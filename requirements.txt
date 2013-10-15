@@ -1,0 +1,8 @@
+Django
+psycopg2
+django-tastypie
+
+python-mimeparse # Until https://github.com/toastdriven/django-tastypie/pull/1029 is merged
+
+python-social-auth
+geopy

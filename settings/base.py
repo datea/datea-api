@@ -121,6 +121,7 @@ INSTALLED_APPS = (
 
     'social.apps.django_app.default',
 
+    'utils',
     'accounts',
     'datum',
     'api',
@@ -167,7 +168,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
 
-   'django.core.context_processors.request',
+    'django.core.context_processors.request',
 
     'social.apps.django_app.context_processors.backends',
     'social.apps.django_app.context_processors.login_redirect',
@@ -175,9 +176,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 AUTH_USER_MODEL = 'accounts.User'
 AUTHENTICATION_BACKENDS = (
-    'social.backends.email.EmailAuth',
+    # 'social.backends.email.EmailAuth',
     'social.backends.twitter.TwitterOAuth',
     'social.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 SOCIAL_AUTH_FACEBOOK_KEY = getenv('FB_KEY')

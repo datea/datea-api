@@ -6,3 +6,7 @@ python-mimeparse # Until https://github.com/toastdriven/django-tastypie/pull/102
 
 python-social-auth
 geopy
+
+# For Production/Heroku
+gunicorn
+dj-database-url

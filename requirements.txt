@@ -10,3 +10,4 @@ geopy
 # For Production/Heroku
 gunicorn
 dj-database-url
+dj-static

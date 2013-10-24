@@ -96,6 +96,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -119,6 +120,7 @@ INSTALLED_APPS = (
 
     'django.contrib.admin',
 
+    'corsheaders',
     'social.apps.django_app.default',
     'django_extensions',
 
@@ -189,3 +191,5 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'es_PE'}
 SOCIAL_AUTH_TWITTER_KEY = getenv('TWITTER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = getenv('TWITTER_SECRET')
+
+CORS_ORIGIN_ALLOW_ALL = False

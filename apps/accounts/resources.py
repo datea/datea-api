@@ -6,6 +6,7 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.serializers import Serializer
 
+from utils.resources import CORSResource
 from .models import User
 
 
@@ -21,7 +22,7 @@ class UserResource(ModelResource):
 
 
 # Adapted from From: http://psjinx.com/programming/2013/06/07/so-you-want-to-create-users-using-djangotastypie/
-class CreateUserResource(ModelResource):
+class CreateUserResource(CORSResource, ModelResource):
     class Meta:
         queryset = User.objects.all()
         excludes = ['is_superuser', 'is_staff', 'is_active', 'last_login',

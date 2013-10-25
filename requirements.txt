@@ -11,4 +11,3 @@ geopy
 gunicorn
 dj-database-url
 dj-static
-django-cors-headers

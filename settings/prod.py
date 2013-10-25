@@ -6,7 +6,9 @@ from base import *
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-DATABASES['default'] =  dj_database_url.config()
+DATABASES = {
+    'default': dj_database_url.config()
+}
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = 'staticfiles'

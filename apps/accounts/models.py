@@ -2,12 +2,15 @@
 from uuid import uuid4
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager, )
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from django_extensions.db.models import TimeStampedModel
 
+from .views import activate_user
 
 class UserManager(BaseUserManager):
     # TODO: send an email to validate the Address and activate the user then.
@@ -48,3 +51,19 @@ class User(TimeStampedModel, PermissionsMixin, AbstractBaseUser):
 
     def get_short_name(self):
         return self.email
+
+
+class UserActivation(TimeStampedModel):
+    """
+    Code used to verify a user's email. User's are disabled by default and code
+    expires after 24 hours
+
+    """
+    code = models.TextField(unique=True, default=uuid4)
+    user = models.ForeignKey(User)
+
+    def get_absolute_url(self):
+        return reverse(activate_user, args=[self.code])
+
+    def activation_url(self):
+        return u"{0}{1}".format(settings.HOSTNAME, self.get_absolute_url())

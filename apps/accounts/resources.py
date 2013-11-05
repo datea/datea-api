@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from tastypie.resources import ModelResource
-from tastypie.authentication import BasicAuthentication, Authentication
-# -*- coding: utf-8 -*-
+from django_rq import enqueue
 from tastypie import fields
+from tastypie.authentication import BasicAuthentication, Authentication
 from tastypie.authorization import Authorization
+from tastypie.resources import ModelResource
 from tastypie.serializers import Serializer
 
 from utils.resources import CORSResource
+from .jobs import generate_activation_code
 from .models import User
 
 
@@ -20,9 +21,11 @@ class UserResource(ModelResource):
         authorization = Authorization()
 
 
-
-# Adapted from From: http://psjinx.com/programming/2013/06/07/so-you-want-to-create-users-using-djangotastypie/
 class CreateUserResource(CORSResource, ModelResource):
+    """Adapted from From:
+http://psjinx.com/programming/2013/06/07/so-you-want-to-create-users-using-djangotastypie/
+
+    """
     class Meta:
         queryset = User.objects.all()
         excludes = ['is_superuser', 'is_staff', 'is_active', 'last_login',
@@ -42,5 +45,7 @@ class CreateUserResource(CORSResource, ModelResource):
 
         bundle.obj.set_password(bundle.obj.password)
         bundle.obj.save()
+
+        enqueue(generate_activation_code, bundle.obj.pk)
 
         return bundle

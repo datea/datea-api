@@ -121,6 +121,7 @@ INSTALLED_APPS = (
 
     'social.apps.django_app.default',
     'django_extensions',
+    'django_rq',
 
     'utils',
     'accounts',
@@ -189,3 +190,13 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'es_PE'}
 SOCIAL_AUTH_TWITTER_KEY = getenv('TWITTER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = getenv('TWITTER_SECRET')
+
+DATEA_HOMEPAGE_URL = '/'
+HOSTNAME = 'http://datea.pe/'
+
+RQ_QUEUES = {
+    'default': {
+        'URL': getenv('REDISTOGO_URL', 'redis://localhost:6379'),
+        'DB': 0,
+    },
+}

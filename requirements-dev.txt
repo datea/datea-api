@@ -2,3 +2,7 @@
 django_extensions
 ipython
 werkzeug
+
+# For jedi
+jedi
+python-epc

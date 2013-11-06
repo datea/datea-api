@@ -21,10 +21,10 @@ class Campaign(PublishedModel, TimeStampedModel):
                               blank=True,
                               max_length=140,
                               help_text=_("A short description or slogan (max. 140 characters)."))
-    # TODO: Determine if ManyToMany would be more appropiate
-    hashtag = models.ForeignKey(HashTag,
-                                verbose_name=_("Hashtag"),
-                                help_text=_("A twitter hashtag for your action"))
+
+    hashtag = models.OneToOne(HashTag,
+                              verbose_name=_("Hashtag"),
+                              help_text=_("A twitter hashtag for your action"))
     category = models.ForeignKey(Category,
                                  verbose_name=_("Category"),
                                  related_name="campaign",

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect, render, get_object_or_404
 
+from .models import UserActivation
+
 
 def activate_user(request, code):
     ua = get_object_or_404(UserActivation, code=code)

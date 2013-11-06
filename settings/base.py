@@ -192,7 +192,7 @@ SOCIAL_AUTH_TWITTER_KEY = getenv('TWITTER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = getenv('TWITTER_SECRET')
 
 DATEA_HOMEPAGE_URL = '/'
-HOSTNAME = 'http://datea.pe/'
+HOSTNAME = 'http://datea.pe'
 
 RQ_QUEUES = {
     'default': {

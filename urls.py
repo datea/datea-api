@@ -7,7 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     url(r'^', include('api.urls')),
-    url('r^accounts/', include('accounts.urls')),
+    url(r'^accounts/', include('accounts.urls')),
 
     url('', include('social.apps.django_app.urls', namespace='social')),
 

@@ -11,6 +11,7 @@ urlpatterns = patterns(
 
     url('', include('social.apps.django_app.urls', namespace='social')),
 
+    url(r'^django-rq/', include('django_rq.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

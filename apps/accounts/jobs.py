@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django_rq import enqueue, get_scheduler
 
-from .models import UserActivation, User
+from .models import User, UserActivation
 
 
 def delete_activation_code(activation_code, user_pk):

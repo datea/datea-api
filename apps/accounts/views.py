@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect, render, get_object_or_404
+from django.conf import settings
 
 from .models import UserActivation
 

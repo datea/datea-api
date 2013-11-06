@@ -10,7 +10,6 @@ from django.conf import settings
 
 from django_extensions.db.models import TimeStampedModel
 
-from .views import activate_user
 
 class UserManager(BaseUserManager):
     # TODO: send an email to validate the Address and activate the user then.
@@ -63,7 +62,7 @@ class UserActivation(TimeStampedModel):
     user = models.ForeignKey(User)
 
     def get_absolute_url(self):
-        return reverse(activate_user, args=[self.code])
+        return reverse('accounts.views.activate_user', args=[self.code])
 
     def activation_url(self):
         return u"{0}{1}".format(settings.HOSTNAME, self.get_absolute_url())

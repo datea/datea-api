@@ -35,3 +35,10 @@ pip install -r requirements.txt
 ```bash
 python manage.py syncdb --settings settings.dev
 ```
+
+
+## Running the project
+
+- Make sure redis is running
+- `python manage.py rqworker default --settings=settings.dev`
+- `python manage.py runserver_plus default --settings=settings.dev`

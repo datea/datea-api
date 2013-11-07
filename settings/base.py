@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     'social.apps.django_app.default',
+    'django_extensions',
     'django_rq',
 
     'utils',

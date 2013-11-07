@@ -1,5 +1,4 @@
 -r requirements.txt
-django_extensions
 ipython
 werkzeug
 

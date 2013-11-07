@@ -1,2 +1,2 @@
 web: gunicorn wsgi:application
-worker: python manage rqworker default --settings=settings.prod
+worker: python manage.py rqworker default --settings=settings.prod

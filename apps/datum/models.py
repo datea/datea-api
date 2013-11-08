@@ -13,7 +13,7 @@ class Datum(TimeStampedModel):
     content = models.TextField(_("Content"))
 
     position = models.PointField(_('Position'), spatial_index=True)
-    address = models.TextField(_('Address'),blank=True, )
+    address = models.TextField(_('Address'), blank=True, )
 
     hashtags = models.ManyToManyField('HashTag')
 

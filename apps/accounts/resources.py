@@ -17,7 +17,7 @@ class UserResource(ModelResource):
         allowed_methods = ['put', 'get', 'patch', ]
         excludes = ['is_superuser', 'is_staff', 'is_active', 'password',
                     'created', ]
-        authentication = Authentication()
+        authentication = BasicAuthentication()
         authorization = Authorization()
 
 
@@ -48,4 +48,11 @@ http://psjinx.com/programming/2013/06/07/so-you-want-to-create-users-using-djang
 
         enqueue(generate_activation_code, bundle.obj.pk)
 
+        return bundle
+
+    def dehydrate(self, bundle):
+        """Remove password.
+
+        """
+        del bundle.data['password']
         return bundle

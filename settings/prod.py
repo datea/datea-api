@@ -7,9 +7,11 @@ DEBUG = False
 TEMPLATE_DEBUG = False
 
 DATABASES = {
-    'default': dj_database_url.config()
-    'engine': 'django.contrib.gis.db.backends.postgis'
+    'default': dj_database_url.config(),
+    'engine': 'django.contrib.gis.db.backends.postgis',
 }
+
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = 'staticfiles'

@@ -8,6 +8,7 @@ TEMPLATE_DEBUG = False
 
 DATABASES = {
     'default': dj_database_url.config()
+    'engine': 'django.contrib.gis.db.backends.postgis'
 }
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

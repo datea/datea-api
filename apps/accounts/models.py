@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
+import requests
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -50,6 +51,31 @@ class User(TimeStampedModel, PermissionsMixin, AbstractBaseUser):
 
     def get_short_name(self):
         return self.email
+
+    def verify_crendetials(token, secret, service):
+        if service == 'twitter':
+            self.verify_twitter_credentials(token, secret)
+        elif service == 'facebook':
+            self.verify_facebook_credentials(token)
+        else:
+            raise Exception("Service {0} not supported".format(service))
+
+    def verify_twitter_credentials(token, secret):
+        pass
+
+    def verify_facebook_credentials(token):
+        """Verify token according to documention on Inspecting access tokens.
+        https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
+
+        """
+        r = requests.get('https://graph.facebook.com/debug_token?input_token={token_to_inspect}&access_token={app_token}'.format(token_to_inspect=token,
+                                                                                                                                app_token=settings.FB_TOKEN))
+        if 400 <= r.status_code < 500:
+            pass
+        elif 200 <= r.status_code < 300:
+            pass
+        else:
+            raise
 
 
 class UserActivation(TimeStampedModel):

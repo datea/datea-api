@@ -200,3 +200,6 @@ RQ_QUEUES = {
         'DB': 0,
     },
 }
+
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

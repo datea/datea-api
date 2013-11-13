@@ -20,6 +20,37 @@ class UserResource(ModelResource):
         authentication = BasicAuthentication()
         authorization = Authorization()
 
+    # haystack
+    def preprend_urls(self):
+        return []
+
+    def search(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+
+        sqs = SearchQuerySet().models(User).load_all().filter(
+            content=AutoQuery(request.GET.get('query', '')))
+
+        paginator = Paginator(sqs, 20)
+        try:
+            page = paginator.page(int(request.GET.get('page', 1)))
+        except InvalidPage:
+            raiseHttp404("Sorry, no results on that page")
+
+        objects = []
+
+        for result in page.object_list:
+            bundle = self.build_bundle(obj=result.object, request=request)
+            bundle = self.full_dehydrate(bundle)
+            objects.append(bundle)
+
+        object_list = {
+            'objects': objects,
+        }
+        self.log_throttled_access(request)
+        return self.create_response(request, object_list)
+
 
 class CreateUserResource(CORSResource, ModelResource):
     """Adapted from From:

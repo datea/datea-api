@@ -1,22 +1,31 @@
 # -*- coding: utf-8 -*-
-import os
-import dj_database_url
+from os import getenv
+from os.path import dirname, abspath
 from base import *
 
 DEBUG = False
 TEMPLATE_DEBUG = False
 
 DATABASES = {
-    'default': dj_database_url.config(),
-    'engine': 'django.contrib.gis.db.backends.postgis',
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': getenv('DATEA_DBNAME', ''),
+        'USER': getenv('DATEA_DBUSER', ''),
+        'PASSWORD': getenv('DATEA_DBPASSWORD', ''),
+        'HOST': '',
+        'PORT': '',
+    }
 }
 
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = 'staticfiles'
-STATIC_URL = '/static/'
+EMAIL_USE_TLS = True
+EMAIL_HOST = getenv('EMAIL_HOST')
+EMAIL_PORT = getenv('EMAIL_PORT')
+EMAIL_HOST_USER = getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_PASSWORD')
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+TWITTER_KEY = getenv('TWITTER_KEY')
+TWITTER_SECRET = getenv('TWITTER_SECRET')
+
+FACEBOOK_KEY = getenv('FACEBOOK_KEY')
+FACEBOOK_SECRET = getenv('FACEBOOK_SECRET')

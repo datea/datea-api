@@ -18,6 +18,8 @@ DATABASES = {
 }
 
 
+INSTALLED_APPS += ('gunicorn', )
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = getenv('EMAIL_HOST')
 EMAIL_PORT = getenv('EMAIL_PORT')

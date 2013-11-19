@@ -6,6 +6,8 @@ from base import *
 DEBUG = False
 TEMPLATE_DEBUG = False
 
+ALLOWED_HOSTS = ['api.datea.pe', ]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',

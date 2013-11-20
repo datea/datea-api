@@ -6,6 +6,7 @@ from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from tastypie.serializers import Serializer
 
+from api.authentication import DateaAuthentication
 from utils.resources import CORSResource
 from .jobs import generate_activation_code
 from .models import User
@@ -17,7 +18,7 @@ class UserResource(ModelResource):
         allowed_methods = ['put', 'get', 'patch', ]
         excludes = ['is_superuser', 'is_staff', 'is_active', 'password',
                     'created', ]
-        authentication = BasicAuthentication()
+        authentication = DateaAuthentication()
         authorization = Authorization()
 
     # haystack

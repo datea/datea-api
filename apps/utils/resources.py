@@ -20,10 +20,7 @@ class CORSResource(object):
             allowed = []
 
         request_method = request.method.lower()
-        # allows = ','.join(map(unicode.upper, allowed))
-        allows = u""
-        for method in allowed:
-            allows += method.upper + u','
+        allows = ','.join(map(unicode.upper, allowed))
 
         if request_method == 'options':
             response = HttpResponse(allows)

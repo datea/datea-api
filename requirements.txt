@@ -2,6 +2,7 @@ Django
 psycopg2
 django-tastypie
 
+simplejson
 python-mimeparse # Until https://github.com/toastdriven/django-tastypie/pull/1029 is merged
 django_extensions
 

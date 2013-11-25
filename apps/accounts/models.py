@@ -6,6 +6,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager, )
+from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -32,7 +33,8 @@ class UserManager(BaseUserManager):
 
 class User(TimeStampedModel, PermissionsMixin, AbstractBaseUser):
     email = models.TextField(_("Email"), unique=True, )
-    twitter_id = models.TextField(blank=True)
+    twitter_id = models.TextField(blank=True, )
+    facebook_id = models.TextField(blank=True, )
     bio = models.CharField(_('Bio'), max_length=140, blank=True, )
 
     USERNAME_FIELD = 'email'
@@ -43,6 +45,8 @@ class User(TimeStampedModel, PermissionsMixin, AbstractBaseUser):
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+
+    token = models.TextField(blank=True)
 
     objects = UserManager()
 
@@ -68,12 +72,18 @@ class User(TimeStampedModel, PermissionsMixin, AbstractBaseUser):
         https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
 
         """
-        r = requests.get('https://graph.facebook.com/debug_token?input_token={token_to_inspect}&access_token={app_token}'.format(token_to_inspect=token,
-                                                                                                                                app_token=settings.FB_TOKEN))
+        r = requests.get('https://graph.facebook.com/debug_token?input_token='
+                         '{token_to_inspect}&access_token={app_token}'.format(
+                             token_to_inspect=token,
+                             app_token=settings.FB_TOKEN))
         if 400 <= r.status_code < 500:
-            pass
+            return HttpResponse("Authentication with Facebook Failed",
+                                status_code=r.status_code)
         elif 200 <= r.status_code < 300:
-            pass
+            self.token = self.generate_token()
+            self.save()
+            return self.create_response(self.token,
+                                        response_class=HttpResponse)
         else:
             raise
 
@@ -92,3 +102,23 @@ class UserActivation(TimeStampedModel):
 
     def activation_url(self):
         return u"{0}{1}".format(settings.HOSTNAME, self.get_absolute_url())
+
+
+class AccessToken(models.Model):
+    """Token the user uses to login.
+
+    """
+    token = models.TextField(unique=True, db_index=True)
+    user = models.ForeignKey(User)
+    expires = models.DateTimeField()
+    client = models.TextField()
+
+    @staticmethod
+    def generate_token(user):
+        token = uuid4()
+        while Session.objects.find(token=token).exists():
+            token = uuid4()
+        session = Session(token=token,
+                          user=user)
+        session.save()
+        return token

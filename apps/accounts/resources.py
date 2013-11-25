@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from django_rq import enqueue
 from tastypie import fields
-from tastypie.authentication import BasicAuthentication, Authentication
+from tastypie.authentication import Authentication
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from tastypie.serializers import Serializer
 
-from api.authentication import DateaAuthentication
+from api.authentication import datea_auth
 from utils.resources import CORSResource
 from .jobs import generate_activation_code
 from .models import User
@@ -18,7 +18,7 @@ class UserResource(ModelResource):
         allowed_methods = ['put', 'get', 'patch', ]
         excludes = ['is_superuser', 'is_staff', 'is_active', 'password',
                     'created', ]
-        authentication = DateaAuthentication()
+        authentication = datea_auth
         authorization = Authorization()
 
     # haystack

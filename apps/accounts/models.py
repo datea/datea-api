@@ -110,8 +110,11 @@ class AccessToken(models.Model):
     """
     token = models.TextField(unique=True, db_index=True)
     user = models.ForeignKey(User)
-    expires = models.DateTimeField()
+    expires = models.DateTimeField(null=True)
     client = models.TextField()
+
+    class Meta:
+        unique_together = (("token", "client"), )
 
     @staticmethod
     def generate_token(user):

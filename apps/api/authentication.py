@@ -33,8 +33,9 @@ class FacebookAuthentication(object):
         """
         if request.META.get('FACEBOOK-TOKEN'):
             return False
-        elif AccessToken.objects.filter(token=request.META.get('FACEBOOK-TOKEN', ""),
-                                        client='facebook').exists():
+        elif AccessToken.objects.filter(
+                token=request.META.get('FACEBOOK-TOKEN', ""),
+                client='facebook').exists():
             pass
         else:
             # Verify againt facebook and if fails return false
@@ -67,13 +68,13 @@ class FacebookAuthentication(object):
                              app_token=settings.FB_TOKEN))
         if 400 <= r.status_code < 500:
             # Maybe log r.status_code
-            return (False, None , None, None, None)
+            return (False, None , None, None, )
         elif 200 <= r.status_code < 300:
             content = json.loads(r.content)
             facebook_id = content['data']['user_id']
-            query = User.objects.filter(facebook_id=facebook_id)
-            if query.exists():
-                user = query.get()
+            user_query = User.objects.filter(facebook_id=facebook_id)
+            if user_query.exists():
+                user = user_query.get()
             else:
                 raise User.DoesNotExist(
                     "No user with the facebook id: {0}".format(facebook_id))
@@ -83,5 +84,51 @@ class FacebookAuthentication(object):
             return (True, token, user, expiry_date)
         else:
             raise Exception("Verify Facebook Credentials: Unhandled HTTP status code")
+
+class TwitterAuthentication(object):
+    """
+    """
+    def is_authenticated(self, request, **kwargs):
+
+        if request.META.get('TWITTER-TOKEN'):
+            return False
+        elif AccessToken.object.filter(
+                token=request.META.get('TWITTER-TOKEN', ''),
+                client='twitter').exists():
+            pass
+        else:
+            return False
+
+    def get_identifier(self, request):
+        return request.user.pk
+
+    def check_active(self, user):
+        return user.is_active
+
+    @staticmethod
+    def verify_twitter_credentials(token):
+        """
+        """
+        headers = {'Authorization': 'Bearer {0}'.format(token)}
+        r = requests.get(
+            'http://api.twitter.com/1/account/verify_credentials.format',
+            headers=headers)
+        if 400 <= r.status_code < 500:
+            return (False, None, None, None, )
+        elif 200 <= r.status_code < 300:
+            content = json.loads(r.content)
+
+            twitter_id = content['id']
+            user_query = User.objects.filter(twitter_id=twitter_id)
+            if user_query.exists():
+                user = user_query.get()
+            else:
+                raise User.DoesNotExist(
+                    "No user with the twitter id: {0}".format(twitter_id))
+
+            return (True, token, user, None)
+        else:
+            raise Exception("Verify Twitter Credentials: Unhandled HTTP status"
+                            " code")
 
 datea_auth = MultiAuthentication(DateaAuthentication())

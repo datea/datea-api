@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 import simplejson as json
-from tastypie.authentication import Authenticate, MultiAuthentication
+from tastypie.authentication import MultiAuthentication
 
 
 class DateaAuthentication(object):
@@ -36,15 +36,15 @@ class FacebookAuthentication(object):
         elif AccessToken.objects.filter(
                 token=request.META.get('FACEBOOK-TOKEN', ""),
                 client='facebook').exists():
-            pass
+            return True
         else:
             # Verify againt facebook and if fails return false
             result, token, user, expiry_date = self.verify_facebook_credentials(request.META.get('FACEBOOK-TOKEN', ""))
             if result:
-                access_token = AccessToken(token=,
+                access_token = AccessToken(token=token,
                                            user=user,
-                                           expires=expiry_date
-                )
+                                           client='facebook',
+                                           expires=expiry_date, )
                 access_token.save()
                 return True
             else:
@@ -68,7 +68,7 @@ class FacebookAuthentication(object):
                              app_token=settings.FB_TOKEN))
         if 400 <= r.status_code < 500:
             # Maybe log r.status_code
-            return (False, None , None, None, )
+            return (False, None ,None, None, )
         elif 200 <= r.status_code < 300:
             content = json.loads(r.content)
             facebook_id = content['data']['user_id']
@@ -95,9 +95,17 @@ class TwitterAuthentication(object):
         elif AccessToken.object.filter(
                 token=request.META.get('TWITTER-TOKEN', ''),
                 client='twitter').exists():
-            pass
+            return True
         else:
-            return False
+            result, token, user, _ = self.verify_twitter_credentials(request.META.get('TWITTER-TOKEN', ""))
+            if result:
+                access_token = AccessToken(token=token,
+                                           user=user,
+                                           client='twitter',)
+                access_token.save()
+                return True
+            else:
+                return False
 
     def get_identifier(self, request):
         return request.user.pk
@@ -108,6 +116,7 @@ class TwitterAuthentication(object):
     @staticmethod
     def verify_twitter_credentials(token):
         """
+        Returns: verified?, token, user, expiry_date
         """
         headers = {'Authorization': 'Bearer {0}'.format(token)}
         r = requests.get(
@@ -118,7 +127,7 @@ class TwitterAuthentication(object):
         elif 200 <= r.status_code < 300:
             content = json.loads(r.content)
 
-            twitter_id = content['id']
+            twitter_id = content['id_str']
             user_query = User.objects.filter(twitter_id=twitter_id)
             if user_query.exists():
                 user = user_query.get()
@@ -131,4 +140,6 @@ class TwitterAuthentication(object):
             raise Exception("Verify Twitter Credentials: Unhandled HTTP status"
                             " code")
 
-datea_auth = MultiAuthentication(DateaAuthentication())
+datea_auth = MultiAuthentication(DateaAuthentication(),
+                                 FacebookAuthentication(),
+                                 TwitterAuthentication(), )

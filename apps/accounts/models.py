@@ -46,8 +46,6 @@ class User(TimeStampedModel, PermissionsMixin, AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
-    token = models.TextField(blank=True)
-
     objects = UserManager()
 
     def get_username(self):

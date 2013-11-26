@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from string import upper
+
 from django.http import HttpResponse
 from tastypie.http import HttpMethodNotAllowed
 from tastypie.exceptions import ImmediateHttpResponse
@@ -21,7 +23,7 @@ class CORSResource(object):
             allowed = []
 
         request_method = request.method.lower()
-        allows = ','.join(map(unicode.upper, allowed))
+        allows = ','.join(map(upper, allowed))
 
         if request_method == 'options':
             response = HttpResponse(allows)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
+from tastypie.http import HttpMethodNotAllowed
 from tastypie.exceptions import ImmediateHttpResponse
 
 
@@ -30,7 +31,7 @@ class CORSResource(object):
             raise ImmediateHttpResponse(response=response)
 
         if not request_method in allowed:
-            response = http.HttpMethodNotAllowed(allows)
+            response = HttpMethodNotAllowed(allows)
             response['Allow'] = allows
             raise ImmediateHttpResponse(response=response)
 

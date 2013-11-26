@@ -62,7 +62,7 @@ http://psjinx.com/programming/2013/06/07/so-you-want-to-create-users-using-djang
         queryset = User.objects.all()
         excludes = ['is_superuser', 'is_staff', 'is_active', 'last_login',
                     'id', 'created', 'modified', 'resource_uri', ]
-        allowed_methods = ['post']
+        allowed_methods = [u'post']
         always_return_data = True
         authentication = Authentication()
         authorization = Authorization()

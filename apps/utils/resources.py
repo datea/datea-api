@@ -24,6 +24,7 @@ class CORSResource(object):
 
         request_method = request.method.lower()
         allows = ','.join(map(upper, allowed))
+        allows += ",OPTIONS"
 
         if request_method == 'options':
             response = HttpResponse(allows)

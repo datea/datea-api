@@ -10,10 +10,18 @@ class DateaAuthentication(object):
     def is_authenticated(self, request, **kwargs):
         if request.user.is_anonymous():
             return True
-        # elif lookup in db:
-        #     pass
+        elif not request.META.get('X-DATEA-TOKEN'):
+            return True
         else:
-            return False
+            query = AccessToken.objects.filter(
+                token=request.META.get('X-DATEA-TOKEN', ""),
+                client='datea')
+            if query.exists():
+                access_token = query.get()
+                request.user = access_token.user
+                return True
+            else:
+                return False
 
     def get_identifier(self, request):
         return request.user.pk

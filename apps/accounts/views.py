@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import simplejson as json
-from django.http import HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404, Http404
+from django.http import (HttpResponse, HttpResponseNotAllowed,
+                         HttpResponseForbidden, Http404, )
+from django.shortcuts import redirect, render, get_object_or_404
 from django.conf import settings
 
 from .models import UserActivation, User, AccessToken
@@ -18,13 +19,18 @@ def get_access_token(request, user_id):
         """Create a new Access Token for the user.
 
         """
-        # self.method_check(request, allowed=['post'])
+        if request.method not in ["POST"]:
+            return HttpResponseNotAllowed
 
         query = User.objects.filter(pk=user_id)
         if query.exists():
             user = query.get()
         else:
             raise Http404("No User with such id: {0}".formar(user_id))
+
+        if not user.check_password(request.META.get('X-PASSWORD', "")):
+            HttpResponseForbidden(json.dumps({'error': 'Incorrect Password'}),
+                                  mimetype='application/json')
 
         access_token = AccessToken.new_token(user)
 

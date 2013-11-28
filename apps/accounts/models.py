@@ -106,7 +106,8 @@ class AccessToken(models.Model):
     """Token the user uses to login.
 
     """
-    token = models.TextField(unique=True, db_index=True)
+    token = models.TextField(db_index=True)
+    secret = models.TextField(blank=True)
     user = models.ForeignKey(User)
     expires = models.DateTimeField(null=True)
     client = models.TextField()
@@ -114,12 +115,20 @@ class AccessToken(models.Model):
     class Meta:
         unique_together = (("token", "client"), )
 
-    @staticmethod
-    def generate_token(user):
+
+    @classmethod
+    def new_token(cls, user):
+        """Create a new random token associated to the new user.
+
+        """
+        result = cls(token=cls.generate_token(),
+                     user=user,
+                     client='datea',)
+        return result
+
+    @classmethod
+    def generate_token(cls):
         token = uuid4()
-        while Session.objects.find(token=token).exists():
+        while cls.objects.filter(token=token).exists():
             token = uuid4()
-        session = Session(token=token,
-                          user=user)
-        session.save()
-        return token
+        return token.hex

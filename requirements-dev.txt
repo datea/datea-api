@@ -1,7 +1,0 @@
--r requirements.txt
-ipython
-werkzeug
-
-# For jedi
-jedi
-python-epc

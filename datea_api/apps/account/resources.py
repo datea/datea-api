@@ -131,7 +131,8 @@ class AccountResource(Resource):
 
 
     def login(self, request, **kwargs):
-        pprint(request)
+        pprint(kwargs)
+        pprint(request.POST)
         self.method_check(request, allowed=['post'])
         
         

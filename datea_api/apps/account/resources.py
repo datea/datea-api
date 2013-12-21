@@ -137,7 +137,8 @@ class AccountResource(Resource):
         #pprint(kwargs)
         #pprint(request)
 
-        print dir(request) 
+
+        print request.body 
 
         return self.create_response(request,{'status': UNAUTHORIZED,
                                                 'error':'Wrong user name and password'})

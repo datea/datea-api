@@ -35,11 +35,11 @@ from pprint import pprint
 
 END_POINT_NAME = 'account'
 
-class AccountResource(Resource):
+class AccountResource(ModelResource):
 
     class Meta:
         allowed_methods = ['post']
-        resource_name = END_POINT_NAME
+        #resource_name = END_POINT_NAME
 
     def prepend_urls(self):
         

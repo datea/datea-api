@@ -133,9 +133,6 @@ class AccountResource(Resource):
     def login(self, request, **kwargs):
 
         self.method_check(request, allowed=['post'])
-        
-        #pprint(kwargs)
-        #pprint(request)
 
         postData = json.loads(request.body)
         username = postData['username']

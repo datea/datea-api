@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'south',
     'django_extensions',
     'sorl.thumbnail',
+    'registration',
 
     # DATEA APPS
     'datea_api.apps.account',

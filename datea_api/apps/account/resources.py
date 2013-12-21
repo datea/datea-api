@@ -144,11 +144,11 @@ class AccountResource(Resource):
         if user is not None:
             if user.is_active:
                 key = getOrCreateKey(user)
-                return self.create_response(request, {'token': key, 'userid': user.id}, status_code=OK)
+                return self.create_response(request, {'token': key, 'userid': user.id}, status =OK)
             else:
-                return self.create_response(request,{'error': 'Account disabled'}, status_code = FORBIDDEN)
+                return self.create_response(request,{'error': 'Account disabled'}, status = FORBIDDEN)
         else:
-            return self.create_response(request,{ 'error':'Wrong user name and password'}, status_code = UNAUTHORIZED)
+            return self.create_response(request,{ 'error': 'Wrong user name and password'}, status = UNAUTHORIZED)
 
 
     def reset_password(self, request, **kwargs):

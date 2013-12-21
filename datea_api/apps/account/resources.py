@@ -36,7 +36,7 @@ from pprint import pprint
 
 END_POINT_NAME = 'account'
 
-class AccountResource(Resource):
+class AccountResource(CORSResource, Resource):
 
     class Meta:
         allowed_methods = ['post']
@@ -132,9 +132,10 @@ class AccountResource(Resource):
 
 
     def login(self, request, **kwargs):
+        pprint(request.raw_post_data)
         self.method_check(request, allowed=['post'])
         
-        pprint(request.raw_post_data)
+        
 
         postData = json.loads(request.raw_post_data)
         username = postData['username']

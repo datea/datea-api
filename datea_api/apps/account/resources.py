@@ -137,6 +137,10 @@ class AccountResource(CORSResource, Resource):
         username = postData['username']
         password = postData['password']
 
+        from pprint import pprint
+
+        pprint(postData)
+
         user = authenticate(username= username,
                             password= password)
 

@@ -7,13 +7,13 @@ from tastypie.throttle import BaseThrottle
 from django.utils.html import strip_tags
 
 from tastypie.authentication import ApiKeyAuthentication
-from datea_api.apps.api.base_resources import DateaBaseGeoResource, CORSResource
+from datea_api.apps.api.base_resources import DateaBaseGeoResource
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from .models import Dateo
 
 
-class DateoResource(CORSResource, DateaBaseGeoResource):
+class DateoResource(DateaBaseGeoResource):
     
     user = fields.ToOneField('datea_api.apps.user.resource.UserResource',
             attribute="user", null=False, full=True, readonly=True)

@@ -4,13 +4,12 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from models import Follow
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
-from api.base_resources import CORSResource
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
 from tastypie.authentication import ApiKeyAuthentication
 
 
-class FollowResource(CORSResource, ModelResource):
+class FollowResource(ModelResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)

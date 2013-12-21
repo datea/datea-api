@@ -5,7 +5,6 @@ from tastypie.authentication import ApiKeyAuthentication
 from django.conf.urls import url
 from api.authentication import ApiKeyPlusWebAuthentication
 from api.authorization import DateaBaseAuthorization
-from api.base_resources import CORSResource
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
 
@@ -36,7 +35,7 @@ from pprint import pprint
 
 END_POINT_NAME = 'account'
 
-class AccountResource(CORSResource, Resource):
+class AccountResource(Resource):
 
     class Meta:
         allowed_methods = ['post']
@@ -194,7 +193,7 @@ class AccountResource(CORSResource, Resource):
 
 
 
-class UserResource(CORSResource, ModelResource):
+class UserResource(ModelResource):
     
     def dehydrate(self, bundle):
         # profile images

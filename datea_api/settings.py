@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'registration',
     'tastypie',
+    'corsheaders',
 
     # DATEA APPS
     'datea_api.apps.account',
@@ -66,12 +67,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'datea_api.urls'
 
 WSGI_APPLICATION = 'datea_api.wsgi.application'
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

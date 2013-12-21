@@ -3,14 +3,14 @@ from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
 from models import Campaign
-from api.base_resources import DateaBaseGeoResource, CORSResource
+from api.base_resources import DateaBaseGeoResource
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
 from account.models import User
 
 
-class CampaignResource(CORSResource, DateaBaseGeoResource):
+class CampaignResource(DateaBaseGeoResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=True, readonly=True)

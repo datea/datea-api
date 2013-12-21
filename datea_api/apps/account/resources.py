@@ -36,7 +36,7 @@ from pprint import pprint
 
 END_POINT_NAME = 'account'
 
-class AccountResource(CORSResource, Resource):
+class AccountResource(Resource):
 
     class Meta:
         allowed_methods = ['post']

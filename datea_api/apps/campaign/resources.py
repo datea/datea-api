@@ -51,7 +51,7 @@ class CampaignResource(DateaBaseGeoResource):
         resource_name = 'campaign'
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
-        authentication = ApiKeyAuthentication()
+        authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)
         limit = 20

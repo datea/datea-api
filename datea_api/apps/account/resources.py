@@ -78,7 +78,7 @@ class AccountResource(Resource):
         self.method_check(request, allowed=['post'])
         
         backend = DefaultBackend()
-        postData = json.loads(request.raw_post_data)
+        postData = json.loads(request.body)
 
         username = postData['username']
         email = postData['email']
@@ -110,7 +110,7 @@ class AccountResource(Resource):
     def activate(self, request, **kwargs):
 
         self.method_check(request, allowed=['post'])
-        postData = json.loads(request.raw_post_data)
+        postData = json.loads(request.body)
 
         if 'activation_key' in postData:
             activation_key = postData['activation_key']
@@ -132,18 +132,12 @@ class AccountResource(Resource):
 
     def login(self, request, **kwargs):
 
-        #self.method_check(request, allowed=['post'])
+        self.method_check(request, allowed=['post'])
         
         #pprint(kwargs)
         #pprint(request)
 
-
-        print request.body 
-
-        return self.create_response(request,{'status': UNAUTHORIZED,
-                                                'error':'Wrong user name and password'})
-
-        postData = json.loads(request.raw_post_data)
+        postData = json.loads(request.body)
         username = postData['username']
         password = postData['password']
 
@@ -168,7 +162,7 @@ class AccountResource(Resource):
     def reset_password(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
 
-        postData = json.loads(request.raw_post_data)
+        postData = json.loads(request.body)
         key = postData['token']
 
         user = getUserByKey(key)

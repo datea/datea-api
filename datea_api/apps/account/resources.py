@@ -35,11 +35,11 @@ from pprint import pprint
 
 END_POINT_NAME = 'account'
 
-class AccountResource(ModelResource):
+class AccountResource(Resource):
 
     class Meta:
         allowed_methods = ['post']
-        #resource_name = END_POINT_NAME
+        resource_name = END_POINT_NAME
 
     def prepend_urls(self):
         
@@ -131,17 +131,21 @@ class AccountResource(ModelResource):
 
 
     def login(self, request, **kwargs):
-        pprint(kwargs)
-        pprint(request)
-        self.method_check(request, allowed=['post'])
+
+        #self.method_check(request, allowed=['post'])
         
-        
+        #pprint(kwargs)
+        #pprint(request)
+
+        print request.POST.dict()
+        print vars(request) 
+
+        return self.create_response(request,{'status': UNAUTHORIZED,
+                                                'error':'Wrong user name and password'})
 
         postData = json.loads(request.raw_post_data)
         username = postData['username']
         password = postData['password']
-
-        
 
         user = authenticate(username= username,
                             password= password)

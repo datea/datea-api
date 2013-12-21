@@ -2,12 +2,14 @@ from tastypie.resources import ModelResource
 from tastypie import fields
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import CORSResource
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 
+
 from .models import Vote
 
-class VoteResource(ModelResource):
+class VoteResource(CORSResource, ModelResource):
     
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':

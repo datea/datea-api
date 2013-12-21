@@ -4,12 +4,13 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from models import Comment
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import CORSResource
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
 
 
-class CommentResource(ModelResource):
+class CommentResource(CORSResource, ModelResource):
     
     user = fields.ToOneField('datea_api.apps.account.models.UserResource', 
             attribute='user', full=True, readonly=True)

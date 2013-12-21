@@ -6,9 +6,10 @@ from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
+from api.base_resources import CORSResource
 
 
-class CategoryResource(ModelResource):
+class CategoryResource(CORSResource, ModelResource):
      
     class Meta:
         queryset = Category.objects.all()

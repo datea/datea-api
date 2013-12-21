@@ -6,8 +6,9 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
+from api.base_resources import CORSResource
 
-class ImageResource(ModelResource):
+class ImageResource(CORSResource, ModelResource):
     
     def dehydrate(self, bundle):
         bundle.data['thumb'] = bundle.obj.get_thumb()

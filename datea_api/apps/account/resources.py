@@ -32,6 +32,7 @@ from registration import signals
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 
+from pprint import pprint
 
 END_POINT_NAME = 'account'
 
@@ -133,13 +134,13 @@ class AccountResource(CORSResource, Resource):
     def login(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
         
+        pprint(request.raw_post_data)
+
         postData = json.loads(request.raw_post_data)
         username = postData['username']
         password = postData['password']
 
-        from pprint import pprint
-
-        pprint(postData)
+        
 
         user = authenticate(username= username,
                             password= password)
@@ -155,7 +156,7 @@ class AccountResource(CORSResource, Resource):
                 return self.create_response(request,{'status':FORBIDDEN,
                                                     'error': 'Account disabled'})
         else:
-            return self.create_response(request,{'status':UNAUTHORIZED,
+            return self.create_response(request,{'status': UNAUTHORIZED,
                                                 'error':'Wrong user name and password'})
 
 

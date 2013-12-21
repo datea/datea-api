@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'sorl.thumbnail',
     'registration',
+    'tastypie',
 
     # DATEA APPS
     'datea_api.apps.account',

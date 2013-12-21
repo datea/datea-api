@@ -10,8 +10,10 @@ from .forms import CustomUserChangeForm, CustomUserCreationForm
 from tastypie.admin import ApiKeyInline
 from tastypie.models import ApiAccess, ApiKey
 
-#admin.site.register(ApiKey)
-#admin.site.register(ApiAccess)
+admin.site.unregister(ApiKey)
+admin.site.register(ApiKey)
+#admin.site.unregister(ApiAccess)
+admin.site.register(ApiAccess)
 
 class CustomUserAdmin(UserAdmin):
 

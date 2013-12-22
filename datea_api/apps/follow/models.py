@@ -24,7 +24,7 @@ class Follow(models.Model):
     
     # generic content type relation to followed object
     content_type = models.ForeignKey(ContentType)
-    followed_object = generic.GenericForeignKey()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
     object_id = models.PositiveIntegerField()
 
     #object_type = models.CharField(max_length=255)

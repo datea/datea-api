@@ -5,6 +5,7 @@ from django_extensions.db.models import TimeStampedModel
 from django.utils.html import strip_tags
 
 from tag.models import Tag
+from campaign.models import Campaign
 from category.models import Category
 
 
@@ -35,7 +36,7 @@ class Dateo(models.Model):
     
     # relation to mapping object: UPDATE -> refer to mapping as an action. More generic!!
     # mapping = models.ForeignKey('DateaMapping', related_name="map_items_old")
-    # action = models.ForeignKey('DateaMapping', related_name="map_items")
+	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True)
     
     # category
 	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, default=None, related_name="dateos")

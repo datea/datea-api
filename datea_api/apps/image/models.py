@@ -39,7 +39,7 @@ class Image(models.Model):
         if not self.image._file:
             image = default.engine.get_image(self.image)
             (self.width, self.height) = default.engine.get_image_size(image)
-        super(DateaImage, self).save(*args, **kwargs)
+        super(Image, self).save(*args, **kwargs)
         
     def delete(self, using=None):
         self.clear_nullable_related()

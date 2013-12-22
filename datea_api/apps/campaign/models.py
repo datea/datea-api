@@ -78,12 +78,14 @@ class Campaign(models.Model):
 	def __unicode__(self):
 		return self.name
 
+
 	def is_active(self):
 		if not self.published:
 			return False
 		elif self.end_date and timezone.now() > self.end_date:
   			return False
 		return True
+
 
 	def get_image_thumb(self, thumb_preset = 'action_image'):
 		if self.image:
@@ -103,6 +105,7 @@ class Campaign(models.Model):
 
 	def get_absolute_url(self):
 		return ugettext('/campaign/')+str(self.pk)
+
 
 
 	def save(self, *args, **kwargs):

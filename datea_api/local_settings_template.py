@@ -1,4 +1,7 @@
 
+# CHANGE THIS SETTING FOR PRODUCTION!!!
+# generate new secret key with ./manage.py generate_secret_key 
+SECRET_KEY = '9ko#ts81m_)h$hjyae!1xpx2#_le+ir3^tvg(dqv7^(jx-*dwe'
 
 DEBUG = False
 TEMPLATE_DEBUG = False

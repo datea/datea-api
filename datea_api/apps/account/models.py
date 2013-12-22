@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 from django.core import validators
 from django.utils import timezone
+from urllib import quote as urlquote
 import re
 
 from image.models import Image
@@ -60,8 +61,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	        validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')
 	    ])
 
-	full_name = models.CharField(_('full name'), max_length=254, blank=True)
-	email = models.EmailField(_('email address'), max_length=254, unique=True)
+	full_name = models.CharField(_('full name'), max_length=254, blank=True, null=True)
+	email = models.EmailField(_('email address'), max_length=254, unique=True, null=True, blank=True)
 	message = models.CharField(_('personal message'), max_length=140, blank=True, null=True)
 
 	image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar")

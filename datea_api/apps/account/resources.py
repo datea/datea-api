@@ -191,7 +191,7 @@ class UserResource(ModelResource):
         bundle.data['image_small'] = bundle.obj.get_small_image()
         bundle.data['image'] = bundle.obj.get_image()
         bundle.data['image_large'] = bundle.obj.get_large_image()
-        bundle.data['url'] = bundle.obj.profile.get_absolute_url()
+        bundle.data['url'] = bundle.obj.get_absolute_url()
         return bundle
     
     def hydrate(self, bundle):
@@ -225,7 +225,7 @@ class UserResource(ModelResource):
         resource_name = 'user'
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get', 'patch']
-        authentication = ApiKeyAuthentication()
+        authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         filtering = {
             'username': ALL,

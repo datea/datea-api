@@ -9,6 +9,9 @@ from tastypie.cache import SimpleCache
 from .models import Vote
 
 class VoteResource(ModelResource):
+
+    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+            attribute='user', full=False, readonly=True)
     
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':

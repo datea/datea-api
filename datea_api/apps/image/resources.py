@@ -8,6 +8,9 @@ from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
 
 class ImageResource(ModelResource):
+
+    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+            attribute='user', full=False, readonly=True)
     
     def dehydrate(self, bundle):
         bundle.data['thumb'] = bundle.obj.get_thumb()

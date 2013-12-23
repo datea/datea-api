@@ -3,10 +3,12 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.conf import settings
+from django.utils import timezone
 
 from category.models import Category
 from tag.models import Tag
 from image.models import Image
+
 
 class Campaign(models.Model):
 

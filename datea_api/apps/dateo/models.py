@@ -47,12 +47,19 @@ class Dateo(models.Model):
 	vote_count = models.IntegerField(default=0, blank=True, null=True)
 	comment_count = models.IntegerField(default=0,blank=True, null=True)
 	follow_count = models.IntegerField(default=0, blank=True, null=True)
+
+	date = models.DateTimeField(_('Date'), )
     
     # Object Manager from geodjango
 	objects = models.GeoManager()
 
 	def __unicode__(self):
 		return self.user.username+': '+strip_tags(self.content)[:100]
+
+	def save(self, *args, **kwargs):
+		if not self.date:
+			self.date = self.created
+		Super(Dateo, self).save(*args, **kwargs)
 
 	def get_absolute_url(self):
 		return '/dateos/'+str(self.pk)

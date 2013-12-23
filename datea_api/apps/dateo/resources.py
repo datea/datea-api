@@ -20,11 +20,11 @@ class DateoResource(DateaBaseGeoResource):
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
             attribute="user", null=False, full=True, readonly=True)
     category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
-            attribute= 'category', null=True, full=False, readonly=True)
+            attribute= 'category', null=True, full=False, readonly=False)
     tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource',
-            attribute='tags', null=True, full=True, readonly=True)
+            attribute='tags', null=True, full=True, readonly=False)
     images = fields.ToManyField('datea_api.apps.image.resources.ImageResource',
-            attribute='images', null=True, full=True, readonly=True)
+            attribute='images', null=True, full=True, readonly=False)
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)

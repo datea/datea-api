@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 class Tag(models.Model):
     
 	tag = models.SlugField(_('Tag'), max_length=100, unique=True, db_index=True)
-	title = models.CharField(_('Title'), max_length=100)
+	title = models.CharField(_('Title'), max_length=100, blank=True, null=True)
 	description = models.TextField(_('Description (optional)'), max_length=500, blank=True, null=True)
 
 	follow_count = models.IntegerField(_('Follow count'), default=0, blank=True, null=True)

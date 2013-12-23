@@ -84,10 +84,15 @@ class AccountResource(Resource):
         email = postData['email']
         password = postData['password']
         
-        if User.objects.filter(email=postData['email']).count() > 0:
+        if User.objects.filter(email=email).count() > 0:
             return self.create_response(request,{
-                    'status': SYSTEM_ERROR,
+                    'status': BAD_REQUEST,
                     'error': 'duplicate email'})
+
+        if User.objects.filter(username=username).count() > 0:
+            return self.create_response(request,{
+                    'status': BAD_REQUEST,
+                    'error': 'duplicate user'})
         
         #print "post data"
         #print args

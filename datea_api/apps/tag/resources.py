@@ -17,7 +17,7 @@ class TagResource(ModelResource):
         filtering={
                 'name' : ALL
                 }
-        list_allowed_methods = ['get']
+        list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'put', 'post', 'patch']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()

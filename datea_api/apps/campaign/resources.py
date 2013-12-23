@@ -50,7 +50,7 @@ class CampaignResource(DateaBaseGeoResource):
     class Meta:
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
-        list_allowed_methods = ['get']
+        list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()

@@ -22,7 +22,7 @@ class FollowResource(ModelResource):
     class Meta:
         queryset = Follow.objects.all()
         resource_name = 'follow'
-        list_allowed_methods =['get']
+        list_allowed_methods =['get', 'post']
         detail_allowed_methods = ['get', 'post', 'delete']
         filtering={
                 'id' : ['exact'],

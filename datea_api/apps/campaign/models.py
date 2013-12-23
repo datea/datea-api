@@ -91,16 +91,18 @@ class Campaign(models.Model):
 		if self.image:
 			return self.image.get_thumb(thumb_preset)
 		else:
-			Preset = settings.THUMBNAIL_PRESETS[thumb_preset]
-			url = os.path.join(settings.MEDIA_ROOT, 'default/img/default-'+self.action_type+'.png')
-			#preserve format
-			ext = url.split('.')[-1].upper()
-			if ext not in ['PNG', 'JPG'] or ext == 'JPG':
-				ext = 'JPEG'
-				options = {'format': ext }
-			if 'options' in Preset:
-				options.update(Preset['options'])
-			return get_thumbnail(url, Preset['size'], **options).url
+			return ''
+
+			#Preset = settings.THUMBNAIL_PRESETS[thumb_preset]
+			#url = os.path.join(settings.MEDIA_ROOT, 'default/img/default-'+self.action_type+'.png')
+			##preserve format
+			#ext = url.split('.')[-1].upper()
+			#if ext not in ['PNG', 'JPG'] or ext == 'JPG':
+			#	ext = 'JPEG'
+			#	options = {'format': ext }
+			#if 'options' in Preset:
+			#	options.update(Preset['options'])
+			#return get_thumbnail(url, Preset['size'], **options).url
 
 
 	def get_absolute_url(self):

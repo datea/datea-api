@@ -8,6 +8,7 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
 from account.models import User
+import os
 
 
 class CampaignResource(DateaBaseGeoResource):

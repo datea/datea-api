@@ -1,5 +1,4 @@
-
-
+from tastypie import fields
 from tastypie.resources import ModelResource
 from .models import Image
 from api.authorization import DateaBaseAuthorization

@@ -5,12 +5,14 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
+from b64field import Base64FileField
 
 class ImageResource(ModelResource):
 
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
-    
+    #image = Base64FileField('image')
+
     def dehydrate(self, bundle):
         bundle.data['thumb'] = bundle.obj.get_thumb()
         bundle.data['image'] = bundle.obj.get_thumb('image_thumb_large')

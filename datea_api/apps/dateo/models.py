@@ -59,7 +59,7 @@ class Dateo(models.Model):
 	def save(self, *args, **kwargs):
 		if not self.date:
 			self.date = self.created
-		Super(Dateo, self).save(*args, **kwargs)
+		super(Dateo, self).save(*args, **kwargs)
 
 	def get_absolute_url(self):
 		return '/dateos/'+str(self.pk)

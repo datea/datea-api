@@ -76,7 +76,7 @@ class DateoResource(DateaBaseGeoResource):
             'published': ['exact']
         }
         ordering = ['name', 'created', 'distance']
-        limit = 500
+        limit = 200
         cache = SimpleCache(timeout=10)
         always_return_data = True
 

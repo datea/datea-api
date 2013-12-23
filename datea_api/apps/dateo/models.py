@@ -7,6 +7,7 @@ from django.utils.html import strip_tags
 from tag.models import Tag
 from campaign.models import Campaign
 from category.models import Category
+from image.models import Image
 
 
 class Dateo(models.Model):
@@ -25,10 +26,10 @@ class Dateo(models.Model):
             ('solved', _('solved'))
         )
 	status = models.CharField(_("status"), max_length=15, choices=status_choices, default="new")
-    
-    # content
+
+	# content
 	content = models.TextField(_("Content"))
-    #images = models.ManyToManyField(DateaImage, verbose_name=_('Images'), null=True, blank=True, related_name="map_item_images")
+	images = models.ManyToManyField(Image, verbose_name=_('Images'), null=True, blank=True, related_name="dateo")
     
     # location
 	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)

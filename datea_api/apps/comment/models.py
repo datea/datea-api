@@ -26,12 +26,12 @@ class Comment(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     
     # do we need content type relation? perhaps this is more simple and fast...
-    # object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever
+    object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever
     object_id = models.PositiveIntegerField(_('Object id')) # object id
     
     # provide a way to know if published was changed
     def __init__(self, *args, **kwargs):
-        super(DateaComment, self).__init__(*args, **kwargs)
+        super(Comment, self).__init__(*args, **kwargs)
         self.__orig_published = self.published
     
 
@@ -43,16 +43,16 @@ class Comment(models.Model):
         if self.content_object != receiver_obj:
             self.content_object = receiver_obj
         '''
-        super(DateaComment, self).save(*args, **kwargs)
+        super(Comment, self).save(*args, **kwargs)
         
     
     def delete(self, using=None):
         self.delete_stats()
-        super(DateaComment, self).delete(using=using)
+        super(Comment, self).delete(using=using)
         
     
     def update_stats(self):
-        ctype = ContentType.objects.get(model=self.object_type.lower())
+        
         receiver_obj = self.content_object
 
         value = 0
@@ -63,9 +63,8 @@ class Comment(models.Model):
             value = -1
         
         if value != 0:
-            prof = self.user.get_profile()
-            prof.comment_count += value 
-            prof.save() 
+            self.user.comment_count += value 
+            self.user.save() 
             
             if hasattr(receiver_obj, 'comment_count'):
                 receiver_obj.comment_count += value
@@ -77,12 +76,10 @@ class Comment(models.Model):
     
     def delete_stats(self):
         if self.published and self.__orig_published:
-            prof = self.user.get_profile()
-            prof.comment_count -= 1
-            prof.save() 
+            self.user.comment_count -= 1
+            self.user.save() 
             
-            ctype = ContentType.objects.get(model=self.object_type.lower())
-            receiver_obj = ctype.get_object_for_this_type(pk=self.object_id)
+            receiver_obj = self.content_object
             if hasattr(receiver_obj, 'comment_count'):
                 receiver_obj.comment_count -= 1
                 receiver_obj.save()
@@ -99,6 +96,7 @@ class Comment(models.Model):
         
 
 # connect signal handlers
+"""
 from datea_api.apps.dateo.models import Dateo
 from django.db.models.signals import pre_delete
 
@@ -107,7 +105,7 @@ def on_dateo_delete(sender, instance, **kwargs):
     Comment.objects.filter(object_type__name='dateo', object_id=instance.id).delete()
 
 pre_delete.connect(on_dateo_delete, sender=Dateo)
-        
+"""     
 
     
 

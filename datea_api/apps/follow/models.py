@@ -43,8 +43,8 @@ class Follow(models.Model):
             	receiver_obj.follow_count += 1
             	receiver_obj.save()
 
-        if not self.object_type:
-            self.object_type = self.content_type.name
+        #if not self.object_type:
+        #    self.object_type = self.content_type.name
 
         super(Follow, self).save(*args, **kwargs)
        
@@ -52,11 +52,11 @@ class Follow(models.Model):
     def delete(self, using=None):
         # update comment stats on voted object 
         #ctype = ContentType.objects.get(model=self.object_type.lower())
-        receiver_obj = self.content_type.get_object_for_this_type(pk=self.object_id)
+        receiver_obj = self.content_object
         if hasattr(receiver_obj, 'follow_count'):
             receiver_obj.follow_count -= 1
             receiver_obj.save()
-        super(DateaFollow, self).delete(using=using)
+        super(Follow, self).delete(using=using)
     
     class Meta:
         verbose_name = _('Follow')

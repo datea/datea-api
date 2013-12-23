@@ -25,13 +25,12 @@ class Vote(models.Model):
         # update comment stats on voted object  
         if self.pk == None:
             self.update_stats(1)
-        super(DateaVote, self).save(*args, **kwargs)
+        super(Vote, self).save(*args, **kwargs)
         
 
     def update_stats(self, value):
-        prof = self.user.get_profile()
-        prof.vote_count += value
-        prof.save()
+        self.user.vote_count += value
+        self.user.save()
         receiver_obj = self.content_object
         if hasattr(receiver_obj, 'vote_count'):
             receiver_obj.vote_count += value
@@ -41,7 +40,7 @@ class Vote(models.Model):
     def delete(self, using=None):
         # update comment stats on voted object 
         self.update_stats(-1)
-        super(DateaVote, self).delete(using=using)
+        super(Vote, self).delete(using=using)
     
     def __unicode__(self):
         return _("Vote")

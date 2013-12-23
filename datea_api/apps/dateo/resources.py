@@ -17,7 +17,7 @@ from comment.models import Comment
 
 class DateoResource(DateaBaseGeoResource):
     
-    user = fields.ToOneField('datea_api.apps.user.resources.UserResource',
+    user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
             attribute="user", null=False, full=True, readonly=True)
     category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
             attribute= 'category', null=True, full=False, readonly=True)

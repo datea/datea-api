@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 from django.conf import settings
 
 from category.models import Category

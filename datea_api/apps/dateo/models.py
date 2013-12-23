@@ -48,7 +48,7 @@ class Dateo(models.Model):
 	comment_count = models.IntegerField(default=0,blank=True, null=True)
 	follow_count = models.IntegerField(default=0, blank=True, null=True)
 
-	date = models.DateTimeField(_('Date'), )
+	date = models.DateTimeField(_('Date'), blank=True, null=True)
     
     # Object Manager from geodjango
 	objects = models.GeoManager()

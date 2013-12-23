@@ -55,8 +55,8 @@ class Dateo(models.Model):
 		return self.user.username+': '+strip_tags(self.content)[:100]
 
 	def get_absolute_url(self):
-        return '/dateos/'+str(self.pk)  
-    
+		return '/dateos/'+str(self.pk)
+
 	class Meta:
 		verbose_name = 'Dateo'
 		verbose_name_plural = 'Dateos'

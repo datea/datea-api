@@ -12,6 +12,8 @@ from datea_api.apps.api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from .models import Dateo
 
+from comment.models import Comment
+
 
 class DateoResource(DateaBaseGeoResource):
     
@@ -24,7 +26,7 @@ class DateoResource(DateaBaseGeoResource):
     images = fields.ToManyField('datea_api.apps.image.resource.ImageResource',
             attribute='images', null=True, full=True, readonly=True)
     comments = fields.ToManyField('datea.datea_api.comment.CommentResource',
-            attribute=lambda bundle: DateaComment.objects.filter(object_id=bundle.obj.id, object_type='dateamapitem'),
+            attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
 
     def dehydrate(self, bundle):

@@ -11,7 +11,7 @@ from tastypie.throttle import BaseThrottle
 
 class CommentResource(ModelResource):
     
-    user = fields.ToOneField('datea_api.apps.account.models.UserResource', 
+    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=True, readonly=True)
     
     def dehydrate(self, bundle):

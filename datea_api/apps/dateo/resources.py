@@ -22,7 +22,7 @@ class DateoResource(DateaBaseGeoResource):
     category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
             attribute= 'category', null=True, full=False, readonly=False)
     tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource',
-            attribute='tags', null=True, full=True, readonly=False)
+            attribute='tags', related_name='tags', null=True, full=True, readonly=False)
     images = fields.ToManyField('datea_api.apps.image.resources.ImageResource',
             attribute='images', null=True, full=True, readonly=False)
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',

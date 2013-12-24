@@ -12,7 +12,9 @@ from datea_api.apps.api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from .models import Dateo
 
+from image.models import Image
 from image.resources import ImageResource
+from tag.models import Tag
 from tag.resources import TagResource
 
 from comment.models import Comment

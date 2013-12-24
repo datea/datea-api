@@ -11,7 +11,7 @@ class ImageResource(ModelResource):
 
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
-    #image = Base64FileField('image')
+    image = Base64FileField('image')
 
     def dehydrate(self, bundle):
         bundle.data['thumb'] = bundle.obj.get_thumb()

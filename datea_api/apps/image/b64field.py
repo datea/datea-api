@@ -25,7 +25,16 @@ class Base64FileField(FileField):
         "content_type": "image/png" # on hydrate optional
     }
     """
-    def dehydrate(self, bundle):
+    def dehydrate(self, bundle, for_list=True):
+
+        instance = getattr(bundle.obj, self.instance_name, None)
+        try:
+            url = getattr(instance, 'url', None)
+        except ValueError:
+            url = None
+        return url
+
+        '''
         if not bundle.data.has_key(self.instance_name) and hasattr(bundle.obj, self.instance_name):
             file_field = getattr(bundle.obj, self.instance_name)
             if file_field:
@@ -41,6 +50,7 @@ class Base64FileField(FileField):
                 except:
                     pass
         return None
+        '''
 
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)

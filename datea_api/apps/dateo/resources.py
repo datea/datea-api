@@ -62,6 +62,12 @@ class DateoResource(DateaBaseGeoResource):
         return bundle
 
 
+    def hydrate_m2m(self, bundle):
+        from pprint import pprint
+        pprint(bundle)
+        return bundle
+
+
     class Meta:
         queryset = Dateo.objects.all()
         resource_name = 'dateo'

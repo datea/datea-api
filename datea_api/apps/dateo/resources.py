@@ -12,6 +12,9 @@ from datea_api.apps.api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from .models import Dateo
 
+from image.resources import ImageResource
+from tag.resources import TagResource
+
 from comment.models import Comment
 
 
@@ -22,9 +25,9 @@ class DateoResource(DateaBaseGeoResource):
     category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
             attribute= 'category', null=True, full=False, readonly=False)
     tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource',
-            attribute='tags', related_name='tags', null=True, full=True, readonly=False)
+            attribute='tags', related_name='tags', null=True, full=True, readonly=True)
     images = fields.ToManyField('datea_api.apps.image.resources.ImageResource',
-            attribute='images', null=True, full=True, readonly=False)
+            attribute='images', null=True, full=True, readonly=True)
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
@@ -62,10 +65,36 @@ class DateoResource(DateaBaseGeoResource):
         return bundle
 
 
-    def save_m2m(self, m2m_bundle): 
-        from pprint import pprint
-        pprint(m2m_bundle)
-        return super(DateoResource, self).save_m2m(m2m_bundle)
+    # do our own saving of related m2m fields
+    def hydrate_m2m(self, bundle):
+        #print bundle.data
+        if 'images' in bundle.data and bundle.data['images']:
+            imgs = []
+            for imgdata in bundle.data['images']:
+                if 'id' in imgdata:
+                    imgs.append(imgdata['id'])
+                else:
+                    imgrsc = ImageResource()
+                    imgbundle = imgrsc.build_bundle(data=imgdata, request=bundle.request)
+                    imgbundle = imgrsc.full_hydrate(imgbundle)
+                    imgbundle.obj.save()
+                    imgs.append(imgbundle.obj.pk)
+            bundle.obj.images = Image.objects.filter(pk__in=imgs)
+
+        if 'tags' in bundle.data and bundle.data['tags']:
+            tags = []
+            for tagdata in bundle.data['tags']:
+                if 'id' in tagdata:
+                    tags.append(tagdata['id'])
+                else:
+                    tagrsc = TagResource()
+                    tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
+                    tagbundle = tagrsc.full_hydrate(tagbundle)
+                    tagbundle.obj.save()
+                    tags.append(tagbundle.obj.pk)
+            bundle.obj.tags = Tag.objects.filter(pk__in=tags)
+
+        return bundle
 
 
     class Meta:

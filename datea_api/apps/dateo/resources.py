@@ -89,11 +89,16 @@ class DateoResource(DateaBaseGeoResource):
                 if 'id' in tagdata:
                     tags.append(tagdata['id'])
                 else:
-                    tagrsc = TagResource()
-                    tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
-                    tagbundle = tagrsc.full_hydrate(tagbundle)
-                    tagbundle.obj.save()
-                    tags.append(tagbundle.obj.pk)
+                    found = Tag.objects.filter(tag=tagdata['tag'])
+                    if found.count() > 0:
+                        tags.append(found[0].pk)
+                    else:
+                        tagrsc = TagResource()
+                        tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
+                        tagbundle = tagrsc.full_hydrate(tagbundle)
+                        tagbundle.obj.save()
+                        tags.append(tagbundle.obj.pk)
+
             bundle.obj.tags = Tag.objects.filter(pk__in=tags)
 
         return bundle

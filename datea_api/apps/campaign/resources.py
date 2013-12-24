@@ -10,6 +10,9 @@ from tastypie.authentication import ApiKeyAuthentication
 from account.models import User
 import os
 
+from tag.models import Tag
+from tag.resources import TagResource
+
 
 class CampaignResource(DateaBaseGeoResource):
     
@@ -20,7 +23,7 @@ class CampaignResource(DateaBaseGeoResource):
     main_tag = fields.ToOneField('datea_api.apps.tag.resources.TagResource',
                 attribute="main_tag", full=True, null=True)
     secondary_tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource', 
-            attribute = 'secondary_tags', full=True, null=True)
+            attribute = 'secondary_tags', full=True, null=True, readonly=True)
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)
     
@@ -46,7 +49,34 @@ class CampaignResource(DateaBaseGeoResource):
             bundle.obj.user = orig_object.user
     
         return bundle
+
+
+
+    def hydrate_m2m(self,bundle):
+
+        # Implement our own m2m logic, since tastypie makes strage things (hard to understand why)
+        if 'tags' in bundle.data and bundle.data['tags']:
+            tags = []
+            for tagdata in bundle.data['tags']:
+                if 'id' in tagdata:
+                    tags.append(tagdata['id'])
+                else:
+                    found = Tag.objects.filter(tag=tagdata['tag'])
+                    if found.count() > 0:
+                        tags.append(found[0].pk)
+                    else:
+                        tagrsc = TagResource()
+                        tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
+                        tagbundle = tagrsc.full_hydrate(tagbundle)
+                        tagbundle.obj.save()
+                        tags.append(tagbundle.obj.pk)
+
+            bundle.obj.tags = Tag.objects.filter(pk__in=tags)
+
+        return bundle
         
+
+
     class Meta:
         queryset = Campaign.objects.all()
         resource_name = 'campaign'

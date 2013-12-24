@@ -63,7 +63,7 @@ class DateoResource(DateaBaseGeoResource):
 
 
     def hydrate_m2m(self, bundle):
-        #from pprint import pprint
+        from pprint import pprint
         pprint(bundle)
         return bundle
 

@@ -50,14 +50,15 @@ class DateoResource(DateaBaseGeoResource):
             del bundle.data['created']
  
         # Some security measures in regards to an object's owner
-        if bundle.request.method == 'POST':
-            # use request user
-            bundle.obj.user = bundle.request.user
-            
-        elif bundle.request.method in 'PATCH':
-            # preserve original owner
-            orig_object = Dateo.objects.get(pk=bundle.data['id'])
-            bundle.obj.user = orig_object.user
+        if bundle.obj._meta.model_name in ['dateo', 'image']:
+            if bundle.request.method == 'POST':
+                # use request user
+                bundle.obj.user = bundle.request.user
+                
+            elif bundle.request.method in 'PATCH':
+                # preserve original owner
+                orig_object = Dateo.objects.get(pk=bundle.data['id'])
+                bundle.obj.user = orig_object.user
         return bundle
 
 
@@ -73,7 +74,8 @@ class DateoResource(DateaBaseGeoResource):
             'id': ['exact'],
             'created': ['range', 'gt', 'gte', 'lt', 'lte'],
             'position': ['distance', 'contained','latitude', 'longitude'],
-            'published': ['exact']
+            'published': ['exact'],
+            'user': ALL_WITH_RELATIONS
         }
         ordering = ['name', 'created', 'distance']
         limit = 200

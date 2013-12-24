@@ -67,7 +67,7 @@ class DateoResource(DateaBaseGeoResource):
 
     def save_m2m(self, m2m_bundle): 
         from pprint import pprint
-        pprint(bundle)
+        pprint(m2m_bundle)
         return super(DateoResource, self).save_m2m(m2m_bundle)
 
     class Meta:

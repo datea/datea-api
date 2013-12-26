@@ -55,7 +55,7 @@ class Base64FileField(FileField):
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)
         if value:
-            b64_string, mime_type = datauri_decode(value['file']['data_uri'])
+            b64_string, mime_type = self.datauri_decode(value['file']['data_uri'])
             file_field = {
                 "name": value['file']['name'],
                 "data": b64_string,

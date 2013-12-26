@@ -53,16 +53,13 @@ class Base64FileField(FileField):
         '''
 
 
-    def datauri_decode(self, data_url):
-        metadata, encoded = data_url.rsplit(b(","), 1)
-        mime_type = metadata.split(';')[0].split(':')[1]
-        return b64_string, mime_type
-
-
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)
+        from pprint import pprint
+        pprint(value)
         if value:
-            b64_string, mime_type = self.datauri_decode(value['file']['data_uri'])
+            metadata, b64_string = value['data_uri'].rsplit(b(","), 1)
+            mime_type = metadata.split(';')[0].split(':')[1]
             file_field = {
                 "name": value['file']['name'],
                 "data": b64_string,
@@ -70,4 +67,3 @@ class Base64FileField(FileField):
             }
             value = SimpleUploadedFile(value["name"], base64.b64decode(fiel_field), getattr(value, "content_type", "application/octet-stream"))
         return value
-

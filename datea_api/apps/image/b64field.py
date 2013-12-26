@@ -65,5 +65,5 @@ class Base64FileField(FileField):
                 "data": b64_string,
                 "content_type": mime_type,
             }
-            value = SimpleUploadedFile(value["name"], base64.b64decode(fiel_field), getattr(value, "content_type", "application/octet-stream"))
+            value = SimpleUploadedFile(value["name"], base64.b64decode(file_field), getattr(value, "content_type", "application/octet-stream"))
         return value

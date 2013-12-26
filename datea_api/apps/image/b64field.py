@@ -65,7 +65,7 @@ class Base64FileField(FileField):
         return value
 
 
-    def datauri_decode(data_url):
+    def datauri_decode(self, data_url):
         metadata, encoded = data_url.rsplit(b(","), 1)
         mime_type = metadata.split(';')[0].split(':')[1]
         return b64_string, mime_type

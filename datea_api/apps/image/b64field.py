@@ -58,8 +58,8 @@ class Base64FileField(FileField):
         from pprint import pprint
         pprint(value)
         if value:
-            metadata, b64_string = value['data_uri'].rsplit(b(","), 1)
-            mime_type = metadata.split(';')[0].split(':')[1]
+            metadata, b64_string = value['data_uri'].rsplit(u",", 1)
+            mime_type = metadata.split(u';')[0].split(u':')[1]
             file_field = {
                 "name": value['file']['name'],
                 "data": b64_string,

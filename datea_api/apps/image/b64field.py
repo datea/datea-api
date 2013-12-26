@@ -21,7 +21,7 @@ class Base64FileField(FileField):
 
     file_field = {
         "name": "myfile.png",
-        "file": "longbas64encodedstring",
+        "data": "longbas64encodedstring",
         "content_type": "image/png" # on hydrate optional
     }
     """
@@ -55,5 +55,18 @@ class Base64FileField(FileField):
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)
         if value:
-            value = SimpleUploadedFile(value["name"], base64.b64decode(value["file"]), getattr(value, "content_type", "application/octet-stream"))
+            b64_string, mime_type = datauri_decode(value['file']['data_uri'])
+            file_field = {
+                "name": value['file']['name'],
+                "data": b64_string,
+                "content_type": mime_type,
+            }
+            value = SimpleUploadedFile(value["name"], base64.b64decode(fiel_field), getattr(value, "content_type", "application/octet-stream"))
         return value
+
+
+    def datauri_decode(data_url):
+        metadata, encoded = data_url.rsplit(b(","), 1)
+        mime_type = metadata.split(';')[0].split(':')[1]
+        return b64_string, mime_type
+

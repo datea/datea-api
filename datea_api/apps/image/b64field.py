@@ -52,6 +52,13 @@ class Base64FileField(FileField):
         return None
         '''
 
+
+    def datauri_decode(self, data_url):
+        metadata, encoded = data_url.rsplit(b(","), 1)
+        mime_type = metadata.split(';')[0].split(':')[1]
+        return b64_string, mime_type
+
+
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)
         if value:
@@ -63,10 +70,4 @@ class Base64FileField(FileField):
             }
             value = SimpleUploadedFile(value["name"], base64.b64decode(fiel_field), getattr(value, "content_type", "application/octet-stream"))
         return value
-
-
-    def datauri_decode(self, data_url):
-        metadata, encoded = data_url.rsplit(b(","), 1)
-        mime_type = metadata.split(';')[0].split(':')[1]
-        return b64_string, mime_type
 

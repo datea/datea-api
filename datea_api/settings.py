@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'registration',
     'tastypie',
     'corsheaders',
+    #'haystack',
 
     # DATEA APPS
     'datea_api.apps.account',
@@ -84,6 +85,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'datea',
+    },
 }
 
 # Internationalization

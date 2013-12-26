@@ -17,7 +17,6 @@ class Image(models.Model):
     width =  models.PositiveIntegerField(blank=True, null=True)
     height = models.PositiveIntegerField(blank=True, null=True)
 
-
     def __unicode__(self):
         return self.image.url
 

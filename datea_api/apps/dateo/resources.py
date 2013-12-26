@@ -71,6 +71,8 @@ class DateoResource(DateaBaseGeoResource):
     def hydrate_m2m(self, bundle):
         #print bundle.data
         if 'images' in bundle.data and bundle.data['images']:
+            from pprint import pprint
+            print bundle.data['images']
             imgs = []
             for imgdata in bundle.data['images']:
                 if 'id' in imgdata:

@@ -61,7 +61,7 @@ class Base64FileField(FileField):
             metadata, b64_string = value['data_uri'].rsplit(u",", 1)
             mime_type = metadata.split(u';')[0].split(u':')[1]
             file_field = {
-                "name": value['file']['name'],
+                "name": value['name'],
                 "data": b64_string,
                 "content_type": mime_type,
             }

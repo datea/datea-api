@@ -21,7 +21,7 @@ class ImageResource(ModelResource):
     def hydrate(self, bundle):
 
         if 'user' not in bundle.data:
-            bundle.data['user'] = '/api/v2/user/'+str(request.user.id)
+            bundle.data['user'] = '/api/v2/user/'+str(bundle.request.user.id)
         
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':

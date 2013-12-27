@@ -46,7 +46,7 @@ INSTALLED_APPS = (
     'registration',
     'tastypie',
     'corsheaders',
-    #'haystack',
+    'haystack',
 
     # DATEA APPS
     'datea_api.apps.account',
@@ -79,15 +79,20 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
+# DATEA USES POSTGIS.
+# CHECK THE local_settings.py file!
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'db_name',          
+        'USER': '',                      
+        'PASSWORD': '',                 
+        'HOST': '',                      
+        'PORT': '',                  
     }
 }
 
-
+# HAYSTACK WITH ELASTICSEARCH
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
@@ -95,6 +100,7 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'datea',
     },
 }
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

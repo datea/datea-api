@@ -19,15 +19,26 @@ class ImageResource(ModelResource):
         return bundle
     
     def hydrate(self, bundle):
-        # images are not to be updated here: this overrides the process for foreignkey fields
-        if 'id' in bundle.data:
-            bundle.obj = Image.objects.get(pk=bundle.data['id'])
+
+        if 'user' not in bundle.data:
+            bundle.data['user'] = '/api/v2/user/'+str(request.user.id)
+        
+        # always use request user on POST (not posting images on behalf of other users)
+        if bundle.request.method == 'POST':
+            bundle.obj.user = bundle.request.user
+
+        # preserve original user
+        elif bundle.request.method in ['PUT', 'PATCH']:
+            orig_object = Image.objects.get(pk=bundle.data['id'])
+            bundle.obj.user = orig_object.user
+
         return bundle
+        
     
     class Meta:
         queryset = Image.objects.all()
         resource_name = 'image'
-        allowed_methods = ['get', 'delete']
+        allowed_methods = ['get', 'post', 'put', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)

@@ -14,16 +14,6 @@ class Base64FileField(FileField):
         
         class Meta:
             queryset = ModelWithFileField.objects.all()
-
-    In the case of multipart for submission, it would also pass the filename.
-    By using a raw post data stream, we have to pass the filename within our
-    file_field structure:
-
-    file_field = {
-        "name": "myfile.png",
-        "data": "longbas64encodedstring",
-        "content_type": "image/png" # on hydrate optional
-    }
     """
     def dehydrate(self, bundle, for_list=True):
 

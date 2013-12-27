@@ -1,26 +1,25 @@
 from haystack import indexes
 from models import Dateo
 
-class MapItemIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
+class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     
-    text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/datea_mapping/dateamapitem_text.txt")
-    obj_id = indexes.IntegerField(model_attr='pk')
+    text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/dateo/dateo_index.txt")
+    id = indexes.IntegerField(model_attr='pk')
     user = indexes.CharField(model_attr='user')
     user_id = indexes.IntegerField()
     published = indexes.BooleanField(model_attr='published')
     status = indexes.CharField(model_attr='status', null=True)
     category = indexes.CharField(model_attr='category', null=True)
     category_id = indexes.IntegerField(null=True)
-    tags = indexes.MultiValueField()
+    tags = indexes.MultiValueField(boost=1.125)
     position = indexes.LocationField(model_attr='position', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
-    
-    
+
     def get_model(self):
         return Dateo
     
-    def index_queryset(self):
+    def index_queryset(self, using=None):
         return self.get_model().objects.all()
     
     def prepare_tags(self, obj):

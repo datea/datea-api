@@ -56,14 +56,14 @@ class Base64FileField(FileField):
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)
         from pprint import pprint
-        pprint(value)
         if value:
             metadata, b64_string = value['data_uri'].rsplit(u",", 1)
             mime_type = metadata.split(u';')[0].split(u':')[1]
-            file_field = {
+            field = {
                 "name": value['name'],
                 "data": b64_string,
                 "content_type": mime_type,
             }
-            value = SimpleUploadedFile(value["name"], base64.b64decode(file_field), getattr(value, "content_type", "application/octet-stream"))
+            pprint(field)
+            value = SimpleUploadedFile(field["name"], base64.b64decode(field['data']), field.get("content_type", "application/octet-stream"))
         return value

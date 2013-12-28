@@ -1,6 +1,6 @@
 ###Dateo Api
 
-allowed methods = GET, POST, PUT, PATCH, DELETE
+allowed methods = GET, POST, PATCH, DELETE
 
 Endpoints:
 
@@ -55,3 +55,33 @@ options:
 * 'distance': for dateos to be ordered by distance, you also need to specify a 'position' parameter, similar to the 'Within distance to point' filter above
 
 
+####POST
+
+	{
+		address:	'Calle x 546',			  	// (optional)
+    	category:	'/api/v2/category/1/',  	// category resource_uri (optional)
+    	content:	'this is a test';
+    	position: 	{ 					  		// (optional)
+    					coordinates : [ -77.027772, -12.121937 ], 
+        				type        : 'Point',
+    				},
+    	tags: 		[ { tag : 'testTag' },
+        	    	  { tag : 'Aaaa', 		  	// existing tag
+            	  		title: 'aaaa',
+              			dateo_count  : 10,
+              			description  : '',
+              			follow_count : 0,
+             			id           : 3,
+              			resource_uri : '/api/v2/tag/3/',
+            	  		}
+           			],
+    	date:   	<date in ISO format>,		// (optional)
+    	images:		[{
+    					image:	{
+    								data_uri: <data uri base64>,
+    								name: 'somefilename.png'
+    							}
+    					order: 0 				// optional integer for ordering
+
+    				}]
+	}

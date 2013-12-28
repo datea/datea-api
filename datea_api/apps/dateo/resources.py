@@ -59,21 +59,22 @@ class DateoResource(DateaBaseGeoResource):
 
 
     def hydrate(self, bundle):
-
-        # don't touch 'created'
-        if 'created' in bundle.data:
-            del bundle.data['created']
  
         # Some security measures in regards to an object's owner
-        if bundle.obj._meta.model_name in ['dateo', 'image']:
-            if bundle.request.method == 'POST':
-                # use request user
-                bundle.obj.user = bundle.request.user
+        if bundle.request.method == 'POST':
+            # use request user
+            if 'user' not in bundle.data:
+                bundle.data['user'] = '/api/v2/user/'+str(bundle.request.user.id)
+            bundle.obj.user = bundle.request.user
                 
-            elif bundle.request.method in 'PATCH':
-                # preserve original owner
-                orig_object = Dateo.objects.get(pk=bundle.data['id'])
-                bundle.obj.user = orig_object.user
+        elif bundle.request.method in 'PATCH':
+            # preserve original owner
+            orig_object = Dateo.objects.get(pk=bundle.data['id'])
+            bundle.obj.user = orig_object.user
+            # don't touch 'created'
+            if 'created' in bundle.data:
+                del bundle.data['created']
+        
         return bundle
 
 

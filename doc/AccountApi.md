@@ -34,5 +34,5 @@ you'll receive a:
 
 
 ####Reset Password
+-> Tenemos que conversar sobre esto!
 Ajax POST (application/json) to: /api/v2/account/reset_password
-with 

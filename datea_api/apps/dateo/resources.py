@@ -153,7 +153,7 @@ class DateoResource(DateaBaseGeoResource):
         self.throttle_check(request)
 
         # pagination
-        limit = int(request.GET.get('limit', 20))
+        limit = int(request.GET.get('limit', 100))
         offset = int(request.GET.get('offset', 0))
         page = (offset / limit) + 1
 
@@ -222,12 +222,15 @@ class DateoResource(DateaBaseGeoResource):
 
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')
-        order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
+        
+        # in elastic search 'score' is '_score'
+        #order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
 
 
         if 'q' in request.GET: 
             if order_by == ['-created'] and '-created' not in request.GET:
-                order_by = ['_score']
+                #order_by = ['_score']
+                order_by = ['score']
     
         # if q is set, then order will be relevance first
         # if not, then do normal order by

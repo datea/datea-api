@@ -6,11 +6,45 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
+from tastypie.utils import trailing_slash
+from django.conf.urls import url
+import json
+from django.http import HttpResponse
+
 
 from models import Tag
 
+from haystack.utils.geo import Point
+from haystack.utils.geo import Distance
+from haystack.query import SearchQuerySet
+from haystack.inputs import AutoQuery
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
+
 class TagResource(ModelResource):
+
+    def prepend_urls(self):
+
+        return [ url(r"^(?P<resource_name>%s)/autocomplete%s$" %
+            (self._meta.resource_name, trailing_slash()), 
+            self.wrap_view('autocomplete'), name="api_tag_autocomplete")]
     
+
+    def autocomplete(self, request, **kwargs):
+
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+        limit = int(request.GET.get('limit', 5))
+
+        sqs = SearchQuerySet().models(Tag).autocomplete(tag_auto=request.GET.get('q', ''))[0:limit]
+
+        suggestions = {'suggestions': [result.tag_auto for result in sqs]}
+
+        self.log_throttled_access(request)
+
+        return HttpResponse(json.dumps(suggestions), content_type="application/json")
+
+
     class Meta:
         queryset = Tag.objects.all()
         resource_name = 'tag'

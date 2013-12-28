@@ -4,7 +4,7 @@ from models import Dateo
 class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/dateo/dateo_index.txt")
-    id = indexes.IntegerField(model_attr='pk')
+    obj_id = indexes.IntegerField(model_attr='pk')
     user = indexes.CharField(model_attr='user')
     user_id = indexes.IntegerField()
     published = indexes.BooleanField(model_attr='published')

@@ -157,7 +157,7 @@ class DateoResource(DateaBaseGeoResource):
         page = (offset / limit) + 1
 
         # Do the query 
-        q_args = {'published': True}
+        q_args = {'published': request.GET.get('published', True)}
         
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
@@ -179,15 +179,15 @@ class DateoResource(DateaBaseGeoResource):
 
 
         # GET ONLY DATEOS I FOLLOW INDIVIDUALLY
-        if 'dateos_followed_by_uid' in request.GET:
-            uid = int(request.GET['dateos_followed_by_uid'])
+        if 'followed' in request.GET:
+            uid = int(request.GET['followed'])
             dateo_ids = [f.object_id for f in Follow.objects.filter(content_type__model='dateo', user__id=uid)]
             q_args['id__in'] = dateo_ids
 
 
         # GET DATEOS BY TAGS I FOLLOW
-        if 'followed_tags_by_uid' in request.GET:
-            uid = int(request.GET['followed_tags_by_uid'])
+        if 'followed_by_tags' in request.GET:
+            uid = int(request.GET['followed_by_tags'])
             tag_ids = [f.object_id for f in Follow.objects.filter(content_type__model='tag', user__id=uid)]
             q_args['tag__in'] = tag_ids
 
@@ -221,7 +221,8 @@ class DateoResource(DateaBaseGeoResource):
 
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')
-        order_by = [o if o != 'score' else '_score' for o in order_by]
+        order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
+
 
         if 'q' in request.GET: 
             if order_by == ['-created'] and '-created' not in request.GET:

@@ -87,12 +87,12 @@ class AccountResource(Resource):
         if User.objects.filter(email=email).count() > 0:
             return self.create_response(request,{
                     'status': BAD_REQUEST,
-                    'error': 'duplicate email'})
+                    'error': 'duplicate email'}, status=BAD_REQUEST)
 
         if User.objects.filter(username=username).count() > 0:
             return self.create_response(request,{
                     'status': BAD_REQUEST,
-                    'error': 'duplicate user'})
+                    'error': 'duplicate user'}, status= BAD_REQUEST)
         
         #print "post data"
         #print args
@@ -105,11 +105,11 @@ class AccountResource(Resource):
                                                                     password, site)   
         #print "user created"
         if newUser:
-            return self.create_response(request,{'status': OK,
-                'message': 'Please check your email !!'})
+            return self.create_response(request,{'status': CREATED,
+                'message': 'Please check your email !!'}, status = CREATED)
         else:
             return self.create_response(request,{'status': SYSTEM_ERROR,
-                                'error': 'Something is wrong >:/ '})
+                                'error': 'Something is wrong >:/ '}, status=SYSTEM_ERROR)
         
 
     def activate(self, request, **kwargs):
@@ -120,19 +120,19 @@ class AccountResource(Resource):
         if 'activation_key' in postData:
             activation_key = postData['activation_key']
         else:
-            return self.create_response(request,{'status': BAD_REQUEST,
-                                'error': 'Something is wrong >:/ '})
+            return self.create_response(request,{'status': BAD_REQUEST, 
+                'error': 'Something is wrong >:/ '}, status = BAD_REQUEST)
 
         activated_user = RegistrationProfile.objects.activate_user(activation_key)
         if activated_user:
             signals.user_activated.send(sender=self.__class__,
                                         user=activated_user,
                                         request=request)
-            return self.create_response(request,{'status': OK,
-                'message': 'Your account has been activated!'})
+            return self.create_response(request,{'status': OK, 
+                'message': 'Your account has been activated!'}, status=OK)
         else:
-            return self.create_response(request,{'status': SYSTEM_ERROR,
-                                'error': 'Your activation key has expired.'})
+            return self.create_response(request,{'status': UNAUTHORIZED, 
+                        'error': 'Your activation key has expired.'}, status = UNAUTHORIZED)
 
 
     def login(self, request, **kwargs):
@@ -149,11 +149,13 @@ class AccountResource(Resource):
         if user is not None:
             if user.is_active:
                 key = getOrCreateKey(user)
-                return self.create_response(request, {'token': key, 'userid': user.id}, status =OK)
+                return self.create_response(request, {'status': OK, 'token': key, 'userid': user.id}, status =OK)
             else:
-                return self.create_response(request,{'error': 'Account disabled'}, status = FORBIDDEN)
+                return self.create_response(request,{'status':UNAUTHORIZED, 
+                    'error': 'Account disabled'}, status = UNAUTHORIZED)
         else:
-            return self.create_response(request,{ 'error': 'Wrong user name and password'}, status = UNAUTHORIZED)
+            return self.create_response(request,{'status':UNAUTHORIZED, 
+                'error': 'Wrong user name and password'}, status = UNAUTHORIZED)
 
 
     def reset_password(self, request, **kwargs):
@@ -173,17 +175,17 @@ class AccountResource(Resource):
                     resetForm.save()
             
                     return self.create_response(request,{'status':OK,
-                        'message': 'check your email for instructions'})
+                        'message': 'check your email for instructions'}, status=OK)
                 else:
                     return self.create_response(request, 
                             {'status': SYSTEM_ERROR,
-                            'message': 'form not valid'})
+                            'message': 'form not valid'}, status=FORBIDDEN)
             else:
                 return self.create_response(request, {'status':FORBIDDEN,
-                    'message':'Account disabled'})
+                    'message':'Account disabled'}, status=UNAUTHORIZED)
         else:
             return self.create_response(request, {'status': UNAUTHORIZED,
-                        'error': 'User does not exists'})
+                        'error': 'User does not exists'}, status=UNAUTHORIZED)
 
 
 

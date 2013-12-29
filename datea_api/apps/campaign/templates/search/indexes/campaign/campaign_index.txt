@@ -1,0 +1,6 @@
+{{object.name}}
+{{objects.main_tag}}
+{% for tag in object.secondary_tags %}{{tag}} {% endfor %}
+{{object.short_description}}
+{{object.mission}}
+{{object.category.name}}

@@ -25,3 +25,13 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+
+EMAIL_HOST = 'mail.example.com'
+EMAIL_HOST_USER= 'example_user'
+DEFAULT_FROM_EMAIL = 'Date <datea@example.com>'
+EMAIL_HOST_PASSWORD= ''
+EMAIL_PORT= '587'
+EMAIL_USE_TLS = True
+SEND_BROKEN_LINK_EMAILS = True
+EMAIL_SUBJECT_PREFIX = '[Datea]'

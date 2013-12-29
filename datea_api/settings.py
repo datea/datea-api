@@ -14,6 +14,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 sys.path.insert(0, os.path.join(BASE_DIR, 'datea_api/apps'))
 
+SITE_ID = 1
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -38,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'django.contrib.gis',
     'south',

@@ -16,7 +16,7 @@ from tastypie.throttle import BaseThrottle
 #from vote.resources import VoteResource
 import json
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import PasswordResetForm
+from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
 from utils import getOrCreateKey, getUserByKey, make_social_username
 from status_codes import *
@@ -30,16 +30,16 @@ from registration.models import RegistrationProfile
 from registration import signals
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
+from django.contrib.sites.models import get_current_site
 
 from pprint import pprint
 
-END_POINT_NAME = 'account'
 
 class AccountResource(Resource):
 
     class Meta:
         allowed_methods = ['post']
-        resource_name = END_POINT_NAME
+        resource_name = 'account'
 
     def prepend_urls(self):
         
@@ -53,23 +53,27 @@ class AccountResource(Resource):
         return [
             #register datea account
             url(r"^(?P<resource_name>%s)/register%s$" %
-            (END_POINT_NAME, trailing_slash()), 
+            (self._meta.resource_name, trailing_slash()), 
             self.wrap_view('register'), name="api_register_datea_account"), 
 
             #activate datea account
             url(r"^(?P<resource_name>%s)/activate%s$" %
-            (END_POINT_NAME, trailing_slash()), 
+            (self._meta.resource_name, trailing_slash()), 
             self.wrap_view('activate'), name="api_activate_datea_account"), 
             
             #login to datea account
             url(r"^(?P<resource_name>%s)/login%s$" %
-            (END_POINT_NAME, trailing_slash()),
+            (self._meta.resource_name, trailing_slash()),
             self.wrap_view('login'), name="api_login_datea_account"),
 
             #password reset
-            url(r"^(?P<resource_name>%s)/api_reset_password%s$" %
-            (END_POINT_NAME, trailing_slash()),
-            self.wrap_view('reset_password'), name="api_password_reset")
+            url(r"^(?P<resource_name>%s)/reset_password%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('reset_password'), name="api_password_reset"),
+
+            # password reset confirm
+
+
             ]
 
 
@@ -162,32 +166,41 @@ class AccountResource(Resource):
         self.method_check(request, allowed=['post'])
 
         postData = json.loads(request.body)
-        key = postData['token']
+        email = postData['email']
 
-        user = getUserByKey(key)
+        try:
+            user = User.objects.get(email=email)
 
-        if user is not None:
-            if user.is_active:
-                data = {'email': user.email}
-                resetForm = PasswordResetForm(data)
-            
-                if resetForm.is_valid():
-                    resetForm.save()
-            
-                    return self.create_response(request,{'status':OK,
-                        'message': 'check your email for instructions'}, status=OK)
-                else:
-                    return self.create_response(request, 
-                            {'status': SYSTEM_ERROR,
-                            'message': 'form not valid'}, status=FORBIDDEN)
-            else:
-                return self.create_response(request, {'status':FORBIDDEN,
-                    'message':'Account disabled'}, status=UNAUTHORIZED)
-        else:
+        except:
             return self.create_response(request, {'status': UNAUTHORIZED,
-                        'error': 'User does not exists'}, status=UNAUTHORIZED)
+                        'error': 'No user with that email'}, status=UNAUTHORIZED)
 
+        if user.is_active: 
+            data = { 'email': email }
+            resetForm = CustomPasswordResetForm(data)
+        
+            if resetForm.is_valid():
 
+                https = True if 'use_https' in postData and postData['use_https'] else False
+                save_data = {'use_https': https, 'request': request}
+                if 'base_url' in postData:
+                    save_data['base_url'] = postData['base_url']
+                if 'site_name' in postData:
+                    save_data['sitename_override'] = postData['site_name']
+                if 'domain' in postData:
+                    save_data['domain_override'] = postData['domain']
+
+                resetForm.save(save_data)
+
+                return self.create_response(request,{'status':OK,
+                    'message': 'check your email for instructions'}, status=OK)
+            else:
+                return self.create_response(request, 
+                        {'status': SYSTEM_ERROR,
+                        'message': 'form not valid'}, status=FORBIDDEN)
+        else:
+            return self.create_response(request, {'status':FORBIDDEN,
+                'message':'Account disabled'}, status=UNAUTHORIZED)
 
 
 
@@ -199,24 +212,32 @@ class UserResource(ModelResource):
         bundle.data['image'] = bundle.obj.get_image()
         bundle.data['image_large'] = bundle.obj.get_large_image()
         bundle.data['url'] = bundle.obj.get_absolute_url()
+
+        # send also email if user is one's own
+        if 'api_key' in bundle.request.REQUEST:
+            keyauth = ApiKeyAuthentication()
+            if keyauth.is_authenticated(bundle.request):
+                if bundle.request.user and bundle.request.user == bundle.obj:
+                    bundle.data['email'] = bundle.obj.email
+
         return bundle
     
     def hydrate(self, bundle):
-        
-        # if own authenticated user, also send email
-        if 'api_key' in bundle.request.REQUEST:
-                keyauth = ApiKeyAuthentication()
-                if keyauth.is_authenticated(bundle.request):
-                    if bundle.request.user and bundle.request.user == bundle.obj:
-                        bundle.data['email'] = bundle.obj.email
             
-        # leave image foreign keys to images untouched (must be edited through other methods)
-        if bundle.request.method == PATCH:
-            # don't change created field
-            del bundle.data['created']
-            # preserve original owner
-            orig_object = Dateo.objects.get(pk=bundle.data['id'])
-            bundle.obj.user = orig_object.user
+        if bundle.request.method == 'PATCH':
+            # don't change created, is_active or is_staff fields
+            forbidden_fields = ['created', 'is_staff', 'is_active', 
+                                'dateo_count', 'comment_count', 'vote_count']
+
+            for f in forbidden_fields:
+                if f in bundle.data:
+                    del bundle.data[f]
+
+            # Allow to change ones own email
+            if 'email' in bundle.data and bundle.request.user == bundle.obj:
+                    bundle.obj.email = bundle.data['email']
+
+
         return bundle
     
 

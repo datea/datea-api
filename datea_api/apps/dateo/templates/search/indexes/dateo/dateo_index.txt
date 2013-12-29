@@ -1,5 +1,5 @@
 {{object.content}}
-{% for tag in tags %}{{tag}} {% endfor %}
+{% for tag in object.tags.all %}#{{tag}} {% endfor %}
 {{object.category.name}}
 {{object.user.username}}
 {% if object.address %}{{object.address}}{% endif %}

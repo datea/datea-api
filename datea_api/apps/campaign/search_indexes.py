@@ -26,7 +26,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         return Campaign
     
-    def index_queryset(self):
+    def index_queryset(self, using=None):
         return self.get_model().objects.all()
     
     def prepare_user_id(self, obj):

@@ -3,7 +3,7 @@ from models import Campaign
 
 class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     
-    text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/campaign/campaign_text.txt")
+    text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/campaign/campaign_index.txt")
     obj_id = indexes.IntegerField(model_attr='pk')
     name = indexes.CharField(model_attr='name', boost=1.25)
     user = indexes.CharField(model_attr='user')

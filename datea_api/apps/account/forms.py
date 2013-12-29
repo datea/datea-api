@@ -68,8 +68,6 @@ class CustomPasswordResetForm(PasswordResetForm):
             else:
                 domain = domain_override
 
-            print url_base
-
             c = {
                 'email': user.email,
                 'base_url': base_url,

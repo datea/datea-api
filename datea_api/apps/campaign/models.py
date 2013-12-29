@@ -76,7 +76,7 @@ class Campaign(models.Model):
 	    
 	class Meta:
 		verbose_name = _("Campaign")
-		verbose_name_plural = _("Mappings")
+		verbose_name_plural = _("Campaigns")
 
 	def __unicode__(self):
 		return self.name

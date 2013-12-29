@@ -17,7 +17,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     main_tag = indexes.CharField(model_attr='main_tag', boost=1.25)
     secondary_tags = indexes.MultiValueField(boost=1.125, null=True)
     is_active = indexes.CharField()
-    center = indexes.LocationField(model_attr='position', null=True)
+    center = indexes.LocationField(model_attr='center', null=True)
     #dateo_count = indexes.IntegerField(model_attr='item_count', null=True)
     #follow_count = indexes.IntegerField(model_attr='follow_count', null=True)
     #comment_count = indexes.IntegerField(model_attr='comment_count', null=True)

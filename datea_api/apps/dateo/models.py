@@ -62,7 +62,28 @@ class Dateo(models.Model):
 		super(Dateo, self).save(*args, **kwargs)
 
 	def get_absolute_url(self):
-		return '/dateos/'+str(self.pk)
+		return '/'+self.user.username+'/dateos/'+str(self.pk)
+
+	def get_next_id_by_user(self):
+		qs = self.__class__._default_manager.using(self._state.db).filter(created__gt=self.created, user=self.user).order_by('created')
+		try:
+			return qs[0].id
+		except:
+				qs = self.__class__._default_manager.using(self._state.db).filter(user=self.user).exclude(pk=self.pk).order_by('created')
+				return qs[0].id
+			except:
+				return None
+
+	def get_previous_id_by_user(self):
+		qs = self.__class__._default_manager.using(self._state.db).filter(created__lt=self.created, user=self.user).order_by('-created')
+		try:
+			return qs[0].id
+		except:
+			try:
+				qs =self.__class__._default_manager.using(self._state.db).filter(user=self.user).exclude(pk=self.pk).order_by('-created')
+				return qs[0].id
+			except:
+				return None
 
 	class Meta:
 		verbose_name = 'Dateo'

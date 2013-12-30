@@ -55,6 +55,8 @@ class DateoResource(DateaBaseGeoResource):
         bundle.data['user'] = user_data
         bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
         bundle.data['url'] = bundle.obj.get_absolute_url()
+        bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
+        bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
         return bundle
 
 
@@ -143,6 +145,9 @@ class DateoResource(DateaBaseGeoResource):
         else:
             return self.dispatch('list', request, **kwargs)
 
+    rename_get_filters = {   
+        'id': 'obj_id', 
+    }
 
     # HAYSTACK SEARCH
     def get_search(self, request, **kwargs): 
@@ -166,10 +171,11 @@ class DateoResource(DateaBaseGeoResource):
 
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id', 
-                  'published', 'status', 'created__year', 'created__month', 'created__day']
+                  'published', 'status', 'id', 
+                  'created__year', 'created__month', 'created__day']
         for p in params:
             if p in request.GET:
-                q_args[p] = request.GET.get(p)
+                q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
 
 
         # check for additional date filters (with datetime objects)      
@@ -252,7 +258,6 @@ class DateoResource(DateaBaseGeoResource):
         objects = []
 
         for result in page.object_list:
-            pp(vars(result))
             bundle = self.build_bundle(obj=result.object, request=request)
             bundle = self.full_dehydrate(bundle)
             objects.append(bundle)

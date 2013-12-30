@@ -26,7 +26,7 @@ class Comment(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     
     # do we need content type relation? perhaps this is more simple and fast...
-    object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever
+    #object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever
     object_id = models.PositiveIntegerField(_('Object id')) # object id
     
     # provide a way to know if published was changed

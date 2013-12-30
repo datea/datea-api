@@ -7,6 +7,7 @@ from api.authentication import ApiKeyPlusWebAuthentication
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
+from django.contrib.contenttypes.models import ContentType
 
 
 class CommentResource(ModelResource):
@@ -23,17 +24,26 @@ class CommentResource(ModelResource):
                      'resource_uri': bundle.data['user'].data['resource_uri'] 
                      }
         bundle.data['user'] = user_data
+        bundle.data['content_type'] = bundle.obj.content_type.model
         return bundle
     
     def hydrate(self,bundle):
         
-        if bundle.request.method == 'PUT':
+        # preserve data
+        if bundle.request.method == 'PATCH':
             #preserve original owner
-            orig_object = DateaComment.objects.get(pk=bundle.data['id'])
-            bundle.obj.user = orig_object.user 
+            fields = ['user', 'published', 'content_type', 'object_id', 'created']
+            for f in fields:
+                if f in request.data:
+                    del request.data[f]
             
         elif bundle.request.method == 'POST':
-            bundle.obj.user = bundle.request.user  
+            # enforce post user
+            bundle.obj.user = bundle.request.user
+            bundle.data['user'] = bundle.request.user.id
+            # convert model name into model
+            bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
+            del bundle.data['content_type']  
             
         return bundle
      
@@ -41,11 +51,11 @@ class CommentResource(ModelResource):
     class Meta:
         queryset = Comment.objects.all()
         resource_name = 'comment'
-        allowed_methods = ['get', 'post', 'put', 'delete']
+        allowed_methods = ['get', 'post', 'patch', 'delete']
         filtering={
                 'id' : ['exact'],
                 'user': ALL_WITH_RELATIONS,
-                'object_type': ['exact'],
+                'content_type': ALL_WITH_RELATIONS,
                 'object_id': ['exact']
                 }
         authentication = ApiKeyPlusWebAuthentication()
@@ -54,3 +64,4 @@ class CommentResource(ModelResource):
         ordering=['created']
         cache = SimpleCache(timeout=10)
         always_return_data = True
+

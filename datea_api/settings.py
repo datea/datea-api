@@ -51,6 +51,9 @@ INSTALLED_APPS = (
     'corsheaders',
     'haystack',
 
+    # PYTHON SOCIAL AUTH
+    'social.apps.django_app.default',
+
     # DATEA APPS
     'datea_api.apps.account',
     'datea_api.apps.dateo',
@@ -94,6 +97,15 @@ DATABASES = {
         'PORT': '',                  
     }
 }
+
+
+AUTHENTICATION_BACKENDS = (
+      'social.backends.google.GoogleOAuth2',
+      'social.backends.twitter.TwitterOAuth',
+      'social.backends.facebook.FacebookOAuth2',
+      'django.contrib.auth.backends.ModelBackend',
+)
+
 
 # HAYSTACK WITH ELASTICSEARCH
 # Ngram fields appear to be broken on elasticsearch (switching to solr, more work on config!)

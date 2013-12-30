@@ -175,8 +175,11 @@ class AccountResource(Resource):
             return self.create_response(request, {'status': UNAUTHORIZED,
                         'error': 'No user with that email'}, status=UNAUTHORIZED)
 
-        if user.is_active: 
+        if user.is_active:
             data = { 'email': email }
+
+            # Function for sending token and so forth
+            '''
             resetForm = CustomPasswordResetForm(data)
         
             if resetForm.is_valid():
@@ -198,6 +201,7 @@ class AccountResource(Resource):
                 return self.create_response(request, 
                         {'status': SYSTEM_ERROR,
                         'message': 'form not valid'}, status=FORBIDDEN)
+            '''
         else:
             return self.create_response(request, {'status':FORBIDDEN,
                 'message':'Account disabled'}, status=UNAUTHORIZED)

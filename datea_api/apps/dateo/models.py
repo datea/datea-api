@@ -69,6 +69,7 @@ class Dateo(models.Model):
 		try:
 			return qs[0].id
 		except:
+			try:
 				qs = self.__class__._default_manager.using(self._state.db).filter(user=self.user).exclude(pk=self.pk).order_by('created')
 				return qs[0].id
 			except:

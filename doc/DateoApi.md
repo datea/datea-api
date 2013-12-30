@@ -11,24 +11,29 @@ Schema: /api/v2/dateo/schema/
 
 ####GET Params
 
+
+Filters:
 * q: search for a phrase
 * user: filter by username [string]
 * user_id: filter by user id [integer]
 * status: filter by status ['new', 'reviewed', 'solved']
 * published: [boolean: 0 or 1]
 * show_unpublished: also show unpublished dateos. Only for one's own dateos, used in combination with user_id [boolean: 0 or 1]
+* id: object id
+* tags: comma separated tags (without hash) [strings]
 
-date related:
+date related filters:
 * created__year: year dateo was created [four digits] (watch for double underscore -> django filters)
 * created__month: in combination with year, month dateo was created [two digits]
 * created__day: combined with month and year, day a dateo was created [two digits]
 * created__gt: created after date [date in ISO format]
 * created__lt: created before date [date in ISO format]. Together with created__gt, you can form a range.
+
+follow filters:
 * followed_by_tags: get all dateos by the tags a user follows. [user id: integer]
-* followed: get all dateo followed individually (because of comment system) [user id: integer]
+* followed: get all dateos followed individually (because of comment system) [user id: integer]
 
-spatial search params:
-
+spatial filters:
 * Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter dateos by a geographic bounding box. Each param has <latitude,longitude> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
 * Within distance to point: 'distance' and 'position' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as <latitude,longitude>, distance in meters as an integer.
 

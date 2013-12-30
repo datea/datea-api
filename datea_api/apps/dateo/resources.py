@@ -44,6 +44,7 @@ class DateoResource(DateaBaseGeoResource):
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
 
+
     def dehydrate(self, bundle):
         
         user_data = {
@@ -183,6 +184,9 @@ class DateoResource(DateaBaseGeoResource):
         for p in date_params:
             if p in request.GET:
                 q_args[p] = models.DateTimeField().to_python(request.get(p))
+
+        if 'tags' in request.GET:
+            q_args['tags__in'] = request.GET.get('tags').split(',')
 
 
         # GET ONLY DATEOS I FOLLOW INDIVIDUALLY

@@ -32,7 +32,10 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
 
+from social.apps.django_app.utils import strategy
+
 from pprint import pprint
+
 
 
 class AccountResource(Resource):
@@ -205,6 +208,22 @@ class AccountResource(Resource):
         else:
             return self.create_response(request, {'status':FORBIDDEN,
                 'message':'Account disabled'}, status=UNAUTHORIZED)
+
+    @strategy()
+    def register_social(request, backend):
+
+        self.method_check(request, allowed=['post'])
+        postData = json.loads(request.body)
+
+        backend = request.strategy.backend
+
+        # Split by spaces and get the array
+        if 'access_token' not in postData:
+            return self.create_response(request,{'status': BAD_REQUEST, 
+                'error': 'No access token provided'}, status = BAD_REQUEST)
+    
+        # Real authentication takes place here
+        user = backend.do_auth(access_token)
 
 
 

@@ -99,12 +99,31 @@ DATABASES = {
 }
 
 
+SOCIAL_AUTH_USER_MODEL = 'account.User'
+
 AUTHENTICATION_BACKENDS = (
       'social.backends.google.GoogleOAuth2',
       'social.backends.twitter.TwitterOAuth',
       'social.backends.facebook.FacebookOAuth2',
       'django.contrib.auth.backends.ModelBackend',
 )
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'datea_api.apps.account.pipeline.get_username',
+    # 'social.pipeline.mail.mail_validation',
+    'social.pipeline.social_auth.associate_by_email',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'datea_api.apps.account.pipeline.save_avatar'
+)
+
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
 
 
 # HAYSTACK WITH ELASTICSEARCH

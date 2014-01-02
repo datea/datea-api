@@ -31,10 +31,11 @@ from registration import signals
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
+from django.core.validators import validate_email
 
 from social.apps.django_app.utils import strategy
 
-from pprint import pprint
+from pprint import pprint as pp
 
 
 
@@ -45,15 +46,13 @@ class AccountResource(Resource):
         resource_name = 'account'
 
     def prepend_urls(self):
-        
-        #twitter
-        '''
-        url(r"^(?P<resource_name>%s)/twitter%s$" %
-        (END_POINT_NAME, trailing_slash()),
-        self.wrap_view('twitter'), name="api_twitter_account"),
-        ]'''
 
         return [
+                        # social auth
+            url(r"^(?P<resource_name>%s)/socialauth/(?P<backend>[a-zA-Z0-9-_.]+)%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('social_auth'), name="api_social_auth"),
+
             #register datea account
             url(r"^(?P<resource_name>%s)/register%s$" %
             (self._meta.resource_name, trailing_slash()), 
@@ -72,11 +71,7 @@ class AccountResource(Resource):
             #password reset
             url(r"^(?P<resource_name>%s)/reset_password%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('reset_password'), name="api_password_reset"),
-
-            # password reset confirm
-
-
+            self.wrap_view('reset_password'), name="api_password_reset")
             ]
 
 
@@ -182,7 +177,6 @@ class AccountResource(Resource):
             data = { 'email': email }
 
             # Function for sending token and so forth
-            '''
             resetForm = CustomPasswordResetForm(data)
         
             if resetForm.is_valid():
@@ -204,26 +198,59 @@ class AccountResource(Resource):
                 return self.create_response(request, 
                         {'status': SYSTEM_ERROR,
                         'message': 'form not valid'}, status=FORBIDDEN)
-            '''
         else:
-            return self.create_response(request, {'status':FORBIDDEN,
+            return self.create_response(request, {'status':UNAUTHORIZED,
                 'message':'Account disabled'}, status=UNAUTHORIZED)
 
-    @strategy()
-    def register_social(request, backend):
+
+    def validate_email(self, request, **kwargs):
+
+        self.method_check(request, allowed=['post'])
+
+
+    def social_auth(self, request, **kwargs):
+
+        pp(kwargs)
 
         self.method_check(request, allowed=['post'])
         postData = json.loads(request.body)
 
-        backend = request.strategy.backend
+        #auth_backend = request.strategy.backend
+        if kwargs['backend'] == 'twitter':
+            if 'oauth_token' in postData and 'oauth_token_secret' in postData:
+                access_token = {
+                    'oauth_token': postData['oauth_token'],
+                    'oauth_token_secret': postData['oauth_token_secret']
+                }
+            else:
+                return self.create_response(request,{'status': BAD_REQUEST, 
+                'error': 'oauth_token and oauth_token_secret not provided'}, status = BAD_REQUEST)
 
-        # Split by spaces and get the array
-        if 'access_token' not in postData:
+        elif 'access_token' not in postData:
             return self.create_response(request,{'status': BAD_REQUEST, 
-                'error': 'No access token provided'}, status = BAD_REQUEST)
-    
+                'error': 'access_token not provided'}, status = BAD_REQUEST)
+        else:
+            access_token = postData['access_token']
+
         # Real authentication takes place here
-        user = backend.do_auth(access_token)
+        user = wrap_social_auth(request, access_token = access_token, **kwargs)
+
+        if user and user.is_active:
+            key = getOrCreateKey(user)
+            return self.create_response(request, {'status': OK, 'token': key, 'userid': user.id}, status =OK)
+        else:
+            return self.create_response(request, {'status': UNAUTHORIZED,
+                'message':'Social access could not be verified'}, status=UNAUTHORIZED)
+
+@strategy()
+def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
+
+    auth_backend = request.strategy.backend
+    user = auth_backend.do_auth(access_token)
+    return user
+
+
+
 
 
 

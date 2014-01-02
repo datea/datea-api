@@ -64,26 +64,16 @@ do this by using our oauthd (from oauth.io) service like follows:
 
 	</script>
 
-Then, for facebook auth with our api, issue a json sjax POST with:
-	{'access_token': <access_token>}
+Then, for facebook auth with our api, issue a json ajax POST with:
+	{'access_token': access_token}
 to /api/v2/account/socialauth/facebook/
 
 For twitter:, json ajax POST with:
-	{oauth_token: <oauth_token>, oauth_token_secret: <oauth_token_secret>}
+	{oauth_token: oauth_token, oauth_token_secret: oauth_token_secret}
 to /api/v2/account/socialauth/twitter/
   
-If everything goes as expected, you'll receive a 200 with {token: <api_key>, 'userid': <int> }
+If everything goes as expected, you'll receive a 200 with {token: api_key, 'userid': int }
 
-
-####Activate
-
-
-to activate the account, POST to: /api/v2/account/activate
-with {activation_key: <activation_key>}
-
-you'll receive a: 
-* 200 if everything ok
-* 401 if key has expired
 
 
 ####Reset Password

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block "body" %}
+  <div class="container">
+    <div class="header">
+    	<!--
+      <ul class="nav nav-pills pull-right">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>-->
+      <h3 class="text-muted">
+      	<img src="{{STATIC_URL}}/img/logo_header2.png" alt="DATEA" />
+      </h3>
+    </div>
+
+    {% block "main_content_wrap" %}
+    <div class="jumbotron">
+    	{% block "main_content" %}
+      <h1>Datea api</h1>
+      <p class="lead">Bienvenido a la API de Datea.</p>
+      {% endblock %}
+    </div>
+    {% endblock %}
+
+    {% block "secondary_content_wrap" %}
+    <div class="row">
+      <div class="col-lg-12">
+      	{% block "secondary_content" %}{% endblock %}
+      </div>
+    </div>
+    {% endblock %}
+
+    <div class="footer">
+      <p>Datea - Todos Somos Dateros, &copy; {% now 'Y' %}</p>
+    </div>
+  </div>
+{% endblock %}

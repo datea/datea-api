@@ -237,7 +237,12 @@ class AccountResource(Resource):
 
         if user and user.is_active:
             key = getOrCreateKey(user)
-            return self.create_response(request, {'status': OK, 'token': key, 'userid': user.id}, status =OK)
+            user_rsc = UserResource()
+            u_bundle = user_rsc.build_bundle(obj=user)
+            u_bundle = user_rsc.full_dehydrate(u_bundle)
+            u_bundle.data['email'] = user.email
+            #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
+            return self.create_response(request, {'status': OK, 'token': key, 'user': u_bundle.data}, status =OK)
         else:
             return self.create_response(request, {'status': UNAUTHORIZED,
                 'message':'Social access could not be verified'}, status=UNAUTHORIZED)
@@ -264,7 +269,7 @@ class UserResource(ModelResource):
         bundle.data['url'] = bundle.obj.get_absolute_url()
 
         # send also email if user is one's own
-        if 'api_key' in bundle.request.REQUEST:
+        if hasattr(bundle.request, 'REQUEST') and 'api_key' in bundle.request.REQUEST:
             keyauth = ApiKeyAuthentication()
             if keyauth.is_authenticated(bundle.request):
                 if bundle.request.user and bundle.request.user == bundle.obj:

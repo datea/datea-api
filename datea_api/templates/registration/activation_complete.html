@@ -1,0 +1,20 @@
+{% extends "site-base.html" %}
+{% load i18n %}
+
+{% block "title" %}{% trans "Activation complete" %}{% endblock %}
+{% block "page_title" %}{% trans "Activation complete" %}{% endblock %}
+
+
+{% block main_content %}
+    
+	<h2>{% trans "Account activated" %}</h2>
+
+	<p class="desc">
+	{% blocktrans %}
+		Thanks, activation complete!  You may now login using the username and password you set at registration.
+	{% endblocktrans %}
+	</p>
+
+{% endblock %}
+
+

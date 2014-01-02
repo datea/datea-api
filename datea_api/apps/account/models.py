@@ -138,7 +138,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return "{uname} ({full_name})".format(uname=self.username, full_name=self.full_name)
 		else:
 			return self.username
+
+
+
+class ClientDomain(models.Model):
+
+	domain = models.CharField(_('domain name'), max_length=100)
+	name = models.CharField(_('site name'), max_length=255)
+
+	class Meta:
+		verbose_name = _('Whitelisted client domain')
+		verbose_name_plural = _('Whitelisted client domains')
+
+	def __unicode__(self):
+		return self.domain
 		
-
-
 

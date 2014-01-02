@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User
+from .models import User, ClientDomain
 from .forms import CustomUserChangeForm, CustomUserCreationForm
 
 from tastypie.admin import ApiKeyInline
@@ -43,3 +43,9 @@ class CustomUserAdmin(UserAdmin):
     inlines = UserAdmin.inlines + [ApiKeyInline]
 
 admin.site.register(User, CustomUserAdmin)
+
+
+class DomainAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(ClientDomain, DomainAdmin)

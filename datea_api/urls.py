@@ -16,6 +16,7 @@ urlpatterns = patterns('',
 
 	url(r'^', include('datea_api.apps.api.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^account/', include('datea_api.apps.account.urls')),
     url(r'^', top_level),
 )
 

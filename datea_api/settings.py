@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os, sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_DIR = os.path.join(BASE_DIR, 'datea_api')
 
 sys.path.insert(0, os.path.join(BASE_DIR, 'datea_api/apps'))
 
@@ -26,6 +27,19 @@ SECRET_KEY = '9ko#ts81m_)h$hjyae!1xpx2#_le+ir3^tvg(dqv7^(jx-*dwe'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_DIR , "templates"),
+)
 
 ALLOWED_HOSTS = []
 
@@ -50,6 +64,7 @@ INSTALLED_APPS = (
     'tastypie',
     'corsheaders',
     'haystack',
+    'bootstrap3',
 
     # PYTHON SOCIAL AUTH
     'social.apps.django_app.default',
@@ -98,6 +113,7 @@ DATABASES = {
     }
 }
 
+ACCOUNT_ACTIVATION_DAYS = 2
 
 SOCIAL_AUTH_USER_MODEL = 'account.User'
 
@@ -163,7 +179,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_DIR ,'site-static'),
+)
 
 # media deliver
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

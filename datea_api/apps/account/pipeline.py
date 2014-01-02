@@ -5,15 +5,14 @@ from django.core.files.base import ContentFile
 from utils import make_social_username
 
 
-def save_avatar(strategy, user, response, details,
-                         is_new=False,*args,**kwargs):
+def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 
-	if is_new or not user.image:
+    if is_new or not user.image:
+        
+        img = None
 
-		img = None
-
-		# FACEBOOK
-		if strategy.backend.name == 'facebook':  
+        # FACEBOOK
+        if strategy.backend.name == 'facebook':  
 			try:
 				img_url = "http://graph.facebook.com/{id}/picture?type=large".format(id=response["id"])
 				img = urlopen(img_url)
@@ -45,7 +44,7 @@ def save_avatar(strategy, user, response, details,
             user.image = img_obj
             user.save()
 
-            
+
 USER_FIELDS = ['username', 'email']
 
 def get_username(strategy, details, user=None, *args, **kwargs):

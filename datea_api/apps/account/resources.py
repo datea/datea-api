@@ -124,29 +124,6 @@ class AccountResource(Resource):
         else:
             return self.create_response(request,{'status': SYSTEM_ERROR,
                                 'error': 'Something is wrong >:/ '}, status=SYSTEM_ERROR)
-        
-
-    def activate(self, request, **kwargs):
-
-        self.method_check(request, allowed=['post'])
-        postData = json.loads(request.body)
-
-        if 'activation_key' in postData:
-            activation_key = postData['activation_key']
-        else:
-            return self.create_response(request,{'status': BAD_REQUEST, 
-                'error': 'Something is wrong >:/ '}, status = BAD_REQUEST)
-
-        activated_user = RegistrationProfile.objects.activate_user(activation_key)
-        if activated_user:
-            signals.user_activated.send(sender=self.__class__,
-                                        user=activated_user,
-                                        request=request)
-            return self.create_response(request,{'status': OK, 
-                'message': 'Your account has been activated!'}, status=OK)
-        else:
-            return self.create_response(request,{'status': UNAUTHORIZED, 
-                        'error': 'Your activation key has expired.'}, status = UNAUTHORIZED)
 
 
     def login(self, request, **kwargs):
@@ -174,6 +151,7 @@ class AccountResource(Resource):
         else:
             return self.create_response(request,{'status':UNAUTHORIZED, 
                 'error': 'Wrong user name and password'}, status = UNAUTHORIZED)
+
 
 
     def reset_password(self, request, **kwargs):
@@ -257,8 +235,15 @@ class AccountResource(Resource):
             u_bundle = user_rsc.build_bundle(obj=user)
             u_bundle = user_rsc.full_dehydrate(u_bundle)
             u_bundle.data['email'] = user.email
+            if hasattr(user, 'is_new') and user.is_new:
+                is_new = True
+                status = CREATED
+            else:
+                is_new = False
+                status = OK
             #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
-            return self.create_response(request, {'status': OK, 'token': key, 'user': u_bundle.data}, status =OK)
+            return self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new}, 
+                status=status)
         else:
             return self.create_response(request, {'status': UNAUTHORIZED,
                 'message':'Social access could not be verified'}, status=UNAUTHORIZED)

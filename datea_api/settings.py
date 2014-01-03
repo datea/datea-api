@@ -132,7 +132,7 @@ SOCIAL_AUTH_PIPELINE = (
     'datea_api.apps.account.pipeline.get_username',
     # 'social.pipeline.mail.mail_validation',
     'social.pipeline.social_auth.associate_by_email',
-    'social.pipeline.user.create_user',
+    'datea_api.apps.account.pipeline.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',

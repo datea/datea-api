@@ -133,8 +133,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 	def get_small_image(self):
 		return self.get_image_thumb('profile_image_small')
 
+
+	def save(self, *args, **kwargs):
+		if self.email == '':
+			self.email = None
+		super(User, self).save(*args, **kwargs)
+
 	def __unicode__(self):
-		if not self.full_name:
+		if self.full_name:
 			return "{uname} ({full_name})".format(uname=self.username, full_name=self.full_name)
 		else:
 			return self.username

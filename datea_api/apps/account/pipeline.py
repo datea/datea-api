@@ -73,3 +73,4 @@ def get_username(strategy, details, user=None, *args, **kwargs):
         final_username = storage.user.get_username(user)
     return {'username': final_username}
 
+

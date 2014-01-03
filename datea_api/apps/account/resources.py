@@ -18,7 +18,7 @@ import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from utils import getOrCreateKey, getUserByKey, make_social_username, get_domain_from_url, validate_url
+from utils import getOrCreateKey, getUserByKey, make_social_username, get_domain_from_url, url_whitelisted
 from status_codes import *
 
 from registration.models import RegistrationProfile
@@ -95,17 +95,26 @@ class AccountResource(Resource):
         else:
             site = RequestSite(request)
 
-        site.redirect_url = None
+        site.success_redirect_url = site.error_redirect_url = None
         site.api_domain = site.domain
 
-        if 'redirect_url' in postData and validate_url(postData['redirect_url']):
-            domain = get_domain_from_url(postData['redirect_url'])
-            # use redirect_url, domain and site name only from white listed domains
-            if ClientDomain.objects.filter(domain=domain).count() > 0:
-                client = ClientDomain.objects.get(domain=domain)
-                site.domain =  client.domain
-                site.name = client.name
-                site.redirect_url = postData['redirect_url']
+        # use *_redirect_url, domain and site name only from white listed domains
+        include_whitelisted_domain = False
+
+        if 'success_redirect_url' in postData and url_whitelisted(postData['success_redirect_url']):
+            domain = get_domain_from_url(postData['success_redirect_url'])
+            include_whitelisted_domain = True
+            site.success_redirect_url = postData['success_redirect_url']
+        
+        if 'error_redirect_url' in postData and url_whitelisted(postData['error_redirect_url']):
+            domain = get_domain_from_url(postData['error_redirect_url'])
+            include_whitelisted_domain = True
+            site.error_redirect_url = postData['error_redirect_url']
+
+        if include_whitelisted_domain:   
+            client = ClientDomain.objects.get(domain=domain)
+            site.domain = client.domain
+            site.name = client.name 
 
         new_user = RegistrationProfile.objects.create_inactive_user(username, email,
                                                                     password, site)   

@@ -4,6 +4,7 @@ from django.template.defaultfilters import slugify
 from account.models import User
 from urlparse import urlparse
 from django.core.validators import URLValidator
+from models import ClientDomain
 
 def getOrCreateKey(user):
     try:
@@ -61,4 +62,19 @@ def validate_url(url):
         return True
     except:
         return False
+
+def domain_whitelisted(dom):
+    try:
+        ClientDomain.objects.get(domain=dom)
+        return True
+    except:
+        return False
+
+def url_whitelisted(url):
+    if validate_url(url):
+        domain = get_domain_from_url(url)
+        return domain_whitelisted(domain)
+    else:
+        return False
+
 

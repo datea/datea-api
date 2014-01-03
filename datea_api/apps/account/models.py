@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 	Custom User class for Datea
 	"""
 	# timestamps
-	#created = models.DateTimeField(_('created'), auto_now_add=True)
+	created = models.DateTimeField(_('created'), auto_now_add=True)
 	date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
 	#modified = models.DateTimeField(_('modified'), auto_now=True)
 

@@ -24,8 +24,12 @@ otherwise you'll receive a 400 error:
 
 
 If your domain is whitelisted (contact us), then you may also additionally 
-pass a "redirect_url": <activation_redirect_url>, specific for your app. Otherwise,
-after clicking the activation link sent in the email, the user will be directed 
+pass the following parameters specific for your app:
+
+"success_redirect_url": \<url\>
+"error_redirect_url": \<url\>
+
+Otherwise, after clicking the activation link sent in the email, the user will be directed 
 to a page from this system.
 
 
@@ -72,7 +76,7 @@ For twitter:, json ajax POST with:
 	{oauth_token: oauth_token, oauth_token_secret: oauth_token_secret}
 to /api/v2/account/socialauth/twitter/
   
-If everything goes as expected, you'll receive a 200 with {token: api_key, 'userid': int }
+If everything goes as expected, you'll receive a 200 with {token: api_key, 'user': full_user_object }
 
 
 

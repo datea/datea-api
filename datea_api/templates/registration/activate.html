@@ -1,0 +1,27 @@
+{% extends "site-base.html" %}
+{% load i18n %}
+
+{% block "page_title" %}{% trans "Activate account" %}{% endblock %}
+{% block "title" %}{% trans "Activate account" %}{% endblock %}
+
+{% block "main_content" %}
+
+{% if account %}
+
+<h1>{% trans "Account activated" %}</h1>
+
+<p class="desc">
+{% blocktrans %}
+	Thanks, activation complete!  You may now login using the username and password you set at registration.
+{% endblocktrans %}
+</p>
+
+{% else %}
+
+<h2>{% trans "We're sorry" %}</h2>
+
+<div class="alert alert-danger">{% trans "We could't activate your account. Please try to register again, or contact us." %}</div>
+
+{% endif %}
+
+{% endblock %}

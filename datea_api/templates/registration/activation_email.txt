@@ -7,7 +7,7 @@ please ignore this email and your address will be removed from our records.
 To activate this account, please click the following link within the next 
 {{ days }} days:
 {% endblocktrans %}
-http://{{ site.api_domain }}/accounts/activate/{{ activation_key }}{% if site.redirect_url %}?redirect_url={{ site.redirect_url|urlencode }}{% endif %}
+http://{{ site.api_domain }}/account/activate/{{ activation_key }}/{% if site.success_redirect_url %}?surl={{ site.success_redirect_url|urlencode }}{% endif %}{% if site.error_redirect_url %}&eurl={{ site.error_redirect_url|urlencode }}{% endif %}
 
 {% blocktrans with site.name as sitename %}
 Sincerely,

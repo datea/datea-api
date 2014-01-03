@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 
+from views import CustomActivationView
+
 # overriding djang-registration urls because of problems with django 1.6
 urlpatterns = patterns('',
 
@@ -23,6 +25,10 @@ urlpatterns = patterns('',
       url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
                     auth_views.password_reset_confirm,
                     name='password_reset_confirm'),
+
+      url(r'^activate/(?P<activation_key>\w+)/$',
+                    CustomActivationView.as_view(),
+                    name='registration_activate'),
 
       #and now add the registration urls
       url(r'', include('registration.backends.default.urls')),

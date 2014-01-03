@@ -2,6 +2,8 @@
 from tastypie.models import ApiKey
 from django.template.defaultfilters import slugify
 from account.models import User
+from urlparse import urlparse
+from django.core.validators import URLValidator
 
 def getOrCreateKey(user):
     try:
@@ -42,3 +44,21 @@ def make_social_username(username):
         index +=1
         
     return final_username
+
+
+def get_domain_from_url(url):
+
+    d = urlparse(url).netloc
+    if d.split('.')[0] == 'www':
+        d = d.replace('wwww.','')
+    return d
+
+
+def validate_url(url):
+    val = URLValidator()
+    try:
+        val(url)
+        return True
+    except:
+        return False
+

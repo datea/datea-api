@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, ClientDomain
 from tastypie.resources import Resource, ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
@@ -18,14 +18,9 @@ import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from utils import getOrCreateKey, getUserByKey, make_social_username
+from utils import getOrCreateKey, getUserByKey, make_social_username, get_domain_from_url, validate_url
 from status_codes import *
-'''
-from oauth2 import Client as OAuthClient, Consumer as OAuthConsumer, Token
-from datea.settings import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
-from social_auth.backends.twitter import TWITTER_CHECK_AUTH
-from social_auth.models import UserSocialAuth
-'''
+
 from registration.models import RegistrationProfile
 from registration import signals
 from django.contrib.sites.models import RequestSite
@@ -78,8 +73,7 @@ class AccountResource(Resource):
     def register(self, request, **kwargs):
         #print "@ create account"
         self.method_check(request, allowed=['post'])
-        
-        backend = DefaultBackend()
+
         postData = json.loads(request.body)
 
         username = postData['username']
@@ -96,17 +90,26 @@ class AccountResource(Resource):
                     'status': BAD_REQUEST,
                     'error': 'duplicate user'}, status= BAD_REQUEST)
         
-        #print "post data"
-        #print args
-        #print "trying to create account"
         if Site._meta.installed:
             site = Site.objects.get_current()
         else:
             site = RequestSite(request)
+
+        site.redirect_url = None
+        site.api_domain = site.domain
+
+        if 'redirect_url' in postData and validate_url(postData['redirect_url']):
+            domain = get_domain_from_url(postData['redirect_url'])
+            # use redirect_url, domain and site name only from white listed domains
+            if ClientDomain.objects.filter(domain=domain).count() > 0:
+                client = ClientDomain.objects.get(domain=domain)
+                site.domain =  client.domain
+                site.name = client.name
+                site.redirect_url = postData['redirect_url']
+
         new_user = RegistrationProfile.objects.create_inactive_user(username, email,
                                                                     password, site)   
-        #print "user created"
-        if newUser:
+        if new_user:
             return self.create_response(request,{'status': CREATED,
                 'message': 'Please check your email !!'}, status = CREATED)
         else:
@@ -281,7 +284,7 @@ class UserResource(ModelResource):
             
         if bundle.request.method == 'PATCH':
             # don't change created, is_active or is_staff fields
-            forbidden_fields = ['created', 'is_staff', 'is_active', 
+            forbidden_fields = ['date_joined', 'is_staff', 'is_active', 
                                 'dateo_count', 'comment_count', 'vote_count']
 
             for f in forbidden_fields:
@@ -314,7 +317,7 @@ class UserResource(ModelResource):
             'username': ALL,
             'id': ALL,
         }
-        fields = ['username', 'id', 'created', 'last_login', 
+        fields = ['username', 'id', 'date_joined', 'last_login', 
                   'image', 'bg_image', 'dateo_count', 'comment_count', 'vote_count',
                   'full_name', 'message' ]
         always_return_data = True

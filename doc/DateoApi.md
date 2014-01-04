@@ -34,8 +34,8 @@ follow filters:
 * followed: get all dateos followed individually (because of comment system) [user id: integer]
 
 spatial filters:
-* Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter dateos by a geographic bounding box. Each param has <latitude,longitude> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
-* Within distance to point: 'distance' and 'position' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as <latitude,longitude>, distance in meters as an integer.
+* Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter dateos by a geographic bounding box. Each param has \<latitude,longitude\> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
+* Within distance to point: 'distance' and 'position' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as \<latitude,longitude\>, distance in meters as an integer.
 
 
 ######Order_options

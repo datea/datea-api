@@ -1,8 +1,9 @@
 ###Authentication Api
 
 ####Login
-Ajax POST (application/json) to: /api/v2/account/login/
+Ajax POST (application/json) to: */api/v2/account/login/*
 with 
+
 	{
 		username: <username>, 
 		password: <password>
@@ -10,6 +11,7 @@ with
 
 you'll receive a:
 * 200 if everything ok, with 
+
 	{
 		token: <api_key>, 
 		user: <user object> 
@@ -19,8 +21,9 @@ you'll receive a:
 * 401 if account has been disabled
 
 ####Register
-Ajax POST (application/json) to: /api/v2/account/register/
+Ajax POST (application/json) to: */api/v2/account/register/*
 with 
+
 	{
 		username: <username>, 
 		email: <email>, 
@@ -85,12 +88,14 @@ do this by using our oauthd (from oauth.io) service like follows:
 
 	</script>
 
-Then, for facebook auth with our api, issue a json ajax POST to /api/v2/account/socialauth/facebook/
+Then, for facebook auth with our api, issue a json ajax POST to */api/v2/account/socialauth/facebook/*
+	
 	{
 		access_token: <access_token>
 	}
 
-For twitter:, json ajax POST to /api/v2/account/socialauth/twitter/ with
+For twitter:, json ajax POST to */api/v2/account/socialauth/twitter/* with
+	
 	{
 		oauth_token: <oauth_token>, 
 		oauth_token_secret: <oauth_token_secret>
@@ -98,6 +103,7 @@ For twitter:, json ajax POST to /api/v2/account/socialauth/twitter/ with
 
   
 If everything goes as expected, you'll receive a 200 with: 
+	
 	{
 		token: <api_key>, 
 		user: <user_object>, 
@@ -126,8 +132,8 @@ If you'd like the API to redirect back to your page when the user clicks the act
 
 ####Reset Password
 
-Ajax POST (application/json) to: /api/v2/account/reset-password/
-with:
+Ajax POST (application/json) to: */api/v2/account/reset-password/* with:
+	
 	{
 		email: <email>
 	}
@@ -151,9 +157,8 @@ The url contains is build like this:
 if your domain is whitelisted, and you sent the "base_url" parameter in the previous step, you'll need to 
 confirm the password reset. Have the user enter his/her new password twice, check if both fields against each other, and then:
 
-Send a Ajax JSON POST to : /api/v2/account/reset-password-confirm/
-
-with
+Send a Ajax JSON POST to : */api/v2/account/reset-password-confirm/* with
+	
 	{
 		password: <new password entered by user>,
 		uid: <uid from reset url>,
@@ -213,6 +218,7 @@ Example User Object:
 ####PATCH
 
 An example. Other fields are ignored. As with PATCH, you need only to provide the fields you want to change, and of course, the id.
+	
 	{
 		id: <userid>
 		username: <username>,

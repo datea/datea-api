@@ -1,6 +1,6 @@
 ###Tag Api
 
-allowed methods = GET, POST, PATCH, DELETE
+allowed methods = GET, POST, PATCH
 
 Endpoints:
 
@@ -13,7 +13,7 @@ Endpoints:
 
 ####Autocomplete suggestions
 
-Issue a JSON GET request to /api/v2/tag/autocomplete/ with a 'q' param:
+Issue a JSON GET request to */api/v2/tag/autocomplete/* with a 'q' param:
 
 To autocomplete on "He":
 
@@ -28,7 +28,8 @@ you'll receive a JSON with:
 
 ###POST 
 
-Params needed for POST to /api/v2/tag/ are:
+Params needed for POST to */api/v2/tag/* are:
+
 	{
 		tag 	: <tagname>, 		// required
 		title 	: <a title>			// optional string with better description

@@ -10,10 +10,9 @@ class CustomActivationView(ActivationView):
 	def get(self, request, *args, **kwargs):
 		activated_user = self.activate(request, *args, **kwargs)
 		if activated_user:
-			signals.user_activated.send(sender=self.__class__,
-                                        user=activated_user,
-                                        request=request)
-
+			activated_user.status = 1
+			activated_user.save()
+			
 			if 'surl' in request.GET and url_whitelisted(request.GET.get('surl')):
 				return HttpResponseRedirect(request.GET.get('surl'))
 

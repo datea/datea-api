@@ -73,6 +73,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 	comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
 	vote_count = models.PositiveIntegerField(_('Vote count'), default=0)
 
+
+	status_choices = (
+            (0,_('unconfirmed')),
+            (1, _('confirmed')),
+            (2, _('banned'))
+        )
+	status = models.PositiveIntegerField(_('Status'), choices=status_choices, default=0)
+
 	objects = CustomUserManager()
 
 	USERNAME_FIELD = 'username'
@@ -138,7 +146,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 	def save(self, *args, **kwargs):
 		if self.email == '':
 			self.email = None
+		if self.status == 2:
+			self.is_active = False
 		super(User, self).save(*args, **kwargs)
+
 
 	def __unicode__(self):
 		if self.full_name:

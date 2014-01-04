@@ -84,7 +84,11 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
                                                       USER_FIELDS))
     if not fields:
         return
-    print "USER IS NEW"
+
+    # if we have an email address, confirm the user
+    if 'email' in fields and fields['email']:
+        fields['status'] = 1
+
     user = strategy.create_user(**fields)
     user.is_new = True
 

@@ -4,9 +4,9 @@ allowed methods = GET, POST, PATCH, DELETE
 
 Endpoints:
 
-List: /api/v2/comment/
-Detail: /api/v2/comment/<id>/
-Schema: /api/v2/comment/schema/
+* List: /api/v2/comment/
+* Detail: /api/v2/comment/\<id\>/
+* Schema: /api/v2/comment/schema/
 
 
 ####GET

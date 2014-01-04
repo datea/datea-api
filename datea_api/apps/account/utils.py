@@ -5,6 +5,9 @@ from account.models import User
 from urlparse import urlparse
 from django.core.validators import URLValidator
 from models import ClientDomain
+from django.contrib.sites.models import RequestSite
+from django.contrib.sites.models import Site
+from django.contrib.sites.models import get_current_site
 
 def getOrCreateKey(user):
     try:
@@ -76,5 +79,35 @@ def url_whitelisted(url):
         return domain_whitelisted(domain)
     else:
         return False
+
+def build_activation_site_info(request, post_data):
+
+    if Site._meta.installed:
+        site = Site.objects.get_current()
+    else:
+        site = RequestSite(request)
+
+    site.success_redirect_url = site.error_redirect_url = None
+    site.api_domain = site.domain
+
+    # use *_redirect_url, domain and site name only from white listed domains
+    include_whitelisted_domain = False
+
+    if 'success_redirect_url' in post_data and url_whitelisted(post_data['success_redirect_url']):
+        domain = get_domain_from_url(post_data['success_redirect_url'])
+        include_whitelisted_domain = True
+        site.success_redirect_url = post_data['success_redirect_url']
+    
+    if 'error_redirect_url' in post_data and url_whitelisted(post_data['error_redirect_url']):
+        domain = get_domain_from_url(post_data['error_redirect_url'])
+        include_whitelisted_domain = True
+        site.error_redirect_url = post_data['error_redirect_url']
+
+    if include_whitelisted_domain:
+        client = ClientDomain.objects.get(domain=domain)
+        site.domain = client.domain
+        site.name = client.name
+
+    return site
 
 

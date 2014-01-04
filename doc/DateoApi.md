@@ -4,9 +4,9 @@ allowed methods = GET, POST, PATCH, DELETE
 
 Endpoints:
 
-List: /api/v2/dateo/
-Detail: /api/v2/dateo/<id>/
-Schema: /api/v2/dateo/schema/
+* List: /api/v2/dateo/
+* Detail: /api/v2/dateo/\<id\>/
+* Schema: /api/v2/dateo/schema/
 
 
 ####GET Params
@@ -46,8 +46,8 @@ example: order_by=score,-created
 
 all parameters invert ascending or descending order when a '-' (minus) on front:
 
-'created' -> created ascending
-'-created' -> descending (probably what you want)
+* 'created' -> created ascending
+* '-created' -> descending (probably what you want)
 
 options: 
 * 'score': works only in combination with 'q' parameter above, means search relevance
@@ -63,7 +63,7 @@ options:
 ####POST
 
 	{
-		address:	'Calle x 546',			  	// (optional)
+		  address:	'Calle x 546',			  	// (optional)
     	category:	'/api/v2/category/1/',  	// category resource_uri (optional)
     	content:	'this is a test';
     	position: 	{ 					  		// (optional)

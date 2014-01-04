@@ -22,6 +22,8 @@ class DateaBaseAuthorization(Authorization):
         raise Unauthorized("Sorry, no list create.")
 
     def create_detail(self, object_list, bundle):
+        if not user.is_active or not user.email or user.status != 1:
+            raise Unauthorized('user is not active or needs to validate email')
         return bundle.obj.user == bundle.request.user
 
     def update_list(self, object_list, bundle):
@@ -37,7 +39,9 @@ class DateaBaseAuthorization(Authorization):
         return allowed
         '''
 
-    def update_detail(self, object_list, bundle): 
+    def update_detail(self, object_list, bundle):
+        if not user.is_active or not user.email or user.status != 1:
+            raise Unauthorized('user is not active or needs to validate email')
         return bundle.request.user.is_staff or (bundle.obj.user == bundle.request.user)
 
     def delete_list(self, object_list, bundle):
@@ -45,4 +49,6 @@ class DateaBaseAuthorization(Authorization):
         raise Unauthorized("Sorry, no deletes.")
 
     def delete_detail(self, object_list, bundle):
+        if not user.is_active or not user.email or user.status != 1:
+            raise Unauthorized('user is not active or needs to validate email')
         return bundle.request.user.is_staff or (bundle.obj.user == bundle.request.user)

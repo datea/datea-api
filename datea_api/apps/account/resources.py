@@ -73,7 +73,7 @@ class AccountResource(Resource):
             #password reset
             url(r"^(?P<resource_name>%s)/reset-password-confirm%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('reset_password_confirm'), name="api_password_reset_confirm")
+            self.wrap_view('password_reset_confirm'), name="api_password_reset_confirm")
         ]
 
 
@@ -181,7 +181,9 @@ class AccountResource(Resource):
                     site = Site.objects.get_current()
                     save_data['base_url'] = settings.PROTOCOL + '://'+ site.domain + '/account/password/reset/confirm'
 
-                resetForm.save(save_data)
+                print "in endpoint", save_data
+
+                resetForm.save(**save_data)
 
                 response = self.create_response(request,{'status':OK,
                     'message': 'check your email for instructions'}, status=OK)
@@ -197,7 +199,7 @@ class AccountResource(Resource):
         return response
 
 
-    def password_reset_confirm(self, request, *kwargs):
+    def password_reset_confirm(self, request, **kwargs):
 
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)

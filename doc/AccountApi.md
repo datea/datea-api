@@ -149,7 +149,7 @@ otherwise it will be handled by system views.
 
 The url contains is build like this:
 
-	[base_url]/[uid]/[token]
+	[base_url]/[uid]/[token]/
 
 
 #### Reset Password confirm

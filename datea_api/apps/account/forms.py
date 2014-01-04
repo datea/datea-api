@@ -40,14 +40,17 @@ class CustomUserChangeForm(UserChangeForm):
 class CustomPasswordResetForm(PasswordResetForm):
 
     def save(self, domain_override=None,
-             subject_template_name='account/password_reset_subject.txt',
-             email_template_name='account/password_reset_email.html',
+             subject_template_name='registration/password_reset_subject.txt',
+             email_template_name='registration/password_reset_email.html',
              use_https=False, token_generator=default_token_generator,
              from_email=None, request=None, base_url = '', sitename_override=None):
         """
         Generates a one-use only link for resetting password and sends to the
         user.
         """
+
+        print "in form", base_url
+
         from django.core.mail import send_mail
         email = self.cleaned_data["email"]
         active_users = User.objects.filter(

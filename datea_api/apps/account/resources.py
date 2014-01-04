@@ -217,13 +217,11 @@ class AccountResource(Resource):
 
         if user is not None and default_token_generator.check_token(user, token):
             user.set_password('password')
-            response = self.create_response(request, 
-                {'status': OK, 'message': 'your password was successfully reset', 'userid': uid)},
-                status=OK
-            )
+            response = self.create_response(request, {'status': OK, 'message': 'your password was successfully reset', 
+                'userid': uid}, status=OK)
         else:
-            response = self.create_response(request,
-                {'status': UNAUTHORIZED, 'Invalid reset link'}, status=UNAUTHORIZED)
+            response = self.create_response(request,{'status': UNAUTHORIZED, 'message': 'Invalid reset link'}, 
+                status=UNAUTHORIZED)
 
         self.log_throttled_access(request)
         return response

@@ -133,10 +133,11 @@ class AccountResource(Resource):
             if user.is_active:
                 key = getOrCreateKey(user)
                 user_rsc = UserResource()
-                u_bundle = user_rsc.build_bundle(obj=user)
+                request.user = user
+                u_bundle = user_rsc.build_bundle(obj=user, request=request)
                 u_bundle = user_rsc.full_dehydrate(u_bundle)
                 u_bundle.data['email'] = user.email
-                response = self.create_response(request, {'status': OK, 'token': key, 'user': ubundle.data}, status =OK)
+                response = self.create_response(request, {'status': OK, 'token': key, 'user': u_bundle.data}, status =OK)
             else:
                 response = self.create_response(request,{'status':UNAUTHORIZED, 
                     'error': 'Account disabled'}, status = UNAUTHORIZED)

@@ -229,7 +229,7 @@ An example. Other fields are ignored. As with PATCH, you need only to provide th
 			image:	{
     			data_uri: <data uri base64>,
     			name: 'somefilename.png'
-    		},
+    		}
 		}
 	}
 

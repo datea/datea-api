@@ -2,11 +2,14 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 
 from views import CustomActivationView
+from django.views.generic.base import TemplateView
+from registration.backends.default.views import RegistrationView
 
-# overriding djang-registration urls because of problems with django 1.6
+
+# overriding djang-registration urls because of problems with django 1.6 and custom behaviour
 urlpatterns = patterns('',
 
-      #override the default urls
+      #override the default auth urls
       url(r'^password/change/$',
                     auth_views.password_change,
                     name='password_change'),
@@ -26,10 +29,24 @@ urlpatterns = patterns('',
                     auth_views.password_reset_confirm,
                     name='password_reset_confirm'),
 
+      # django-registration views
+      url(r'^activate/complete/$',
+                   TemplateView.as_view(template_name='registration/activation_complete.html'),
+                   name='registration_activation_complete'),
+
       url(r'^activate/(?P<activation_key>\w+)/$',
                     CustomActivationView.as_view(),
                     name='registration_activate'),
 
-      #and now add the registration urls
-      url(r'', include('registration.backends.default.urls')),
+      url(r'^register/$',
+                    RegistrationView.as_view(),
+                    name='registration_register'),
+
+      url(r'^register/complete/$',
+                    TemplateView.as_view(template_name='registration/registration_complete.html'),
+                    name='registration_complete'),
+      
+      url(r'^register/closed/$',
+                    TemplateView.as_view(template_name='registration/registration_closed.html'),
+                    name='registration_disallowed')
 )

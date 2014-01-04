@@ -3,6 +3,8 @@ from registration.backends.default.views import ActivationView
 from django.http import HttpResponseRedirect
 from utils import url_whitelisted
 from registration import signals
+from django.shortcuts import redirect
+
 
 
 class CustomActivationView(ActivationView):

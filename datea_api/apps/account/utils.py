@@ -17,9 +17,8 @@ def getOrCreateKey(user):
     except:
         #User already has key, so get's retreive it!
         #this fix a postgre error [https://code.djangoproject.com/ticket/10813]
-        from django.db import connection 
-        connection._rollback()
-
+        #from django.db import connection 
+        #connection._rollback()
         key = ApiKey.objects.get(user=user)
         return key.key
 

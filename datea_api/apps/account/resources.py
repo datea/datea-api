@@ -34,6 +34,10 @@ from django.core.validators import validate_email
 from social.apps.django_app.utils import strategy
 from pprint import pprint as pp
 
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from tastypie.exceptions import Unauthorized
+
 
 
 class AccountResource(Resource):
@@ -312,45 +316,80 @@ class UserResource(ModelResource):
     def hydrate(self, bundle):
             
         if bundle.request.method == 'PATCH':
+            
+            # only change one's own user
+            if bundle.request.user.id != bundle.obj.id:
+                raise Unauthorized('not authorized')
+
             # don't change created, is_active or is_staff fields
             forbidden_fields = ['date_joined', 'is_staff', 'is_active', 
                                 'dateo_count', 'comment_count', 'vote_count', 'status']
 
             for f in forbidden_fields:
                 if f in bundle.data:
-                    del bundle.data[f]
+                    bundle.data[f] = getattr(bundle.obj, f)
 
-            # Allow to change ones own email
-            if 'email' in bundle.data and bundle.request.user.id == bundle.data['id']:
+            if 'password' in bundle.data:
+                if bundle.data['password'].strip() == '':
+                    raise ValidationError('password cannot be empty')
+                else:
+                    bundle.obj.set_password(bundle.data['password'])
+                    del bundle.data['password']
 
-                # load original object
-                orig_user = User.objects.get(pk=int(bundle.data['id']))
-                if orig_user.email != bundle.data['email'] and orig_user.status != 2:
+
+            if 'email' in bundle.data or 'username' in bundle.data:
+
+                if 'username' in bundle.data and bundle.data['username'] != bundle.obj.username:
+
+                    if bundle.data['username'].strip() == '':
+                        raise ValidationError('username cannot be empty')
+
+                    if User.objects.filter(username=bundle.data['username']).count() > 0:
+                        raise ValidationError('username already exists')
+
+                    bundle.obj.username = bundle.data['username']
+
+                # Allow to change ones own email
+                if 'email' in bundle.data and bundle.obj.email != bundle.data['email'] and bundle.obj.status != 2:
+                    print "HELLO MIERDA"
+                    new_email = bundle.data['email']
+
+                    try:
+                        validate_email(new_email)
+                    except:
+                        print "HEY"
+                        raise ValidationError('not a valid email address')
+
+                    if User.objects.filter(email=new_email).count() > 0:
+                        print "HEY2"
+                        raise ValidationError('email already exists')
+
+                    print "HEY3"
 
                     self.email_changed = True
 
-                    bundle.obj.email = bundle.data['email']
-                    bundle.obj.status = 0
+                    bundle.obj.email = new_email
+                    bundle.obj.status = bundle.data['status'] = 0
                     # try to delete old registration profile
                     try:
-                        old_profile = RegistrationProfile.objects.get(user=instance)
+                        old_profile = RegistrationProfile.objects.get(user=bundle.obj)
                         old_profile.delete()
                     except:
                         pass
-                    
+                
                     # create registration profile
-                    new_profile = RegistrationProfile.objects.create_profile(instance)
+                    new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
 
                     site = build_activation_site_info(bundle.request, bundle.data)
                     if 'success_redirect_url' in bundle.data:
                         del bundle.data['success_redirect_url']
                     if 'error_redirect_url' in bundle.data:
                         del bundle.data['error_redirect_url']
-                                            
+                                        
                     new_profile.send_activation_email(site)
 
-            return bundle
-    
+        return bundle
+        
 
     def prepend_urls(self):
         return [
@@ -372,7 +411,7 @@ class UserResource(ModelResource):
         }
         fields = ['username', 'id', 'date_joined', 'last_login', 
                   'image', 'bg_image', 'dateo_count', 'comment_count', 'vote_count',
-                  'full_name', 'message' ]
+                  'full_name', 'message']
         always_return_data = True
         
 

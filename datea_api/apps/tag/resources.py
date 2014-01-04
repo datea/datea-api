@@ -52,7 +52,7 @@ class TagResource(ModelResource):
                 'name' : ALL
                 }
         list_allowed_methods = ['get', 'post']
-        detail_allowed_methods = ['get', 'put', 'post', 'patch']
+        detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
 

@@ -217,10 +217,11 @@ Example User Object:
 
 ####PATCH
 
-An example. Other fields are ignored. As with PATCH, you need only to provide the fields you want to change, and of course, the id.
+An example. Other fields are ignored. As with PATCH, you need only to provide the fields you want to change to
+
+*/api/v2/user/\<id\>/*
 	
 	{
-		id: <userid>
 		username: <username>,
 		fullname: <fullname>,	
 		message: <message>,

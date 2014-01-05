@@ -98,6 +98,9 @@ WSGI_APPLICATION = 'datea_api.wsgi.application'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+TASTYPIE_ALLOW_MISSING_SLASH = True
+APPEND_SLASH = False
+
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 # DATEA USES POSTGIS.

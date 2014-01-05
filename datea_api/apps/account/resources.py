@@ -83,12 +83,12 @@ class AccountResource(Resource):
 
     def register(self, request, **kwargs):
         #print "@ create account"
+        print request.body
         self.method_check(request, allowed=['post'])
+
         self.throttle_check(request)
 
         postData = json.loads(request.body)
-
-        print postData
 
         username = postData['username']
         email = postData['email']

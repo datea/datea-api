@@ -23,7 +23,7 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
     
     def prepare_tags(self, obj):
-        return ['#'+tag.tag for tag in obj.tags.all()]
+        return [tag.tag for tag in obj.tags.all()]
 
     def prepare_user_id(self, obj):
         return int(obj.user.pk)

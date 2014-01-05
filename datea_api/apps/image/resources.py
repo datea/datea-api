@@ -19,18 +19,14 @@ class ImageResource(ModelResource):
         return bundle
     
     def hydrate(self, bundle):
-
-        if 'user' not in bundle.data:
-            bundle.data['user'] = '/api/v2/user/'+str(bundle.request.user.id)
         
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
-            bundle.obj.user = bundle.request.user
+            bundle.obj.user = bundle.data['user'] = bundle.request.user
 
         # preserve original user
-        elif bundle.request.method in ['PUT', 'PATCH']:
-            orig_object = Image.objects.get(pk=bundle.data['id'])
-            bundle.obj.user = orig_object.user
+        elif bundle.request.method  == 'PATCH':
+            bundle.data['user'] = bundle.obj.user
 
         return bundle
         
@@ -38,7 +34,7 @@ class ImageResource(ModelResource):
     class Meta:
         queryset = Image.objects.all()
         resource_name = 'image'
-        allowed_methods = ['get', 'post', 'put', 'delete']
+        allowed_methods = ['get', 'post', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)

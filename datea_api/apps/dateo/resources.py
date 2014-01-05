@@ -62,21 +62,23 @@ class DateoResource(DateaBaseGeoResource):
 
 
     def hydrate(self, bundle):
- 
+
         # Some security measures in regards to an object's owner
         if bundle.request.method == 'POST':
-            # use request user
-            if 'user' not in bundle.data:
-                bundle.data['user'] = '/api/v2/user/'+str(bundle.request.user.id)
-            bundle.obj.user = bundle.request.user
+
+            forbidden_fields = ['created', 'modified', 'vote_count', 'follow_count', 'comment_count']
+            for f in forbidden_fields:
+                if f in bundle.data:
+                    del bundle.data[f]
+
+            bundle.data['user'] = bundle.obj.user = bundle.request.user
                 
         elif bundle.request.method in 'PATCH':
-            # preserve original owner
-            orig_object = Dateo.objects.get(pk=bundle.data['id'])
-            bundle.obj.user = orig_object.user
-            # don't touch 'created'
-            if 'created' in bundle.data:
-                del bundle.data['created']
+            # don't touch some fields
+            forbidden_fields = ['created', 'modified', 'user', 'vote_count', 'follow_count', 'comment_count']
+            for f in forbidden_fields:
+                if f in bundle.data:
+                     bundle.data[f] = getattr(bundle.obj, f)
         
         return bundle
 

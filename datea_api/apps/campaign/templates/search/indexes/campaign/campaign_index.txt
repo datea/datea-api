@@ -1,6 +1,6 @@
 {{object.name}}
-{{objects.main_tag}}
-{% for tag in object.secondary_tags.all %}#{{tag}} {% endfor %}
+{{objects.main_tag.tag}}
+{% for tag in object.secondary_tags.all %}#{{tag.tag}} {% endfor %}
 {{object.short_description}}
 {{object.mission}}
 {{object.category.name}}

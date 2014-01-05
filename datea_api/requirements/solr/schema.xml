@@ -130,10 +130,11 @@
 
   <fields>
     <!-- general -->
+    <field name="_version_" type="long" indexed="true" stored="true" multiValued="false"/>
     <field name="id" type="string" indexed="true" stored="true" multiValued="false" required="true"/>
     <field name="django_ct" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="django_id" type="string" indexed="true" stored="true" multiValued="false"/>
-    <field name="_version_" type="long" indexed="true" stored="true" multiValued="false"/>
+
     <dynamicField name="*_i"  type="int"    indexed="true"  stored="true"/>
     <dynamicField name="*_s"  type="string"  indexed="true"  stored="true"/>
     <dynamicField name="*_l"  type="long"   indexed="true"  stored="true"/>
@@ -174,15 +175,17 @@
 
     <field name="secondary_tags" type="text_en" indexed="true" stored="true" multiValued="true" />
 
-    <field name="center" type="location" indexed="true" stored="true" multiValued="false" />
-
-    <field name="main_tag" type="text_en" indexed="true" stored="true" multiValued="false" />
-
     <field name="is_active" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="featured" type="boolean" indexed="true" stored="true" multiValued="false" />
 
     <field name="name" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="center" type="location" indexed="true" stored="true" multiValued="false" />
+
+    <field name="main_tag_id" type="long" indexed="true" stored="true" multiValued="false" />
+
+    <field name="main_tag" type="text_en" indexed="true" stored="true" multiValued="false" />
 
   </fields>
 

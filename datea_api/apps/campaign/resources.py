@@ -74,6 +74,139 @@ class CampaignResource(DateaBaseGeoResource):
             bundle.obj.tags = Tag.objects.filter(pk__in=tags)
 
         return bundle
+
+    # Replace GET dispatch_list with HAYSTACK SEARCH
+    def dispatch_list(self, request, **kwargs):
+        if request.method == "GET":
+            return self.get_search(request, **kwargs)
+        else:
+            return self.dispatch('list', request, **kwargs)
+
+    rename_get_filters = {   
+        'id': 'obj_id', 
+    }
+
+    # HAYSTACK SEARCH
+    def get_search(self, request, **kwargs): 
+
+        # tests
+        self.method_check(request, allowed=['get'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+
+        # pagination
+        limit = int(request.GET.get('limit', 20))
+        offset = int(request.GET.get('offset', 0))
+        page = (offset / limit) + 1
+
+        # Do the query 
+        q_args = {'published': request.GET.get('published', True)}
+        
+        # add search query
+        if 'q' in request.GET and request.GET['q'] != '':
+            q_args['content'] = AutoQuery(request.GET['q'])
+
+        # check for more params
+        params = ['category_id', 'category', 'user', 'user_id', 
+                  'published', 'is_active', 'id', 
+                  'created__year', 'created__month', 'created__day', 
+                  'main_tag', 'main_tag_id']
+        for p in params:
+            if p in request.GET:
+                q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
+
+        # check for additional date filters (with datetime objects)      
+        date_params = ['created__gt', 'created__lt']
+        for p in date_params:
+            if p in request.GET:
+                q_args[p] = models.DateTimeField().to_python(request.get(p))
+
+        if 'tags' in request.GET:
+            q_args['tags__in'] = request.GET.get('tags').split(',')
+
+        # GET DATEOS BY TAGS I FOLLOW
+        if 'followed_by_tags' in request.GET:
+            uid = int(request.GET['followed_by_tags'])
+            tag_ids = [f.object_id for f in Follow.objects.filter(content_type__model='tag', user__id=uid)]
+            q_args['main_tag_id__in'] = tag_ids
+
+        # show also one's own unpublished actions
+        user_id = int(request.GET.get('user_id', -1))
+        show_unpublished = int(request.GET.get('show_unpublished', 0))
+        if request.user.is_authenticated() and user_id == request.user.id and show_unpublished ==1:
+            del q_args['published']
+
+        # INIT THE QUERY
+        sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
+
+        # SPATIAL QUERY ADDONS
+        # WITHIN QUERY
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left', 'top_right')):
+            bleft = [float(c) for c in request.GET.get('bottom_left').split(',')]
+            bottom_left = Point(bleft[0], bleft[1])
+            tright = [float(c) for c in request.GET.get('top_right').split(',')]
+            top_right = Point(tright[0], tright[1])
+
+            sqs = sqs.within('center', bottom_left, top_right)
+
+        # DWITHIN QUERY
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('max_distance', 'center')):
+            dist = Distance( m = int(request.GET.get('max_distance')))
+            pos = [float(c) for c in request.GET.get('center').split(',')]
+            position = Point(pos[0], pos[1])
+
+            sqs = sqs.dwithin('center', position, dist)
+
+
+        # ORDER BY
+        order_by = request.GET.get('order_by', '-created').split(',')
+        
+        # in elastic search 'score' is '_score'
+        #order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
+
+
+        if 'q' in request.GET: 
+            if order_by == ['-created'] and '-created' not in request.GET:
+                #order_by = ['_score']
+                order_by = ['score']
+    
+        # if q is set, then order will be relevance first
+        # if not, then do normal order by
+        if 'distance' in order_by and 'center' in request.GET and request.GET['center'] != '':
+            pos = [float(c) for c in request.GET.get('center').split(',')]
+            position = Point(pos[0], pos[1])
+            sqs = sqs.distance('center', position).order_by(*order_by)
+        elif len(order_by) > 0:
+            sqs = sqs.order_by(*order_by)
+
+
+        paginator = Paginator(sqs, limit)
+
+        try:
+            page = paginator.page(page)
+        except InvalidPage:
+            raise Http404("Sorry, no results on that page.")
+        
+        objects = []
+
+        for result in page.object_list:
+            bundle = self.build_bundle(obj=result.object, request=request)
+            bundle = self.full_dehydrate(bundle)
+            objects.append(bundle)
+
+        object_list = {
+            'meta': {
+                'limit': limit,
+                'next': page.has_next(),
+                'previous': page.has_previous(),
+                'total_count': sqs.count(),
+                'offset': offset
+            },
+            'objects': objects,
+        }
+
+        self.log_throttled_access(request)
+        return self.create_response(request, object_list)
         
 
 

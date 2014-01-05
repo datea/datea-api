@@ -36,7 +36,7 @@ class CommentResource(ModelResource):
             fields = ['user', 'published', 'content_type', 'object_id', 'created']
             for f in fields:
                 if f in request.data:
-                    del request.data[f]
+                    request.data[f] = getattr(bundle.obj, f)
             
         elif bundle.request.method == 'POST':
             # enforce post user

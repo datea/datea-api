@@ -16,7 +16,7 @@ class FollowResource(ModelResource):
     
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':
-            bundle.obj.user = bundle.request.user  
+            bundle.obj.user = bundle.data['user'] = bundle.request.user  
         return bundle
      
     class Meta:

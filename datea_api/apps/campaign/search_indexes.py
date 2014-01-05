@@ -15,6 +15,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
     main_tag = indexes.CharField(model_attr='main_tag', boost=1.25)
+    main_tag_id = indexes.IntegerField()
     secondary_tags = indexes.MultiValueField(boost=1.125, null=True)
     is_active = indexes.CharField()
     center = indexes.LocationField(model_attr='center', null=True)
@@ -28,6 +29,9 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     
     def index_queryset(self, using=None):
         return self.get_model().objects.all()
+
+    def prepare_main_tag_id(self, obj):
+        return obj.main_tag.id
     
     def prepare_user_id(self, obj):
         return int(obj.user.pk)
@@ -36,7 +40,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
         return obj.is_active()
 
     def prepare_secondary_tags(self, obj):
-        return ['#'+tag.tag for tag in obj.secondary_tags.all()]
+        return [ob.main_tag.tag] + [tag.tag for tag in obj.secondary_tags.all()]
 
     def prepare_category_id(self, obj):
         if obj.category:

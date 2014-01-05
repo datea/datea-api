@@ -40,7 +40,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
         return obj.is_active()
 
     def prepare_secondary_tags(self, obj):
-        return [ob.main_tag.tag] + [tag.tag for tag in obj.secondary_tags.all()]
+        return [obj.main_tag.tag] + [tag.tag for tag in obj.secondary_tags.all()]
 
     def prepare_category_id(self, obj):
         if obj.category:

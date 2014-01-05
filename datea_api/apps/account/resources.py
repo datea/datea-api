@@ -88,6 +88,8 @@ class AccountResource(Resource):
 
         postData = json.loads(request.body)
 
+        print postData
+
         username = postData['username']
         email = postData['email']
         password = postData['password']
@@ -352,20 +354,15 @@ class UserResource(ModelResource):
 
                 # Allow to change ones own email
                 if 'email' in bundle.data and bundle.obj.email != bundle.data['email'] and bundle.obj.status != 2:
-                    print "HELLO MIERDA"
                     new_email = bundle.data['email']
 
                     try:
                         validate_email(new_email)
                     except:
-                        print "HEY"
                         raise ValidationError('not a valid email address')
 
                     if User.objects.filter(email=new_email).count() > 0:
-                        print "HEY2"
                         raise ValidationError('email already exists')
-
-                    print "HEY3"
 
                     self.email_changed = True
 

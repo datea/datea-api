@@ -65,7 +65,7 @@ class AccountResource(Resource):
             self.wrap_view('activate'), name="api_activate_datea_account"), 
             
             #login to datea account
-            url(r"^(?P<resource_name>%s)/login%s$" %
+            url(r"^(?P<resource_name>%s)/signin%s$" %
             (self._meta.resource_name, trailing_slash()),
             self.wrap_view('login'), name="api_login_datea_account"),
 

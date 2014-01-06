@@ -1,7 +1,7 @@
 ###Authentication Api
 
-####Login
-Ajax POST (application/json) to: */api/v2/account/login/*
+####Sign in
+Ajax POST (application/json) to: */api/v2/account/signin/*
 with 
 
 	{

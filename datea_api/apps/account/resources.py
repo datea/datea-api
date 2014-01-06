@@ -83,7 +83,6 @@ class AccountResource(Resource):
 
     def register(self, request, **kwargs):
         #print "@ create account"
-        print request.body
         self.method_check(request, allowed=['post'])
 
         self.throttle_check(request)
@@ -105,7 +104,7 @@ class AccountResource(Resource):
         else:
 
             site = build_activation_site_info(request, postData) 
-
+            print vars(site)
             new_user = RegistrationProfile.objects.create_inactive_user(username, email,
                                                                     password, site)   
             if new_user:

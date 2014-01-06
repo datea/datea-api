@@ -87,7 +87,7 @@ def build_activation_site_info(request, post_data):
         site = RequestSite(request)
 
     site.success_redirect_url = site.error_redirect_url = None
-    site.api_domain = site.domain
+    site.api_domain = str(site.domain)
 
     # use *_redirect_url, domain and site name only from white listed domains
     include_whitelisted_domain = False
@@ -104,8 +104,8 @@ def build_activation_site_info(request, post_data):
 
     if include_whitelisted_domain:
         client = ClientDomain.objects.get(domain=domain)
-        site.domain = client.domain
-        site.name = client.name
+        site.domain = str(client.domain)
+        site.name = str(client.name)
 
     return site
 

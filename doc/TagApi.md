@@ -10,6 +10,14 @@ Endpoints:
 * Autocomplete: /api/v2/tag/autocomplete/
 
 
+####Search Tags and get trending topics
+
+The following parameters may be given for the GET method:
+
+* 'q': search for a phrase [string]
+* 'trending_days': get the trending topics for the given last number of days [integer]
+* 'trending_forever': If you provide this parameter, it will look for the most used tags since the beginnig (example: trending_forever=1. 
+
 
 ####Autocomplete suggestions
 

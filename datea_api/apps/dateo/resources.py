@@ -26,7 +26,6 @@ from haystack.utils.geo import Distance
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-
 from pprint import pprint as pp
 
 

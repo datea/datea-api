@@ -13,6 +13,12 @@ import os
 from tag.models import Tag
 from tag.resources import TagResource
 
+from haystack.utils.geo import Point
+from haystack.utils.geo import Distance
+from haystack.query import SearchQuerySet
+from haystack.inputs import AutoQuery
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 
 class CampaignResource(DateaBaseGeoResource):
     

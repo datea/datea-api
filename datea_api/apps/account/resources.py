@@ -108,8 +108,12 @@ class AccountResource(Resource):
             new_user = RegistrationProfile.objects.create_inactive_user(username, email,
                                                                     password, site)   
             if new_user:
+                user_rsc = UserResource()
+                request.user = new_user
+                u_bundle = user_rsc.build_bundle(obj=new_user, request=request)
+                u_bundle = user_rsc.full_dehydrate(u_bundle)
                 response = self.create_response(request,{'status': CREATED,
-                    'message': 'Please check your email !!'}, status = CREATED)
+                    'message': 'Please check your email !!', 'user': u_bundle.data}, status = CREATED)
             else:
                 response = self.create_response(request,{'status': SYSTEM_ERROR,
                                 'error': 'Something is wrong >:/ '}, status=SYSTEM_ERROR)

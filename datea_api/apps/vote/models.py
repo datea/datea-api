@@ -29,8 +29,8 @@ class Vote(models.Model):
         
 
     def update_stats(self, value):
-        self.user.vote_count += value
-        self.user.save()
+        #self.user.vote_count += value
+        #self.user.save()
         receiver_obj = self.content_object
         if hasattr(receiver_obj, 'vote_count'):
             receiver_obj.vote_count += value

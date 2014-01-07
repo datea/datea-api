@@ -266,9 +266,10 @@ class AccountResource(Resource):
         user = wrap_social_auth(request, access_token = access_token, **kwargs)
 
         if user and user.is_active:
+            request.user = user
             key = getOrCreateKey(user)
             user_rsc = UserResource()
-            u_bundle = user_rsc.build_bundle(obj=user)
+            u_bundle = user_rsc.build_bundle(obj=user, request=request)
             u_bundle = user_rsc.full_dehydrate(u_bundle)
             u_bundle.data['status'] = user.status
             if 'email' in u_bundle.data:

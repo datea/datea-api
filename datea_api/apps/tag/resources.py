@@ -45,6 +45,24 @@ class TagResource(ModelResource):
         return HttpResponse(json.dumps(suggestions), content_type="application/json")
 
 
+    def get_search(self, request, **kwargs):
+
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+
+        # pagination
+        limit = int(request.GET.get('limit', 100))
+        offset = int(request.GET.get('offset', 0))
+        page = (offset / limit) + 1
+
+        # add search query
+        if 'q' in request.GET and request.GET['q'] != '':
+            q_args['content'] = AutoQuery(request.GET['q'])
+
+
+        
+
+
     class Meta:
         queryset = Tag.objects.all()
         resource_name = 'tag'

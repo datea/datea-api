@@ -37,12 +37,6 @@ class Comment(models.Model):
 
     def save(self, *args, **kwargs):
         self.update_stats()
-        '''
-        ctype = ContentType.objects.get(model=self.object_type.lower())
-        receiver_obj = ctype.get_object_for_this_type(pk=self.object_id)
-        if self.content_object != receiver_obj:
-            self.content_object = receiver_obj
-        '''
         super(Comment, self).save(*args, **kwargs)
         
     
@@ -69,10 +63,6 @@ class Comment(models.Model):
             if hasattr(receiver_obj, 'comment_count'):
                 receiver_obj.comment_count += value
                 receiver_obj.save()
-            
-            if hasattr(receiver_obj, 'action'):
-                receiver_obj.action.comment_count += value
-                receiver_obj.action.save()
     
     def delete_stats(self):
         if self.published and self.__orig_published:
@@ -83,9 +73,6 @@ class Comment(models.Model):
             if hasattr(receiver_obj, 'comment_count'):
                 receiver_obj.comment_count -= 1
                 receiver_obj.save()
-            if hasattr(receiver_obj, 'action'):
-                receiver_obj.action.comment_count -= 1
-                receiver_obj.action.save()
     
     def __unicode__(self):
         return self.user.username+': '+strip_tags(self.comment)[:25]

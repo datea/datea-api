@@ -316,7 +316,6 @@ class UserResource(ModelResource):
         # send also email if user is one's own
         if bundle.request.user and bundle.request.user.id == bundle.obj.id:
             bundle.data['email'] = bundle.obj.email
-            bundle.data['status'] = bundle.obj.status
 
         return bundle
     
@@ -413,7 +412,7 @@ class UserResource(ModelResource):
         }
         fields = ['username', 'id', 'date_joined', 'last_login', 
                   'image', 'bg_image', 'dateo_count', 'comment_count', 'vote_count',
-                  'full_name', 'message']
+                  'full_name', 'message', 'status']
         always_return_data = True
         
 

@@ -8,6 +8,7 @@ from tag.models import Tag
 from campaign.models import Campaign
 from category.models import Category
 from image.models import Image
+import urllib2, json
 
 
 class Dateo(models.Model):
@@ -49,7 +50,13 @@ class Dateo(models.Model):
 	follow_count = models.IntegerField(default=0, blank=True, null=True)
 
 	date = models.DateTimeField(_('Date'), blank=True, null=True)
-    
+
+	# Administrative levels
+	country = models.CharField(_('Country'), max_length=100, blank=True, null=True)
+	admin_level1 = models.CharField(_('Administrative level 1'), max_length=127, blank=True, null=True)
+	admin_level2 = models.CharField(_('Administrative level 2'), max_length=127, blank=True, null=True)
+	admin_level3 = models.CharField(_('Administrative level 3'), max_length=127, blank=True, null=True)
+
     # Object Manager from geodjango
 	objects = models.GeoManager()
 
@@ -85,6 +92,31 @@ class Dateo(models.Model):
 				return qs[0].id
 			except:
 				return None
+
+
+	def get_administrative_levels(self):
+		if self.position:
+			xy = str(self.position.get_x())+','+str(self.position.get_y())
+			url = 'http://global.mapit.mysociety.org/point/'+str(self.position.srid)+'/'+xy
+			f = urllib2.urlopen(url)
+			data = json.load(f)
+			extract = {}
+			for key,item in data.iteritems():
+				extract[item['type']] = item['name']
+
+			result = []
+			for k in sorted(extract.keys()):
+				result.append(extract[k])
+			
+			fields = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
+
+			num_items = len(result) if len(result) <= 4 else 4 
+
+			for i in range(num_items):
+				setattr(self, fields[i], result[i])
+
+			self.save()
+
 
 	class Meta:
 		verbose_name = 'Dateo'

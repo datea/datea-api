@@ -356,38 +356,43 @@ class UserResource(ModelResource):
                     bundle.obj.username = bundle.data['username']
 
                 # Allow to change ones own email
-                if 'email' in bundle.data and bundle.obj.email != bundle.data['email'] and bundle.obj.status != 2:
-                    new_email = bundle.data['email']
+                if 'email' in bundle.data and bundle.obj.status != 2:
 
-                    try:
-                        validate_email(new_email)
-                    except:
-                        raise ValidationError('not a valid email address')
+                    if bundle.obj.email != bundle.data['email'] or bundle.obj.status == 0:
 
-                    if User.objects.filter(email=new_email).count() > 0:
-                        raise ValidationError('email already exists')
+                        new_email = bundle.data['email']
 
-                    self.email_changed = True
+                        try:
+                            validate_email(new_email)
+                        except:
+                            raise ValidationError('not a valid email address')
 
-                    bundle.obj.email = new_email
-                    bundle.obj.status = bundle.data['status'] = 0
-                    # try to delete old registration profile
-                    try:
-                        old_profile = RegistrationProfile.objects.get(user=bundle.obj)
-                        old_profile.delete()
-                    except:
-                        pass
-                
-                    # create registration profile
-                    new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
+                        if User.objects.filter(email=new_email).exclude(pk=bundle.obj.pk).count() > 0:
+                            raise ValidationError('email already exists')
 
-                    site = build_activation_site_info(bundle.request, bundle.data)
-                    if 'success_redirect_url' in bundle.data:
-                        del bundle.data['success_redirect_url']
-                    if 'error_redirect_url' in bundle.data:
-                        del bundle.data['error_redirect_url']
-                                        
-                    new_profile.send_activation_email(site)
+                        self.email_changed = True
+
+                        bundle.obj.email = new_email
+                        bundle.obj.status = bundle.data['status'] = 0
+                        # try to delete old registration profile
+                        try:
+                            old_profile = RegistrationProfile.objects.get(user=bundle.obj)
+                            old_profile.delete()
+                        except:
+                            pass
+                    
+                        # create registration profile
+                        new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
+
+
+
+                        site = build_activation_site_info(bundle.request, bundle.data)
+                        if 'success_redirect_url' in bundle.data:
+                            del bundle.data['success_redirect_url']
+                        if 'error_redirect_url' in bundle.data:
+                            del bundle.data['error_redirect_url']
+                                            
+                        new_profile.send_activation_email(site)
 
         return bundle
         

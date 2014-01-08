@@ -33,6 +33,14 @@ follow filters:
 * followed_by_tags: get all dateos by the tags a user follows. [user id: integer]
 * followed: get all dateos followed individually (because of comment system) [user id: integer]
 
+political filters:
+At the moment we have fields for 3 administrative levels besides 'Country'. In Perú this means: Regions, Provinces, Districts. We're looking forward to provide a service like mapit by mysociety, in order to fill this fields automatically, but you can use that service or other service at client level.
+
+* country: spelled mostly in their own language [string]
+* admin_level1: Region (Perú) [string]
+* admin_level2: Provice (Perú) [string]
+* admin_level3: District (Perú) [string]
+
 spatial filters:
 * Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter dateos by a geographic bounding box. Each param has \<latitude,longitude\> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
 * Within distance to point: 'distance' and 'position' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as \<latitude,longitude\>, distance in meters as an integer.

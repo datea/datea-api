@@ -174,11 +174,12 @@ class DateoResource(DateaBaseGeoResource):
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id', 
                   'published', 'status', 'id', 
-                  'created__year', 'created__month', 'created__day']
+                  'created__year', 'created__month', 'created__day',
+                  'country', 'admin_level1', 'admin_level2', 'admin_level3']
+
         for p in params:
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
-
 
         # check for additional date filters (with datetime objects)      
         date_params = ['created__gt', 'created__lt']

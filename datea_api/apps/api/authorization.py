@@ -1,5 +1,5 @@
 from tastypie.authorization import Authorization
-
+from tastypie.exceptions import Unauthorized
 
 class DateaBaseAuthorization(Authorization):
     '''
@@ -43,12 +43,29 @@ class DateaBaseAuthorization(Authorization):
 
     def update_detail(self, object_list, bundle):
         user = bundle.request.user
-        if not user or not user.is_active or not user.email or user.status != 1:
-            raise Unauthorized('user is not active or needs to validate email')
-        if hasattr(bundle.obj, 'user'):
-            return user.is_staff or (bundle.obj.user == user)
+        
+        if not user or not user.is_active
+            raise Unauthorized('Not authenticated or inactive user')
+            return False
+        
         elif bundle.obj._meta == 'user':
-            return user.is_staff or (bundle.obj.user == user)
+            if user.is_staff or (bundle.obj.user == user and bundle.obj.user.status != 2):
+                return True
+            else:
+                raise Unauthorized('Not authorized to change user')
+                return False
+
+        elif not user.email or user.status != 1:
+            raise Unauthorized('User needs to validate email or has been banned')
+            return False
+
+        elif hasattr(bundle.obj, 'user'):
+            if user.is_staff or (bundle.obj.user == user):
+                return True
+            else:
+                raise Unauthorized('Can change only own user')
+                return False
+
         return True
 
     def delete_list(self, object_list, bundle):

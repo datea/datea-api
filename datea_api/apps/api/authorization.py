@@ -48,8 +48,8 @@ class DateaBaseAuthorization(Authorization):
             raise Unauthorized('Not authenticated or inactive user')
             return False
         
-        elif bundle.obj._meta == 'user':
-            if user.is_staff or (bundle.obj.user == user and bundle.obj.user.status != 2):
+        elif bundle.obj._meta.model_name == 'user':
+            if user.is_staff or (bundle.obj == user and bundle.obj.status != 2):
                 return True
             else:
                 raise Unauthorized('Not authorized to change user')

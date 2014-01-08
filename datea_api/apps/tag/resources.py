@@ -155,14 +155,14 @@ class TagResource(ModelResource):
         for f in filters:
             if f in request.GET:
                 cache_key_elems.append(f)
-                q_args['dateos__'+f+'__iexact'] = f
+                q_args['dateos__'+f+'__iexact'] = request.GET.get(f)
 
         cache_key = "_".join(cache_key_elems)
         response = cache.get(cache_key)
 
         if response is None:
 
-            query = Tag.objects.filter(**q_args).annotate(num_dateos=Count('dateos')).order_by('-num_dateos')
+            query = Tag.objects.filter(**q_args).distinct().annotate(num_dateos=Count('dateos')).order_by('-num_dateos')
             paginator = Paginator(query, limit)
 
             try:

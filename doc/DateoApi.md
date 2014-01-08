@@ -22,6 +22,10 @@ Filters:
 * id: object id
 * tags: comma separated tags (without hash) [strings]
 
+Number of results and pagingation:
+* 'limit': number of results, defaults to 100 [int]
+* 'offset': paging offset (e.g 100 for next page) [int]
+
 date related filters:
 * created__year: year dateo was created [four digits] (watch for double underscore -> django filters)
 * created__month: in combination with year, month dateo was created [two digits]

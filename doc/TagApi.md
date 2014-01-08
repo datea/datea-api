@@ -16,6 +16,8 @@ Endpoints:
 The following parameters may be given for the GET method:
 
 * 'q': search for a phrase [string]
+
+Number of results and pagingation:
 * 'limit': number of results, defaults to 5 [int]
 * 'offset': paging offset (e.g 5 for next page) [int]
 
@@ -44,15 +46,19 @@ you'll receive a JSON with:
 
 Endpoint: */api/v2/tag/trending/*
 
+Filter parameters
 * 'days': get the trending topics for the given last number of days [integer]
 * 'forever': If you provide this parameter, it will look for the most used tags since the beginnig (forever=1)
 * 'country': spelled mostly in their own language (e.g. Perú with tilde) [string]
 * 'admin_level1': e.g. Region for Perú [string]
 * 'admin_level2': e.g. Province  for Perú [string]
 * 'admin_level3': e.g. District  for Perú [string]
+
+Number of results and pagingation:
 * 'limit': number of results, defaults to 5 [int]
 * 'offset': paging offset (e.g 5 for next page) [int]
 
+This endpoint caches the results for 10 minutes.
 
 ###POST 
 

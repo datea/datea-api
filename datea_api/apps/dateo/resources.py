@@ -6,6 +6,7 @@ from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
 from django.utils.html import strip_tags
 from django.conf.urls import url
+from django.http import Http404
 
 from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.base_resources import DateaBaseGeoResource
@@ -82,7 +83,7 @@ class DateoResource(DateaBaseGeoResource):
         return bundle
 
 
-    # do our own saving of related m2m fields
+    # do our own saving of related m2m fields (since tatsypie does strange stuff)
     def hydrate_m2m(self, bundle):
         #print bundle.data
         if 'images' in bundle.data and bundle.data['images']:

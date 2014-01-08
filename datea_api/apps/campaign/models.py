@@ -24,7 +24,7 @@ class Campaign(models.Model):
 
 	# Tags / Categories
 	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, related_name="campaigns_primary", help_text=_("Choose a category for this campaign")) 
-	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."))
+	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."), related_name="campaigns")
 	secondary_tags = models.ManyToManyField(Tag, 
 	                        verbose_name=_("Dateo Tags"), 
 	                        blank=True, null=True, 

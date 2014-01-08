@@ -9,7 +9,7 @@ from tastypie.throttle import BaseThrottle
 from tastypie.utils import trailing_slash
 from django.conf.urls import url
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 
 
 from models import Tag
@@ -30,9 +30,17 @@ class TagResource(ModelResource):
 
     def prepend_urls(self):
 
-        return [ url(r"^(?P<resource_name>%s)/autocomplete%s$" %
+        return [ 
+
+            url(r"^(?P<resource_name>%s)/autocomplete%s$" %
             (self._meta.resource_name, trailing_slash()), 
-            self.wrap_view('autocomplete'), name="api_tag_autocomplete")]
+            self.wrap_view('autocomplete'), name="api_tag_autocomplete"),
+
+            url(r"^(?P<resource_name>%s)/trending%s$" %
+            (self._meta.resource_name, trailing_slash()), 
+            self.wrap_view('get_trending'), name="api_tag_trending")
+
+        ]
     
 
     def autocomplete(self, request, **kwargs):
@@ -57,9 +65,6 @@ class TagResource(ModelResource):
         else:
             return self.dispatch('list', request, **kwargs)
 
-    rename_get_filters = {   
-        'id': 'obj_id', 
-    }
 
     def get_search(self, request, **kwargs):
 
@@ -72,119 +77,132 @@ class TagResource(ModelResource):
         page = (offset / limit) + 1
 
         q_args = {}
-        searching = False
 
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(request.GET['q'])
-            searching = True
+
+        filters = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
+        for f in filters:
+            if f in request.GET:
+                cache_key_elems.append(f)
+                q_args[f] = f
 
         sqs = SearchQuerySet().models(Tag).load_all().filter(**q_args)
 
-        # don't know how to do this with haystack, so we use the orm 
-        # and memcached to avoid taking too much a hit
-        if 'trending_days' in request.GET or 'trending_forever' in request.GET:
+        paginator = Paginator(sqs, limit)
+        
+        try:
+            page = paginator.page(page)
+        except InvalidPage:
+            raise Http404("Sorry, no results on that page.")
+    
+        objects = []
 
-            cache_key_elems = ['tag_trending']
+        for result in page.object_list:
+            bundle = self.build_bundle(obj=result.object, request=request)
+            bundle = self.full_dehydrate(bundle)
+            objects.append(bundle)
 
-            if 'trending_days' in request.GET:
-                days = int(request.GET.get('trending_days'))
-                cache_key_elems.append(str(days))
+        object_list = {
+            'meta': {
+                'limit': limit,
+                'next': page.has_next(),
+                'previous': page.has_previous(),
+                'total_count': sqs.count(),
+                'offset': offset
+            },
+            'objects': objects,
+        }
 
-            elif 'trending_forever' in request.GET:
-                days = None
-                cache_key_elems.append('all')
+        response = self.create_response(request, object_list)
 
-            cache_key_elems.append(str(limit))
+        self.log_throttled_access(request)
+        return response
 
-            if searching:
-                cache_key_elems.append(request.GET.get('q').encode('ascii', 'ignore'))
 
-            cache_key = "_".join(cache_key_elems)
-            response = cache.get(cache_key)
+    # Don't know how to annotate a searchqueryset, so we use the orm
+    # and memcached to avoid taking too much a hit
+    def get_trending(self, request, **kwargs):
 
-            if response is None:
-                if days is not None:
-                    now = datetime.utcnow().replace(tzinfo=utc)
-                    delta = timedelta(days=days)
-                    since = now - delta
-                    query = Tag.objects.filter(dateos__created__gt=since)
-                else:
-                    query = Tag.objects.all()
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
 
-                if searching:
-                    ids = []
-                    for res in sqs:
-                        ids.append(res.obj_id)
-                    query = query.filter(pk__in=ids)
+        cache_key_elems = ['tag_trend']
 
-                query = query.annotate(num_dateos=Count('dateos')).order_by('-num_dateos')
+        # pagination
+        limit = int(request.GET.get('limit', 5))
+        offset = int(request.GET.get('offset', 0))
+        page = (offset / limit) + 1
 
-                paginator = Paginator(query, limit)
+        q_args = {'dateos__published': True}
 
-                try:
-                    page = paginator.page(page)
-                except InvalidPage:
-                    raise Http404("Sorry, no results on that page.")
-
-                final_tags = []
-
-                for tag in page.object_list:
-                    bundle = self.build_bundle(obj=tag, request=request)
-                    bundle = self.full_dehydrate(bundle)
-                    final_tags.append(bundle)
-
-                object_list = {
-                    'meta': {
-                        'limit': limit,
-                        'next': page.has_next(),
-                        'previous': page.has_previous(),
-                        'total_count': query.count(),
-                        'offset': offset
-                    },
-                    'objects': final_tags,
-                }
-
-                response = self.create_response(request, object_list)
-                cache.set(cache_key, response, 6000)
-
+        if 'forever' in request.GET:
+            days = None
+            cache_key_elems.append('all')
         else:
+            days = request.GET.get('days', 7)
+            cache_key_elems.append(str(days))
+            now = datetime.utcnow().replace(tzinfo=utc)
+            delta = timedelta(days=days)
+            since = now - delta
+            q_args['dateos__created__gt'] = since
 
-            paginator = Paginator(sqs, limit)
+        cache_key_elems.append(str(limit))
+        cache_key_elems.append(str(offset))
+
+        filters = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
+        for f in filters:
+            if f in request.GET:
+                cache_key_elems.append(f)
+                q_args[f] = f
+
+        cache_key = "_".join(cache_key_elems)
+        response = cache.get(cache_key)
+
+        if response is None:
+
+            query = Tag.objects.filter(**q_args).annotate(num_dateos=Count('dateos')).order_by('-num_dateos')
+            paginator = Paginator(query, limit)
+
             try:
                 page = paginator.page(page)
             except InvalidPage:
                 raise Http404("Sorry, no results on that page.")
-        
-            objects = []
 
-            for result in page.object_list:
-                bundle = self.build_bundle(obj=result.object, request=request)
+            final_tags = []
+
+            for tag in page.object_list:
+                bundle = self.build_bundle(obj=tag, request=request)
                 bundle = self.full_dehydrate(bundle)
-                objects.append(bundle)
+                final_tags.append(bundle)
 
             object_list = {
                 'meta': {
                     'limit': limit,
                     'next': page.has_next(),
                     'previous': page.has_previous(),
-                    'total_count': sqs.count(),
+                    'total_count': query.count(),
                     'offset': offset
                 },
-                'objects': objects,
+                'objects': final_tags,
             }
+
             response = self.create_response(request, object_list)
+            cache.set(cache_key, response, 6000)
 
         self.log_throttled_access(request)
         return response
+
 
 
     class Meta:
         queryset = Tag.objects.all()
         resource_name = 'tag'
         filtering={
-                'name' : ALL
+                'tag' : ALL
                 }
+        exclude = ['dateo_count', 'follow_count']
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()
@@ -192,3 +210,4 @@ class TagResource(ModelResource):
 
         always_return_data = True
         cache = SimpleCache(timeout=10)
+

@@ -2,14 +2,14 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import BaseThrottle
-from models import Campaign
 from api.base_resources import DateaBaseGeoResource
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
-from account.models import User
 import os
 
+from models import Campaign
+from account.models import User
 from tag.models import Tag
 from tag.resources import TagResource
 
@@ -18,6 +18,7 @@ from haystack.utils.geo import Distance
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.http import Http404
 
 
 class CampaignResource(DateaBaseGeoResource):

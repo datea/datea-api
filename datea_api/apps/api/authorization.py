@@ -63,9 +63,8 @@ class DateaBaseAuthorization(Authorization):
             if user.is_staff or (bundle.obj.user == user):
                 return True
             else:
-                raise Unauthorized('Can change only own user')
+                raise Unauthorized('Can only change own user')
                 return False
-
         return True
 
     def delete_list(self, object_list, bundle):

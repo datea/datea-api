@@ -4,13 +4,14 @@ allowed methods = GET, POST, PATCH
 
 Endpoints:
 
-* List: /api/v2/tag/
+* List (Search): /api/v2/tag/
 * Detail: /api/v2/tag/\<id\>/
 * Schema: /api/v2/tag/schema/
 * Autocomplete: /api/v2/tag/autocomplete/
+* Trending: /api/v2/tag/trending/
 
 
-####Search Tags and get trending topics
+####List and Search Tags
 
 The following parameters may be given for the GET method:
 

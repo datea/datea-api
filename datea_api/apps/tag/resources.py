@@ -141,7 +141,7 @@ class TagResource(ModelResource):
             days = None
             cache_key_elems.append('all')
         else:
-            days = request.GET.get('days', 7)
+            days = int(request.GET.get('days', 7))
             cache_key_elems.append(str(days))
             now = datetime.utcnow().replace(tzinfo=utc)
             delta = timedelta(days=days)

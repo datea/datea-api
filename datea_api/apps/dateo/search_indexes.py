@@ -16,6 +16,11 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
 
+    country = indexes.CharField(model_attr='country', null=True)
+    admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
+    admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
+    admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
+
     def get_model(self):
         return Dateo
     

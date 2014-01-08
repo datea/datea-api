@@ -151,13 +151,15 @@
 
     <field name="category" type="text_en" indexed="true" stored="true" multiValued="false" />
 
+    <field name="admin_level1" type="text_en" indexed="true" stored="true" multiValued="false" />
+
     <field name="user_id" type="long" indexed="true" stored="true" multiValued="false" />
 
-    <field name="tags" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="obj_id" type="long" indexed="true" stored="true" multiValued="false" />
 
     <field name="text" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="obj_id" type="long" indexed="true" stored="true" multiValued="false" />
+    <field name="tags" type="text_en" indexed="true" stored="true" multiValued="true" />
 
     <field name="modified" type="date" indexed="true" stored="true" multiValued="false" />
 
@@ -165,11 +167,13 @@
 
     <field name="user" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="published" type="boolean" indexed="true" stored="true" multiValued="false" />
+    <field name="country" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="position" type="location" indexed="true" stored="true" multiValued="false" />
 
     <field name="category_id" type="long" indexed="true" stored="true" multiValued="false" />
+
+    <field name="published" type="boolean" indexed="true" stored="true" multiValued="false" />
 
     <field name="tag_auto" type="ngram" indexed="true" stored="true" multiValued="false" />
 

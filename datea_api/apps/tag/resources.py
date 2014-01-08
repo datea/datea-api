@@ -155,7 +155,7 @@ class TagResource(ModelResource):
         for f in filters:
             if f in request.GET:
                 cache_key_elems.append(f)
-                q_args['dateos__'+f] = f
+                q_args['dateos__'+f+'__iexact'] = f
 
         cache_key = "_".join(cache_key_elems)
         response = cache.get(cache_key)

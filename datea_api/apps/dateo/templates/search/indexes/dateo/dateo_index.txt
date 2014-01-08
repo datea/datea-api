@@ -3,3 +3,4 @@
 {{object.category.name}}
 {{object.user.username}}
 {% if object.address %}{{object.address}}{% endif %}
+{{ object.country }} {{ object.admin_level1 }} {{ objects.admin_level2 }} {{ object.admin_level3 }}

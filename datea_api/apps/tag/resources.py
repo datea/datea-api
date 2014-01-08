@@ -82,11 +82,11 @@ class TagResource(ModelResource):
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(request.GET['q'])
 
-        filters = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
-        for f in filters:
-            if f in request.GET:
-                cache_key_elems.append(f)
-                q_args[f] = f
+        #filters = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
+        #for f in filters:
+        #    if f in request.GET:
+        #        cache_key_elems.append(f)
+        #      q_args[f] = f
 
         sqs = SearchQuerySet().models(Tag).load_all().filter(**q_args)
 
@@ -98,6 +98,9 @@ class TagResource(ModelResource):
             raise Http404("Sorry, no results on that page.")
     
         objects = []
+
+        if 'order_by' in request.GET:
+            order_by = request.GET.get('order_by').split(',')
 
         for result in page.object_list:
             bundle = self.build_bundle(obj=result.object, request=request)
@@ -156,7 +159,7 @@ class TagResource(ModelResource):
             if f in request.GET:
                 cache_key_elems.append(f)
                 q_args['dateos__'+f+'__iexact'] = request.GET.get(f)
-
+        
         cache_key = "_".join(cache_key_elems)
         response = cache.get(cache_key)
 

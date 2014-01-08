@@ -38,7 +38,7 @@ At the moment we have fields for 3 administrative levels besides 'Country'. In P
 
 * country: spelled mostly in their own language [string]
 * admin_level1: Region (Perú) [string]
-* admin_level2: Provice (Perú) [string]
+* admin_level2: Province (Perú) [string]
 * admin_level3: District (Perú) [string]
 
 spatial filters:

@@ -387,7 +387,7 @@ class UserResource(ModelResource):
                         if 'success_redirect_url' in bundle.data:
                             site_data['success_redirect_url'] = bundle.data['success_redirect_url']
                         if 'error_redirect_url' in bundle.data:
-                            site_data['error_redirect_url'] = request.data['error_redirect_url']
+                            site_data['error_redirect_url'] = bundle.data['error_redirect_url']
 
                         site = build_activation_site_info(bundle.request, site_data)
                         if 'success_redirect_url' in bundle.data:

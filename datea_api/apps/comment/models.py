@@ -39,14 +39,14 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         self.is_new = self.pk is None
         self.published_changed = self.__orig_published != self.published
-        #update_comment_stats.delay(self)
+        update_comment_stats.delay(self)
         super(Comment, self).save(*args, **kwargs)
         
     
     def delete(self, using=None):
         self.is_new = self.pk is None
         self.published_changed = self.__orig_published != self.published
-        #update_comment_stats.delay(self, 'delete')
+        update_comment_stats.delay(self, 'delete')
         super(Comment, self).delete(using=using)
     
     def __unicode__(self):

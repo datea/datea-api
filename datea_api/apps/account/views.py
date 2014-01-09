@@ -13,6 +13,7 @@ class CustomActivationView(ActivationView):
 		activated_user = self.activate(request, *args, **kwargs)
 		if activated_user:
 			activated_user.status = 1
+			activated_user.date_joined = activated_user.created
 			activated_user.save()
 			
 			if 'surl' in request.GET and url_whitelisted(request.GET.get('surl')):

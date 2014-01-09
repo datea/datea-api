@@ -170,5 +170,8 @@ class ClientDomain(models.Model):
 
 	def __unicode__(self):
 		return self.domain
+
+
+
 		
 

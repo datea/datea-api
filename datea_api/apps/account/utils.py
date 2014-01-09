@@ -8,6 +8,7 @@ from models import ClientDomain
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
+from django.conf import settings
 
 def getOrCreateKey(user):
     try:
@@ -82,7 +83,7 @@ def url_whitelisted(url):
 def build_activation_site_info(request, post_data):
 
     if Site._meta.installed:
-        site = Site.objects.get_current()
+        site = Site.objects.get(pk=settings.SITE_ID)
     else:
         site = RequestSite(request)
 

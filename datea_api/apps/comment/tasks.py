@@ -4,9 +4,10 @@ from celery import shared_task
 from campaign.models import Campaign
 
 @shared_task
-def update_comment_stats(comment, op='save'):
+def update_comment_stats(commented_obj_type, commented_obj_id, op='save'):
 
 	# get commented objects
+	obj = 1
 	obj = comment.content_object
 
 	value = 0

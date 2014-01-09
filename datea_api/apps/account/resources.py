@@ -37,6 +37,8 @@ from pprint import pprint as pp
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from tastypie.exceptions import Unauthorized
+import datetime
+from django.utils.timezone import utc
 
 
 
@@ -381,6 +383,7 @@ class UserResource(ModelResource):
                             pass
                     
                         # create registration profile
+                        bundle.obj.date_joined = bundle.data['date_joined'] = datetime.datetime.utcnow().replace(tzinfo=utc)
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
 
                         site_data = {}
@@ -389,6 +392,7 @@ class UserResource(ModelResource):
                         if 'error_redirect_url' in bundle.data:
                             site_data['error_redirect_url'] = bundle.data['error_redirect_url']
 
+                        site.activation_mode = 'change_email'
                         site = build_activation_site_info(bundle.request, site_data)
                         if 'success_redirect_url' in bundle.data:
                             del bundle.data['success_redirect_url']

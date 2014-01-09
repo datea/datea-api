@@ -384,12 +384,12 @@ class UserResource(ModelResource):
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
 
                         site_data = {}
-                        if 'success_redirect_url' in request.GET:
-                            site_data['success_redirect_url'] = request.GET.get('success_redirect_url')
+                        if 'success_redirect_url' in bundle.data:
+                            site_data['success_redirect_url'] = bundle.data['success_redirect_url']
                         if 'error_redirect_url' in request.GET:
-                            site_data['error_redirect_url'] = request.GET.get('error_redirect_url')
+                            site_data['error_redirect_url'] = request.data['error_redirect_url']
 
-                        site = build_activation_site_info(bundle.request, bundle.data)
+                        site = build_activation_site_info(bundle.request, site_data)
                         if 'success_redirect_url' in bundle.data:
                             del bundle.data['success_redirect_url']
                         if 'error_redirect_url' in bundle.data:

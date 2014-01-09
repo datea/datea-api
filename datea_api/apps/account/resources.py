@@ -7,7 +7,7 @@ from django.conf import settings
 from api.authentication import ApiKeyPlusWebAuthentication
 from api.authorization import DateaBaseAuthorization
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 
@@ -45,6 +45,7 @@ class AccountResource(Resource):
     class Meta:
         allowed_methods = ['post']
         resource_name = 'account'
+        throttle = CacheThrottle(throttle_at=60)
 
     def prepend_urls(self):
 
@@ -384,7 +385,11 @@ class UserResource(ModelResource):
                         # create registration profile
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
 
-
+                        site_data = {}
+                        if 'success_redirect_url' in request.GET:
+                            site_data['success_redirect_url'] = request.GET.get('success_redirect_url')
+                        if 'error_redirect_url' in request.GET:
+                            site_data['error_redirect_url'] = request.GET.get('error_redirect_url')
 
                         site = build_activation_site_info(bundle.request, bundle.data)
                         if 'success_redirect_url' in bundle.data:
@@ -411,6 +416,7 @@ class UserResource(ModelResource):
         detail_allowed_methods = ['get', 'patch']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
+        throttle = CacheThrottle(throttle_at=100)
         filtering = {
             'username': ALL,
             'id': ALL,

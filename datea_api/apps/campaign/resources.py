@@ -1,7 +1,7 @@
 from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from api.base_resources import DateaBaseGeoResource
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
@@ -235,4 +235,5 @@ class CampaignResource(DateaBaseGeoResource):
             'position': ['distance', 'contained','latitude', 'longitude']
         }
         cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle()
         always_return_data = True

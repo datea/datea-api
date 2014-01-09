@@ -4,7 +4,7 @@ from .models import Image
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from b64field import Base64FileField
 
 class ImageResource(ModelResource):
@@ -38,4 +38,5 @@ class ImageResource(ModelResource):
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)
+        thottle = CacheThrottle()
         always_return_data = True

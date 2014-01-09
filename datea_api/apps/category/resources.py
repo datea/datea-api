@@ -5,7 +5,7 @@ from .models import Category
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 
 
 class CategoryResource(ModelResource):
@@ -17,3 +17,4 @@ class CategoryResource(ModelResource):
         authentication = Authentication()
         authorization = ReadOnlyAuthorization()
         cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle()

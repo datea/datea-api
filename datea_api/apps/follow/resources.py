@@ -5,7 +5,7 @@ from models import Follow
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
 
 
@@ -35,4 +35,5 @@ class FollowResource(ModelResource):
         authorization = DateaBaseAuthorization()
         limit = 50
         cache = SimpleCache(timeout=10)
+        thottle = CacheThrottle()
         always_return_data = True

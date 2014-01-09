@@ -6,7 +6,7 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -64,5 +64,6 @@ class CommentResource(ModelResource):
         limit = 50
         ordering=['created']
         cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle(throttle_at=500)
         always_return_data = True
 

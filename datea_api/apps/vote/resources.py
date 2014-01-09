@@ -4,6 +4,7 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
+from tastypie.throttle import CacheThrottle
 
 
 from .models import Vote
@@ -26,3 +27,4 @@ class VoteResource(ModelResource):
         authorization = DateaBaseAuthorization()
         always_return_data = True
         cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle()

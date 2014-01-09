@@ -3,7 +3,7 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.utils.text import Truncator
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from django.utils.html import strip_tags
 from django.conf.urls import url
 from django.http import Http404
@@ -138,6 +138,7 @@ class DateoResource(DateaBaseGeoResource):
         ordering = ['name', 'created', 'distance']
         limit = 200
         cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle(throttle_at=300)
         always_return_data = True
 
 

@@ -5,7 +5,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
 from tastypie.utils import trailing_slash
 from django.conf.urls import url
 import json
@@ -213,4 +213,5 @@ class TagResource(ModelResource):
 
         always_return_data = True
         cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle()
 

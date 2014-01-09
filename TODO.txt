@@ -1,0 +1,9 @@
+
+
+1. Throttling: implement on all resources to protect against ddos.
+
+2. Estadisticas: num dateos, etc.
+
+3. History
+
+4. Notifications

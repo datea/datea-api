@@ -34,6 +34,10 @@ urlpatterns = patterns('',
                    TemplateView.as_view(template_name='registration/activation_complete.html'),
                    name='registration_activation_complete'),
 
+      url(r'^confirm-email/complete/$',
+                   TemplateView.as_view(template_name='registration/change_email_complete.html'),
+                   name='registration_email_change_complete'),
+
       url(r'^activate/(?P<activation_key>\w+)/$',
                     CustomActivationView.as_view(),
                     name='registration_activate'),

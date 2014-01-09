@@ -108,6 +108,7 @@ def build_activation_site_info(request, post_data):
         site.domain = str(client.domain)
         site.name = str(client.name)
 
+    site.activation_mode = post_data.get('activation_mode', 'registration')
     return site
 
 

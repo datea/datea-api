@@ -400,8 +400,8 @@ class UserResource(ModelResource):
                         if 'error_redirect_url' in bundle.request.GET:
                             site_data['error_redirect_url'] = bundle.request.GET.get('error_redirect_url')
 
+                        site_data['activation_mode'] = 'change_email'
                         site = build_activation_site_info(bundle.request, site_data)
-                        site.activation_mode = 'change_email'
                          
                         new_profile.send_activation_email(site)
 

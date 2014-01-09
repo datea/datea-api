@@ -30,3 +30,9 @@ class CustomActivationView(ActivationView):
 			return HttpResponseRedirect(request.GET.get('eurl'))
 		else:
 			return super(ActivationView, self).get(request, *args, **kwargs)
+
+
+	def get_success_url(self, request, user):
+		if 'ec' in request.GET:
+			return ('registration_email_change_complete', (), {})
+		return ('registration_activation_complete', (), {})

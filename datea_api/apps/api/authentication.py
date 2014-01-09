@@ -8,11 +8,15 @@ class ApiKeyPlusWebAuthentication(ApiKeyAuthentication):
     
     def is_authenticated(self, request, **kwargs):
         # people can always get stuff
-        if request.user.is_authenticated() or request.method == 'GET':
+
+        if request.META.get('HTTP_AUTHORIZATION', '') != '':
+            return super(ApiKeyPlusWebAuthentication, self).is_authenticated(request, **kwargs)
+
+        elif request.user.is_authenticated() or request.method == 'GET':
             return True
 
-        auth = super(ApiKeyPlusWebAuthentication, self).is_authenticated(request, **kwargs)
-        return auth
+        return super(ApiKeyPlusWebAuthentication, self).is_authenticated(request, **kwargs)
+
 
     def get_identifier(self, request):
         if request.user.is_authenticated():

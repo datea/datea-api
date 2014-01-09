@@ -315,6 +315,8 @@ class UserResource(ModelResource):
         bundle.data['url'] = bundle.obj.get_absolute_url()
 
         # send also email if user is one's own
+        print 'request user', bundle.request.user
+        print 'bundle user', bundle.obj
         if bundle.request.user and bundle.request.user.id == bundle.obj.id:
             bundle.data['email'] = bundle.obj.email
 

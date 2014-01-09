@@ -97,11 +97,11 @@ class AccountResource(Resource):
         if User.objects.filter(email=email).count() > 0:
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
-                    'error': 'duplicate email'}, status=BAD_REQUEST)
+                    'error': 'Duplicate email'}, status=BAD_REQUEST)
         elif User.objects.filter(username=username).count() > 0:
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
-                    'error': 'duplicate user'}, status= BAD_REQUEST)
+                    'error': 'Duplicate username'}, status= BAD_REQUEST)
         else:
 
             site = build_activation_site_info(request, postData) 
@@ -114,7 +114,7 @@ class AccountResource(Resource):
                 u_bundle = user_rsc.build_bundle(obj=new_user, request=request)
                 u_bundle = user_rsc.full_dehydrate(u_bundle)
                 response = self.create_response(request,{'status': CREATED,
-                    'message': 'Please check your email !!', 'user': u_bundle.data}, status = CREATED)
+                    'message': 'Check your email for further instructions', 'user': u_bundle.data}, status = CREATED)
             else:
                 response = self.create_response(request,{'status': SYSTEM_ERROR,
                                 'error': 'Something is wrong >:/ '}, status=SYSTEM_ERROR)
@@ -149,7 +149,7 @@ class AccountResource(Resource):
                     'error': 'Account disabled'}, status = UNAUTHORIZED)
         else:
             response = self.create_response(request,{'status':UNAUTHORIZED, 
-                'error': 'Wrong user name and password'}, status = UNAUTHORIZED)
+                'error': 'Wrong username or password'}, status = UNAUTHORIZED)
 
         self.log_throttled_access(request)
         return response
@@ -168,8 +168,8 @@ class AccountResource(Resource):
             user = User.objects.get(email=email)
         except:
             user = None
-            response = self.create_response(request, {'status': UNAUTHORIZED,
-                        'error': 'No user with that email'}, status=UNAUTHORIZED)
+            response = self.create_response(request, {'status': BAD_REQUEST,
+                        'error': 'No user with that email'}, status=BAD_REQUEST)
 
         if user is not None and user.is_active:
             
@@ -192,12 +192,10 @@ class AccountResource(Resource):
                     site = Site.objects.get_current()
                     save_data['base_url'] = settings.PROTOCOL + '://'+ site.domain + '/account/password/reset/confirm'
 
-                print "in endpoint", save_data
-
                 resetForm.save(**save_data)
 
                 response = self.create_response(request,{'status':OK,
-                    'message': 'check your email for instructions'}, status=OK)
+                    'message': 'Check your email for further instructions'}, status=OK)
             else:
                 response = self.create_response(request, 
                         {'status': SYSTEM_ERROR,
@@ -230,10 +228,10 @@ class AccountResource(Resource):
 
         if user is not None and default_token_generator.check_token(user, token):
             user.set_password('password')
-            response = self.create_response(request, {'status': OK, 'message': 'your password was successfully reset', 
+            response = self.create_response(request, {'status': OK, 'message': 'Your password was successfully reset', 
                 'userid': uid}, status=OK)
         else:
-            response = self.create_response(request,{'status': UNAUTHORIZED, 'message': 'Invalid reset link'}, 
+            response = self.create_response(request, {'status': UNAUTHORIZED, 'message': 'Invalid reset link'}, 
                 status=UNAUTHORIZED)
 
         self.log_throttled_access(request)
@@ -349,10 +347,10 @@ class UserResource(ModelResource):
                 if 'username' in bundle.data and bundle.data['username'] != bundle.obj.username:
 
                     if bundle.data['username'].strip() == '':
-                        raise ValidationError('username cannot be empty')
+                        raise ValidationError('Username cannot be empty')
 
                     if User.objects.filter(username=bundle.data['username']).count() > 0:
-                        raise ValidationError('username already exists')
+                        raise ValidationError('Duplicate username')
 
                     bundle.obj.username = bundle.data['username']
 
@@ -366,10 +364,10 @@ class UserResource(ModelResource):
                         try:
                             validate_email(new_email)
                         except:
-                            raise ValidationError('not a valid email address')
+                            raise ValidationError('Not a valid email address')
 
                         if User.objects.filter(email=new_email).exclude(pk=bundle.obj.pk).count() > 0:
-                            raise ValidationError('email already exists')
+                            raise ValidationError('Duplicate email')
 
                         self.email_changed = True
 

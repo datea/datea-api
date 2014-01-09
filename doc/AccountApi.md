@@ -152,7 +152,7 @@ The url contains is build like this:
 	[base_url]/[uid]/[token]/
 
 
-#### Reset Password confirm
+####Reset Password confirm
 
 if your domain is whitelisted, and you sent the "base_url" parameter in the previous step, you'll need to 
 confirm the password reset. Have the user enter his/her new password twice, check if both fields against each other, and then:

@@ -1,9 +1,13 @@
 
 
-1. Throttling: implement on all resources to protect against ddos.
-
-2. Estadisticas: num dateos, etc.
+1. Estadisticas: num dateos, etc.
+	1. dateos
+	2. Campaigns
+	3. Usuarios
 
 3. History
+	
 
 4. Notifications
+
+

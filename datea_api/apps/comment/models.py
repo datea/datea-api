@@ -10,6 +10,7 @@ from django.contrib.contenttypes import generic
 from django.utils.html import strip_tags
 
 from django.conf import settings
+from tasks import update_comment_stats
 # Create your models here.
 
 
@@ -36,43 +37,17 @@ class Comment(models.Model):
     
 
     def save(self, *args, **kwargs):
-        self.update_stats()
+        self.is_new = self.pk is None
+        self.published_changed = self.__orig_published != self.published
+        #update_comment_stats.delay(self)
         super(Comment, self).save(*args, **kwargs)
         
     
     def delete(self, using=None):
-        self.delete_stats()
+        self.is_new = self.pk is None
+        self.published_changed = self.__orig_published != self.published
+        #update_comment_stats.delay(self, 'delete')
         super(Comment, self).delete(using=using)
-        
-    
-    def update_stats(self):
-        
-        receiver_obj = self.content_object
-
-        value = 0
-        if ((self.pk == None and self.published)
-          or (self.__orig_published == False and self.published and self.pk)): 
-            value = 1
-        elif (self.pk and self.published == False and self.__orig_published):
-            value = -1
-        
-        if value != 0:
-            self.user.comment_count += value 
-            self.user.save() 
-            
-            if hasattr(receiver_obj, 'comment_count'):
-                receiver_obj.comment_count += value
-                receiver_obj.save()
-    
-    def delete_stats(self):
-        if self.published and self.__orig_published:
-            self.user.comment_count -= 1
-            self.user.save() 
-            
-            receiver_obj = self.content_object
-            if hasattr(receiver_obj, 'comment_count'):
-                receiver_obj.comment_count -= 1
-                receiver_obj.save()
     
     def __unicode__(self):
         return self.user.username+': '+strip_tags(self.comment)[:25]

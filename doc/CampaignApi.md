@@ -53,6 +53,9 @@ options:
 * 'score': works only in combination with 'q' parameter above, means search relevance
 * 'created'
 * 'published'
+* 'dateo_count'
+* 'comment_count'
+* 'follow_count'
 * 'distance': for dateos to be ordered by distance, you also need to specify a 'center' parameter, similar to the 'Within distance to point' filter above
 
 

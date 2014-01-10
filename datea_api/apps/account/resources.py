@@ -424,7 +424,7 @@ class UserResource(ModelResource):
         detail_allowed_methods = ['get', 'patch']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        throttle = CacheThrottle(throttle_at=100)
+        #throttle = CacheThrottle(throttle_at=100)
         filtering = {
             'username': ALL,
             'id': ALL,

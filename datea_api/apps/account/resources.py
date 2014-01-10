@@ -100,7 +100,7 @@ class AccountResource(Resource):
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
-        elif User.objects.filter(username=username).count() > 0:
+        elif User.objects.filter(username__iexact=username).count() > 0:
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Duplicate username'}, status= BAD_REQUEST)

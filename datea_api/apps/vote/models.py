@@ -20,29 +20,31 @@ class Vote(models.Model):
     #object_type = models.CharField(max_length=255)
     object_id = models.PositiveIntegerField()
     
-    
     def save(self, *args, **kwargs):
         # update comment stats on voted object  
-        if self.pk == None:
-            self.update_stats(1)
         super(Vote, self).save(*args, **kwargs)
-        
-
-    def update_stats(self, value):
-        #self.user.vote_count += value
-        #self.user.save()
-        receiver_obj = self.content_object
-        if hasattr(receiver_obj, 'vote_count'):
-            receiver_obj.vote_count += value
-            receiver_obj.save()
-        
-        
-    def delete(self, using=None):
-        # update comment stats on voted object 
-        self.update_stats(-1)
-        super(Vote, self).delete(using=using)
     
     def __unicode__(self):
         return _("Vote")
+
+
+
+####
+#  UPDATE STATS
+#  better implemented with signals, if you'd like to turn this off.
+#  updating stats on objects is done using celery
+###
+from django.db.models.signals import post_init, post_save, pre_delete
+from vote.tasks import update_vote_stats 
+
+def vote_saved(sender, instance, created, **kwargs):
+    if created:
+        update_vote_stats.delay(instance.content_type.model, instance.object_id, 1)
+
+def vote_pre_delete(sender, instance, **kwargs):
+    update_dateo_stats.delay(instance.content_type.model, instance.object_id, -1)
+
+post_save.connect(vote_saved, sender=Vote)
+pre_delete.connect(vote_pre_delete, sender=Vote)
     
 

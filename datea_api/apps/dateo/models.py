@@ -47,7 +47,7 @@ class Dateo(models.Model):
     # stats
 	vote_count = models.IntegerField(default=0, blank=True, null=True)
 	comment_count = models.IntegerField(default=0,blank=True, null=True)
-	follow_count = models.IntegerField(default=0, blank=True, null=True)
+	#follow_count = models.IntegerField(default=0, blank=True, null=True)
 
 	date = models.DateTimeField(_('Date'), blank=True, null=True)
 
@@ -123,4 +123,35 @@ class Dateo(models.Model):
 		verbose_name_plural = 'Dateos'
 
 
+####
+#  UPDATE STATS
+#  better implemented with signals, if you'd like to turn this off.
+#  updating stats on objects is done using celery
+###
+from django.db.models.signals import post_init, post_save, pre_delete
+import tasks 
+
+def dateo_pre_saved(sender, instance, **kwargs):
+	instance.__orig_published = instance.published
+
+def dateo_saved(sender, instance, created, **kwargs):
+	instance.publish_changed = instance.__orig_published != instance.published
+	value = 0
+	if created and instance.published:
+		value = 1
+	elif not created and instance.publish_changed and instance.published:
+		value = 1
+	elif not created and instance.publish_changed and not instance.published:
+		value = -1
+
+	if value != 0:
+		tasks.update_dateo_stats.delay(instance.pk, value)
+
+def dateo_pre_delete(sender, instance, **kwargs):
+	if instance.published:
+		tasks.update_dateo_stats(instance, -1)
+
+post_init.connect(dateo_pre_saved, sender=Dateo)
+post_save.connect(dateo_saved, sender=Dateo)
+pre_delete.connect(dateo_pre_delete, sender=Dateo)
 		

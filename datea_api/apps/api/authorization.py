@@ -44,6 +44,9 @@ class DateaBaseAuthorization(Authorization):
     def update_detail(self, object_list, bundle):
         user = bundle.request.user
         
+        print user
+        print bundle.obj
+
         if not user or not user.is_active:
             raise Unauthorized('Not authenticated or inactive user')
             return False

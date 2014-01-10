@@ -35,32 +35,39 @@ class Follow(models.Model):
     follow_key = models.CharField(max_length=255)
     published = models.BooleanField(default=True)
     
-    def save(self, *args, **kwargs):
-        # update follow stats on voted object  
-        if self.pk == None:
-            receiver_obj = self.followed_object
-            if hasattr(receiver_obj, 'follow_count'):
-            	receiver_obj.follow_count += 1
-            	receiver_obj.save()
-
-        #if not self.object_type:
-        #    self.object_type = self.content_type.name
-
+    def save(self, *args, **kwargs): 
+        if self.follow_key is None:
+            self.follow_key = self.content_type.model+'.'+str(self.pk)
         super(Follow, self).save(*args, **kwargs)
-       
-        
-    def delete(self, using=None):
-        # update comment stats on voted object 
-        #ctype = ContentType.objects.get(model=self.object_type.lower())
-        receiver_obj = self.content_object
-        if hasattr(receiver_obj, 'follow_count'):
-            receiver_obj.follow_count -= 1
-            receiver_obj.save()
-        super(Follow, self).delete(using=using)
     
+    def __unicode__(self):
+        return self.follow_key
+
+
     class Meta:
         verbose_name = _('Follow')
         verbose_name_plural = _('Follows')
+
+
+
+
+####
+#  UPDATE STATS
+#  better implemented with signals, if you'd like to turn this off.
+#  updating stats on objects is done using celery
+###
+from django.db.models.signals import post_save, pre_delete
+from follow.tasks import update_follow_stats 
+
+def follow_saved(sender, instance, created, **kwargs):
+    if created:
+        update_follow_stats.delay(instance.content_type.model, instance.object_id, 1)
+
+def follow_pre_delete(sender, instance, **kwargs):
+    update_follow_stats.delay(instance.content_type.model, instance.object_id, -1)
+
+post_save.connect(follow_saved, sender=Follow)
+pre_delete.connect(follow_pre_delete, sender=Follow)
         
     
  

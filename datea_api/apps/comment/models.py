@@ -30,25 +30,6 @@ class Comment(models.Model):
     #object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever
     object_id = models.PositiveIntegerField(_('Object id')) # object id
     
-    # provide a way to know if published was changed
-    def __init__(self, *args, **kwargs):
-        super(Comment, self).__init__(*args, **kwargs)
-        self.__orig_published = self.published
-    
-
-    def save(self, *args, **kwargs):
-        self.is_new = self.pk is None
-        self.published_changed = self.__orig_published != self.published
-        update_comment_stats.delay(self)
-        super(Comment, self).save(*args, **kwargs)
-        
-    
-    def delete(self, using=None):
-        self.is_new = self.pk is None
-        self.published_changed = self.__orig_published != self.published
-        update_comment_stats.delay(self, 'delete')
-        super(Comment, self).delete(using=using)
-    
     def __unicode__(self):
         return self.user.username+': '+strip_tags(self.comment)[:25]
     
@@ -57,17 +38,38 @@ class Comment(models.Model):
         verbose_name_plural = _('Comments')
         
 
-# connect signal handlers
-"""
-from datea_api.apps.dateo.models import Dateo
-from django.db.models.signals import pre_delete
 
-def on_dateo_delete(sender, instance, **kwargs):
-    # delete comments
-    Comment.objects.filter(object_type__name='dateo', object_id=instance.id).delete()
+####
+#  UPDATE STATS
+#  better implemented with signals, if you'd like to turn this off.
+#  updating stats on objects is done using celery
+###
+from django.db.models.signals import post_init, post_save, pre_delete
+from comment.tasks import update_comment_stats 
 
-pre_delete.connect(on_dateo_delete, sender=Dateo)
-"""     
+def comment_pre_saved(sender, instance, **kwargs):
+    instance.__orig_published = instance.published
+
+def comment_saved(sender, instance, created, **kwargs):
+    instance.publish_changed = instance.__orig_published != instance.published
+    value = 0
+    if created and instance.published:
+        value = 1
+    elif not created and instance.publish_changed and instance.published:
+        value = 1
+    elif not created and instance.publish_changed and not instance.published:
+        value = -1
+
+    if value != 0:
+        update_comment_stats.delay(instance.content_type.model, instance.object_id, value)
+
+def comment_pre_delete(sender, instance, **kwargs):
+    if instance.published:
+        update_comment_stats(instance.content_type.model, instance.object_id, -1)
+
+post_init.connect(comment_pre_saved, sender=Comment)
+post_save.connect(comment_saved, sender=Comment)
+pre_delete.connect(comment_pre_delete, sender=Comment)    
 
     
 

@@ -70,9 +70,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 	bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background")
 
 	dateo_count = models.PositiveIntegerField(_("Dateo count"), default=0)
-	comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
-	vote_count = models.PositiveIntegerField(_('Vote count'), default=0)
-
+	#comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
+	#vote_count = models.PositiveIntegerField(_('Vote count'), default=0)
+	voted_count = models.PositiveIntegerField(_('Voted count'), default=0)
 
 	status_choices = (
             (0,_('unconfirmed')),

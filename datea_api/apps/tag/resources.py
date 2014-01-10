@@ -205,7 +205,7 @@ class TagResource(ModelResource):
         filtering={
                 'tag' : ALL
                 }
-        excludes = ['dateo_count', 'follow_count']
+        excludes = ['dateo_count']
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()

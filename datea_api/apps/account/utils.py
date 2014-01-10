@@ -41,7 +41,7 @@ def make_social_username(username):
         try:
             if index != 0:
                 final_username = username+str(index)
-            User.objects.get(username=final_username)
+            User.objects.get(username__iexact=final_username)
         except User.DoesNotExist:
             break
         index +=1

@@ -5,7 +5,12 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.utils.translation import ugettext
 
+from django.conf import settings
+
 def send_mails(users, object_type, context_data):
+
+	if not settings.SEND_NOTIFICATION_EMAILS:
+		return
 
 	subject = render_to_string("notify/{type}/email_subject.txt".format(type=object_type), context_data)
 	body = render_to_string("notify/{type}/email_body.txt".format(type=object_type), context_data)

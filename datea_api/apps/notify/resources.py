@@ -28,7 +28,17 @@ class NotificationResource(ModelResource):
         
     recipient = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
         attribute='recipient', full=False, readonly=True)
-    
+
+    class Meta:
+        queryset = Notification.objects.all()
+        resource_name = 'activity_stream'
+        allowed_methods =['get']
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
+        limit = 10
+        cache = SimpleCache(timeout=60)
+        #thottle = CacheThrottle()
+        always_return_data = True
 
 
 

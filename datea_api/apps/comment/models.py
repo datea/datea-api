@@ -10,7 +10,7 @@ from django.contrib.contenttypes import generic
 from django.utils.html import strip_tags
 
 from django.conf import settings
-from tasks import update_comment_stats
+from tasks import do_comment_async_tasks
 # Create your models here.
 
 

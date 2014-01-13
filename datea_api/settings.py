@@ -79,6 +79,7 @@ INSTALLED_APPS = (
     'follow',
     'vote',
     'campaign',
+    'notify',
     'api'
 )
 

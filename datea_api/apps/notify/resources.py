@@ -1,15 +1,15 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from models import Follow
+from models import Comment
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
+from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from tastypie.authentication import ApiKeyAuthentication
 
 
-class FollowResource(ModelResource):
+class ActivityResource(ModelResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
@@ -33,7 +33,7 @@ class FollowResource(ModelResource):
                 }
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        limit = 50
-        cache = SimpleCache(timeout=10)
+        limit = 10
+        cache = SimpleCache(timeout=60)
         thottle = CacheThrottle()
         always_return_data = True

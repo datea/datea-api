@@ -5,6 +5,6 @@ from .models import Dateo
 
 class DateoAdmin(admin.ModelAdmin):
     model = Dateo
-    readonly_fields = ('vote_count', 'comment_count', 'follow_count')
+    readonly_fields = ('vote_count', 'comment_count')
 
 admin.site.register(Dateo, DateoAdmin)

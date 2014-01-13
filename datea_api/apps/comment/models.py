@@ -50,22 +50,26 @@ from comment.tasks import update_comment_stats
 def comment_pre_saved(sender, instance, **kwargs):
     instance.__orig_published = instance.published
 
+
 def comment_saved(sender, instance, created, **kwargs):
     instance.publish_changed = instance.__orig_published != instance.published
     value = 0
+    notify = False
     if created and instance.published:
         value = 1
+        notify = True
     elif not created and instance.publish_changed and instance.published:
         value = 1
     elif not created and instance.publish_changed and not instance.published:
         value = -1
 
     if value != 0:
-        update_comment_stats.delay(instance.content_type.model, instance.object_id, value)
+        do_comment_async_tasks.delay(instance.pk, value, notify)
+
 
 def comment_pre_delete(sender, instance, **kwargs):
     if instance.published:
-        update_comment_stats(instance.content_type.model, instance.object_id, -1)
+        do_comment_async_tasks(instance.pk, -1)
 
 post_init.connect(comment_pre_saved, sender=Comment)
 post_save.connect(comment_saved, sender=Comment)

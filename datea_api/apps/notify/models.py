@@ -1,90 +1,147 @@
 from django.db import models
-from datea_api.apps.account.models import User
+from account.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from datea.datea_action.models import DateaAction
 from django.core.mail import EmailMessage
 from django.contrib.sites.models import Site
 from django.conf import settings
+from jsonfield import JSONField
+from django.db.models.signals import post_save
 
-from django.db.models.signals import post_save, pre_delete, m2m_changed
-
-from datea.datea_comment.models import DateaComment
-from datea.datea_vote.models import DateaVote
-from datea.datea_mapping.models import DateaMapping, DateaMapItem, DateaMapItemResponse
-from datea.datea_mapping.signals import map_item_response_created
+from tag.models import Tag
 
 
-class DateaNotifySettings(models.Model):
+class NotifySettings(models.Model):
     
     user = models.OneToOneField(User, related_name="notify_settings")
-    
-    new_content = models.BooleanField(_('new content in my actions'), default=True)
-    new_comment = models.BooleanField(_('new comment on my content'), default=True)
-    new_vote = models.BooleanField(_('new vote on my content'), default=True)
-    new_reply = models.BooleanField(_('new reply on my content'), default=True)
-    new_follow = models.BooleanField(_('new follower on my content'), default=True)
-     
-    notice_from_site = models.BooleanField(_('general news by the site'), default=True)
-    notice_from_action = models.BooleanField(_('news from actions I joined'), default=True)
-    
-    def get_absolute_url(self):
-        return '/#/?edit_profile=notify_settings'
+    interaction = models.BooleanField(_("Interactions regarding my content."), default=True)
+    tags_dateos = models.BooleanField(_("Dateos in tags I follow"), default=True)
+    tags_reports = models.BooleanField(_("Reports in tags I follow"), default=True)
+    conversations = models.BooleanField(_("Conversations I follow/engage"), default=True)
+    site_news = models.BooleanField(_("News by Datea"), default=True)
     
     def __unicode__(self):
         return _('notify settings for')+' '+self.user.username
     
-    
-    
 def create_notify_settings(sender, instance=None, **kwargs):
     if instance is None: return
-    notify_settings, created = DateaNotifySettings.objects.get_or_create(user=instance)
+    notify_settings, created = NotifySettings.objects.get_or_create(user=instance)
 
 post_save.connect(create_notify_settings, sender=User)
         
-     
-        
-class DateaHistory(models.Model):
 
-    user = models.ForeignKey(User, related_name="sent_notices")
-    published = models.BooleanField(default=True)
+class Notification(models.Model):
+
+    created = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(_('Type of Notifications'), max_length=30)
+    recipient = models.ForeignKey(User, verbose_name=_("User"))
+    unread = models.BooleanField(_("Unread"), default=True)
+
+    data = JSONField(verbose_name=_("Data"), blank=True, null=True)
+    activity = models.ForeignKey('ActivityLog', verbose_name=_("ActivityLog"), null=True, blank=True)
+
+    def __unicode__(self):
+        return self.type +" notification for " + self.recipient.username
+
+
+# loosely inspired in https://github.com/justquick/django-activity-stream
+class ActivityLog(models.Model):
+
+    created = models.DateTimeField(auto_now_add=True)
+    published = models.BooleanField(_('Published'), default=True)
+
+    actor = models.ForeignKey(User, verbose_name=_("Acting user (actor)"), related_name="acting_user")
+    verb = models.CharField(_('Verb'), max_length=50)
+
+    action_object = generic.GenericForeignKey('action_type', 'action_id')
+    action_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="action_types")
+    action_id = models.PositiveIntegerField(null=True, blank=True)
+
+    action_key = models.CharField(_("Action Key"), max_length=50)
+
+    target_object = generic.GenericForeignKey('target_type', 'target_id')
+    target_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="target_types")
+    target_id = models.PositiveIntegerField(null=True, blank=True)
+
+    target_key = models.CharField(_("Target Key"), max_length=50)
+
+    target_user = models.ForeignKey(User, verbose_name=_("Target user"), related_name="target_user", null=True, blank=True)
+    tags = models.ManyToManyField(Tag, verbose_name=_("Tag"), null=True, blank=True)
+
+    data = JSONField(verbose_name=_("Data"), blank=True, null=True)
+
+
+    def __unicode__(self):
+        name = self.actor.username + ' ' + self.verb
+        if self.action_type is not None:
+            name += " "+self.action_type.model+"."+str(self.action_id)
+        if self.target_type is not None:
+            name += " on "+self.target_type.model+"."+str(self.target_id)
+
+    def save(self, *args, **kwargs):
+
+        if self.action_key is not None and self.action_object is None:
+            try:
+                elems = str(self.action_key).split(".")
+                self.action_type = ContentType.objects.get(model=elems[0])
+                self.action_id = int(elems[1])
+            except:
+                pass
+        elif self.action_object is not None and self.action_key is None:
+            try:
+                self.action_key = self.action_type.model+"."+str(self.action_id)
+            except:
+                pass
+
+        if self.target_key is not None and self.target_object is None:
+            try:
+                elems = str(self.target_key).split(".")
+                self.target_type = ContentType.objects.get(model=elems[0])
+                self.target_id = int(elems[1])
+            except:
+                pass
+        elif self.target_object is not None and self.target_key is None:
+            try:
+                self.target_key = self.target_type.model+"."+str(self.target_id)
+            except:
+                pass
+
+        super(Activity, self).save(*args, **kwargs)
+
+
+
+'''        
+class History(models.Model):
+
+    follow_key = models.CharField(max_length=50) # key to identify who should see this
+    object_key = models.CharField(max_length=50) # key to identify the sending object rapidly
+
+    acting_user = models.ForeignKey(User, null=True, blank=True)
+    affected_user = models.ForeignKey(User, null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     
-    #title = models.TextField(_('Title'), blank=True, null=True)
-    extract = models.TextField(_('Extract'), blank=True, null=True)
-    
-    sender_type = models.CharField(max_length=50)
-    receiver_type = models.CharField(max_length=50)
-    
-    # generic content type relation to the object which receives an action:
-    # for example: the content which receives a vote
-    # receiver_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="receiver_types")
-    # receiver_id = models.PositiveIntegerField(null=True, blank=True)
-    # receiver_obj = generic.GenericForeignKey('receiver_type', 'receiver_id')
+    receiver_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="receiver_types")
+    receiver_id = models.PositiveIntegerField(null=True, blank=True)
+    receiver_obj = generic.GenericForeignKey('receiver_type', 'receiver_id')
     
     # generic content type relation to the acting object, for example a "comment"
     acting_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="acting_types")
     acting_id = models.PositiveIntegerField(null=True, blank=True)
     acting_obj = generic.GenericForeignKey('acting_type', 'acting_id')
+
+    title_verb = model.CharField(_('verb'), max_length=255, null=True, blank=True)
+
     
-    action = models.ForeignKey(DateaAction, blank=True, null=True, related_name="notices")
-    
-    # follow_key
-    follow_key = models.CharField(max_length=255) # can be an action or a content instance
-    history_key =  models.CharField(max_length=255) # a content object
-    
-    
-    def save(self, *args, **kwargs):
-        
+    def save(self, *args, **kwargs):  
         self.check_published(save=False)
         super(DateaHistory, self).save(*args, **kwargs)
         
     def delete(self, using=None):
-        self.receiver_items.delete()
         super(DateaHistory, self).delete(using=using)
         
     def generate_extract(self, object_type, object_instance):
@@ -238,3 +295,4 @@ follow.connect()
 mapping.connect()
 vote.connect()
 action.connect()
+'''

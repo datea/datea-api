@@ -11,7 +11,7 @@ from follow.resources import FollowResource
 from image.resources import ImageResource
 from tag.resources import TagResource
 from vote.resources import VoteResource
-from notify.resources import NotifySettingsResource, NotificationResource, ActivyLogResource
+from notify.resources import NotifySettingsResource, NotificationResource, ActivityLogResource
 
 v2_api = Api(api_name='v2')
 v2_api.register(AccountResource())

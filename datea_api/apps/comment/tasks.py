@@ -16,9 +16,9 @@ def do_comment_async_tasks(comment_id, stat_value, notify=False):
 
 	comment = models.Comment.objects.get(pk=comment_id)
 	update_comment_stats(comment, stat_value)
-	if notify:
-		actlog = create_activity_log(comment)
-		create_notifications(actlog)
+	#if notify:
+		#actlog = create_activity_log(comment)
+		#create_notifications(actlog)
 
 
 def update_comment_stats(comment, value):
@@ -87,7 +87,9 @@ def create_notifications(actlog):
 	# TODO: url!!
 	notify_data = {
 		"actor": actlog.actor.username,
+		"actor_id": actlog.actor.pk,
 		"target_user": actlog.target_user.username,
+		"target_user_id": actlog.target_user.pk,
 		"target_object_name": ugettext(actlog.target_object._meta.model_name),
 		"comment": actlog.action_object.comment,
 		"url": "http://datea.pe/dateos/"+str(actlog.target_object.pk)+"/comments/"+str(actlog.action_object.pk),

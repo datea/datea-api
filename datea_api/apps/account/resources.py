@@ -10,6 +10,7 @@ from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+import re
 
 #from campaign.models import Campaign
 #from campaign.resources import CampaignResource
@@ -95,8 +96,13 @@ class AccountResource(Resource):
         username = postData['username']
         email = postData['email']
         password = postData['password']
+    
+        if re.match("^(?=.*\d)(?=.*[a-z])(?!.*\s).{6,32}$", password) is None:
+             response = self.create_response(request,{
+                    'status': BAD_REQUEST,
+                    'error': 'Password too weak'}, status=BAD_REQUEST)
         
-        if User.objects.filter(email=email).count() > 0:
+        elif User.objects.filter(email=email).count() > 0:
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
@@ -220,6 +226,11 @@ class AccountResource(Resource):
         uidb64 = postData['uid']
         token = postData['token']
         password = postData['password']
+
+        if re.match("^(?=.*\d)(?=.*[a-z])(?!.*\s).{6,32}$", password) is None:
+             response = self.create_response(request,{
+                    'status': BAD_REQUEST,
+                    'error': 'Password too weak'}, status=BAD_REQUEST)
 
         try:
             uid = urlsafe_base64_decode(uidb64)

@@ -213,5 +213,5 @@ class TagResource(ModelResource):
 
         always_return_data = True
         cache = SimpleCache(timeout=10)
-        throttle = CacheThrottle()
+        #throttle = CacheThrottle()
 

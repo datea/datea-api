@@ -11,6 +11,7 @@ from follow.resources import FollowResource
 from image.resources import ImageResource
 from tag.resources import TagResource
 from vote.resources import VoteResource
+from notify.resources import NotifySettingsResource, NotificationResource, ActivyLogResource
 
 v2_api = Api(api_name='v2')
 v2_api.register(AccountResource())
@@ -23,6 +24,9 @@ v2_api.register(FollowResource())
 v2_api.register(ImageResource())
 v2_api.register(TagResource())
 v2_api.register(VoteResource())
+v2_api.register(NotifySettingsResource())
+v2_api.register(NotificationResource())
+v2_api.register(ActivyLogResource())
 
 urlpatterns = patterns('',
     (r'^api/', include(v2_api.urls)),

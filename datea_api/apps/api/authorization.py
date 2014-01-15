@@ -82,7 +82,16 @@ class DateaBaseAuthorization(Authorization):
 class OwnerOnlyAuthorization(Authorization):
 
     def read_list(self, object_list, bundle):
-        raise Unauthorized('No list read. Only detail allowed')
+        allowed = []
+        # Since they may not all be saved, iterate over them.
+        for obj in object_list:
+            if hasattr(obj, 'user') and obj.user == bundle.request.user:
+                allowed.append(obj)
+            elif obj._meta.model_name == 'user' and obj == bundle.request.user:
+                allowed.append(obj)
+
+        return allowed
+        
 
     def read_detail(self, object_list, bundle):
         if request.user.is_active and request.user.status != 2 and bundle.obj.user == bundle.request.user:

@@ -1,0 +1,1 @@
+{% spaceless %}{% load i18n %}{% blocktrans with actor as actor and target_user as target_user and target_object_name as object_name %}{{actor}} commented {{ target_user }}'s {{ object_name }}{% endblockrans %}{% endspaceless %}

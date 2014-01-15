@@ -145,11 +145,11 @@ def dateo_saved(sender, instance, created, **kwargs):
 		value = -1
 
 	if value != 0:
-		tasks.update_dateo_stats.delay(instance.pk, value)
+		tasks.do_dateo_async_tasks.delay(instance.pk, value)
 
 def dateo_pre_delete(sender, instance, **kwargs):
 	if instance.published:
-		tasks.update_dateo_stats(instance, -1)
+		tasks.do_dateo_async_tasks(instance, -1)
 
 post_init.connect(dateo_pre_saved, sender=Dateo)
 post_save.connect(dateo_saved, sender=Dateo)

@@ -26,12 +26,23 @@
 		-> nuevo apoyo
 
 
-4. History
-	(all of the above, excepto novedades)
+	que informaciones da la notificacion:
 
-	- tags i follow
-	- interacciones
-	- comentarios
+		-> usuario actor:
+			username, imagen, userid
+		-> usuario receptor ( si no es uno mismo):
+			idem
+		-> objeto actor:
+			completo?
+		-> objeto target:
+			completo?
+
+	
+
+
+4. History
+
+	ver que informaciones aporta el endpoint
 
 
 

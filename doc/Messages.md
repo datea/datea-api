@@ -6,6 +6,7 @@
 
 * "Duplicate email"
 * "Duplicate username"
+* "Password too weak"
 * "No user with that email"
 * "oauth_token and oauth_token_secret not provided" (twitter)
 * "access_token not provided" (facebook and other oauth2 clients)

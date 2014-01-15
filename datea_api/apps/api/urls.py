@@ -26,7 +26,7 @@ v2_api.register(TagResource())
 v2_api.register(VoteResource())
 v2_api.register(NotifySettingsResource())
 v2_api.register(NotificationResource())
-v2_api.register(ActivyLogResource())
+v2_api.register(ActivityLogResource())
 
 urlpatterns = patterns('',
     (r'^api/', include(v2_api.urls)),

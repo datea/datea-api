@@ -49,12 +49,11 @@ class CustomPasswordResetForm(PasswordResetForm):
         user.
         """
 
-        print "in form", base_url
-
         from django.core.mail import send_mail
         email = self.cleaned_data["email"]
         active_users = User.objects.filter(
             email__iexact=email, is_active=True)
+        
         for user in active_users:
             # Make sure that no email is sent to a user that actually has
             # a password marked as unusable

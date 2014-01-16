@@ -164,6 +164,24 @@ class ClientDomain(models.Model):
 	domain = models.CharField(_('domain name'), max_length=100)
 	name = models.CharField(_('site name'), max_length=255)
 
+	register_success_url = models.URLField(_('Register success redirect URL'), max_length=200, blank=True, null=True)
+	register_error_url = models.URLField(_('Register error redirect URL'), max_length=200, blank=True, null=True)
+
+	change_email_success_url = models.URLField(_('Change email success redirect URL'), max_length=200, blank=True, null=True)
+	change_email_error_url = models.URLField(_('Change email error redirect URL'), max_length=200, blank=True, null=True)
+
+	pwreset_base_url = models.URLField(_('Password reset base URL'), max_length=200, blank=True, null=True)
+
+	comment_url = models.CharField(_('Comment url template'), max_length=255, 
+					help_text=_("Available vars: {user_id} of commented object's owner, \
+						{username} of commented object' owner, {obj_id} of commented \
+						object, {comment_id} of comment"), blank=True, null=True)
+
+	dateo_url = models.CharField(_('Dateo url template'), max_length=255, 
+					help_text=_("Available vars: {user_id} of dateo owner, \
+						{username} of dateo owner, {obj_id} dateo"), 
+					blank=True, null=True)
+
 	class Meta:
 		verbose_name = _('Whitelisted client domain')
 		verbose_name_plural = _('Whitelisted client domains')

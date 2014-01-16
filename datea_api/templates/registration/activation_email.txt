@@ -15,8 +15,11 @@ please contact us at contacto@datea.pe.
 To activate your account with this new email address, please click the following link within the next 
 {{ days }} days:
 {% endblocktrans %}{% endif %}
-
-http://{{ site.api_domain }}/account/activate/{{ activation_key }}/?n=1{% if site.success_redirect_url %}&surl={{ site.success_redirect_url|urlencode }}{% endif %}{% if site.error_redirect_url %}&eurl={{ site.error_redirect_url|urlencode }}{% endif %}{% if site.activation_mode == "change_email" %}&ec=1{% endif %}
+{% if site.activation_mode == "registration" %}
+{{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.register_success_url %}&surl={{ site.register_success_url|urlencode }}{% endif %}{% if site.register_error_url %}&eurl={{ site.register_error_url|urlencode }}{% endif %}
+{% else %}
+{{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.change_email_success_url %}&surl={{ site.change_email_success_url|urlencode }}{% endif %}{% if site.change_email_error_url %}&eurl={{ site.change_email_error_url|urlencode }}{% endif %}&ec=1
+{% endif %}
 
 {% blocktrans with site.name as sitename %}
 Sincerely,

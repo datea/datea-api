@@ -79,35 +79,35 @@ def url_whitelisted(url):
     else:
         return False
 
-def build_activation_site_info(request, post_data):
+def get_client_data(request):
 
-    if Site._meta.installed:
-        site = Site.objects.get(pk=settings.SITE_ID)
-    else:
-        site = RequestSite(request)
+    site = Site.objects.get_current()
 
-    site.success_redirect_url = site.error_redirect_url = None
-    site.api_domain = str(site.domain)
+    # default data
+    data = {
+        'domain': site.domain,
+        'api_domain': site.domain,
+        'api_base_url': settings.PROTOCOL + '://'+ site.domain,
+        'register_success_url': None,
+        'register_error_url': None,
+        'email_change_success_url': None,
+        'email_change_error_url': None,
+        'pwreset_base_url': settings.PROTOCOL + '://'+ site.domain + '/account/password/reset/confirm',
+        'comment_url': 'http://datea.pe/dateos/{object_id}#comment{comment_id}',
+        'dateo_url': 'http://datea.pe/dateos/{object_id}',
+    }
 
-    # use *_redirect_url, domain and site name only from white listed domains
-    include_whitelisted_domain = False
-
-    if 'success_redirect_url' in post_data and url_whitelisted(post_data['success_redirect_url']):
-        domain = get_domain_from_url(post_data['success_redirect_url'])
-        include_whitelisted_domain = True
-        site.success_redirect_url = post_data['success_redirect_url']
+    # GET DOMAIN FROM ORIGIN
+    domain = get_domain_from_url(request.META.get('HTTP_ORIGIN', 'http://localhost'))
     
-    if 'error_redirect_url' in post_data and url_whitelisted(post_data['error_redirect_url']):
-        domain = get_domain_from_url(post_data['error_redirect_url'])
-        include_whitelisted_domain = True
-        site.error_redirect_url = post_data['error_redirect_url']
+    try:
+        client = ClientDomain.objects.get(domain=dom)
+        for field in data.keys():
+            if hasattr(client, field) and getattr(client, field):
+                data[field] = getattr(client, field)        
+    except:
+        pass
 
-    if include_whitelisted_domain:
-        client = ClientDomain.objects.get(domain=domain)
-        site.domain = str(client.domain)
-        site.name = str(client.name)
-
-    site.activation_mode = post_data.get('activation_mode', 'registration')
-    return site
+    return data
 
 

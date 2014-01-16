@@ -22,7 +22,7 @@ import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from utils import getOrCreateKey, getUserByKey, make_social_username, get_domain_from_url, url_whitelisted, build_activation_site_info
+from utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data
 from status_codes import *
 
 from registration.models import RegistrationProfile
@@ -106,16 +106,17 @@ class AccountResource(Resource):
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
+
         elif User.objects.filter(username__iexact=username).count() > 0:
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Duplicate username'}, status= BAD_REQUEST)
         else:
 
-            site = build_activation_site_info(request, postData) 
-            print vars(site)
+            client_data = get_client_data(request)
+            client_data['activation_mode'] = 'registration'
             new_user = RegistrationProfile.objects.create_inactive_user(username, email,
-                                                                    password, site)   
+                                                                    password, client_data)   
             if new_user:
                 user_rsc = UserResource()
                 request.user = new_user
@@ -188,18 +189,13 @@ class AccountResource(Resource):
         
             if resetForm.is_valid():
 
-                https = True if 'use_https' in postData and postData['use_https'] else False
-                save_data = {'use_https': https, 'request': request}
-                if 'base_url' in postData and url_whitelisted(postData['url']):
-                    domain = get_domain_from_url(postData['url'])
-                    client = ClientDomain.obejcts.get(domain=domain)
-                    save_data['base_url'] = postData['base_url']
-                    save_data['sitename_override'] = client.name
-                    save_data['domain_override'] = client.domain
-                else:
-                    site = Site.objects.get_current()
-                    save_data['base_url'] = settings.PROTOCOL + '://'+ site.domain + '/account/password/reset/confirm'
-
+                client_data = get_client_data(request)
+                save_data = {
+                    'request': request,
+                    'base_url': client_data['base_url'],
+                    'sitename_override': client_data['name'],
+                    'domain_override': client_data['domain']
+                } 
                 resetForm.save(**save_data)
 
                 response = self.create_response(request,{'status':OK,
@@ -325,14 +321,13 @@ class UserResource(ModelResource):
         bundle.data['image_large'] = bundle.obj.get_large_image()
         bundle.data['url'] = bundle.obj.get_absolute_url()
 
-        # send also email if user is one's own
-        print 'request user', bundle.request.user
-        print 'bundle user', bundle.obj
+        # send all user data user is one's own and is authenticated
         if bundle.request.user and bundle.request.user.id == bundle.obj.id:
             bundle.data['email'] = bundle.obj.email
 
         return bundle
     
+
     def hydrate(self, bundle):
             
         if bundle.request.method == 'PATCH':
@@ -398,25 +393,9 @@ class UserResource(ModelResource):
                         # create registration profile
                         bundle.obj.date_joined = bundle.data['date_joined'] = datetime.datetime.utcnow().replace(tzinfo=utc)
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
-
-                        site_data = {}
-
-                        if 'success_redirect_url' in bundle.data:
-                            site_data['success_redirect_url'] = bundle.data['success_redirect_url']
-                            del bundle.data['success_redirect_url']
-                        if 'error_redirect_url' in bundle.data:
-                            site_data['error_redirect_url'] = bundle.data['error_redirect_url']
-                            del bundle.data['error_redirect_url']
-
-                        if 'success_redirect_url' in bundle.request.GET:
-                            site_data['success_redirect_url'] = bundle.request.GET.get('success_redirect_url')
-                        if 'error_redirect_url' in bundle.request.GET:
-                            site_data['error_redirect_url'] = bundle.request.GET.get('error_redirect_url')
-
-                        site_data['activation_mode'] = 'change_email'
-                        site = build_activation_site_info(bundle.request, site_data)
-                         
-                        new_profile.send_activation_email(site)
+                        client_data = get_client_data(request)
+                        client_data['activation_mode'] = 'change_email'
+                        new_profile.send_activation_email(client_data)
 
         return bundle
         

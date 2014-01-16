@@ -9,9 +9,6 @@ class ApiKeyPlusWebAuthentication(ApiKeyAuthentication):
     def is_authenticated(self, request, **kwargs):
         # people can always get stuff
 
-        from pprint import pprint
-        pprint(request.META)
-
         if request.META.get('HTTP_AUTHORIZATION', '') != '':
             return super(ApiKeyPlusWebAuthentication, self).is_authenticated(request, **kwargs)
 

@@ -81,6 +81,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         )
 	status = models.PositiveIntegerField(_('Status'), choices=status_choices, default=0)
 
+	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+
 	objects = CustomUserManager()
 
 	USERNAME_FIELD = 'username'
@@ -179,8 +181,12 @@ class ClientDomain(models.Model):
 
 	dateo_url = models.CharField(_('Dateo url template'), max_length=255, 
 					help_text=_("Available vars: {user_id} of dateo owner, \
-						{username} of dateo owner, {obj_id} dateo"), 
+						{username} of dateo owner, {obj_id} of dateo"), 
 					blank=True, null=True)
+
+	notify_settings_url = models.CharField(_('Notify settings url template'), max_length=255, 
+					help_text=_("Available vars: {user_id} and {username}"), 
+					blank=True, null=True) 
 
 	class Meta:
 		verbose_name = _('Whitelisted client domain')

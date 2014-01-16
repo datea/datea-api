@@ -23,10 +23,12 @@ class ImageResource(ModelResource):
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
+            bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
 
         # preserve original user
         elif bundle.request.method  == 'PATCH':
             bundle.data['user'] = bundle.obj.user
+            bundle.data['client_domain'] = bundle.obj.client_domain
 
         return bundle
         
@@ -38,5 +40,6 @@ class ImageResource(ModelResource):
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)
-        thottle = CacheThrottle()
+        thottle = CacheThrottle(throttle_at=300)
+        excludes = ['client_domain']
         always_return_data = True

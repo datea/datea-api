@@ -1,26 +1,37 @@
 from __future__ import absolute_import
 from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
-from campaign.models import Campaign
 from notify.models import ActivityLog
-
-from follow.models import Follow
+from django.utils.translation import ugettext
+from types import IntType
 import bleach
 from django.utils.text import Truncator
-import comment.models
+
+from follow.models import Follow
+from .models import Vote
 from notify.utils import send_mails
-from django.utils.translation import ugettext
+import account.utils
+from campaign.models import Campaign
+
+
 
 @shared_task
+def do_vote_async_tasks(vote, stat_value, notify=False):
+
+	if type(vote) == IntType:
+		vote = Vote.objects.get(pk=vote)
+
+	update_vote_stats(vote, stat_value)
+
+	if notify and stat_value > 0:
+		actlog = create_activity_log(vote)
+		create_notifications(actlog)
 
 
 
+def update_vote_stats(vote, value):
 
-def update_vote_stats(voted_obj_type, voted_obj_id, value):
-
-	# get commented objects
-	obj_type = ContentType.objects.get(model=voted_obj_type)
-	obj = obj_type.get_object_for_this_type(pk=voted_obj_id)
+	obj = vote.content_object
 
 	if hasattr(obj, 'vote_count'):
 		obj.vote_count += value
@@ -31,6 +42,7 @@ def update_vote_stats(voted_obj_type, voted_obj_id, value):
 		obj.user.save()
 
 
+
 def create_activity_log(vote):
 
 	actlog = ActivityLog()
@@ -39,7 +51,7 @@ def create_activity_log(vote):
 	actlog.action_object = vote
 	actlog.target_object = vote.content_object
 
-	if hasattr(vote.content_object.content):
+	if hasattr(vote.content_object, 'content'):
 		tr = Truncator(bleach.clean(vote.content_object.content, strip=True))
 		extract = tr.chars(140) 
 		actlog.data = {'extract': extract}
@@ -64,7 +76,7 @@ def create_notifications(actlog):
 	if actlog.target_user.notify_settings.interaction:
 		email_users.append(actlog.target_user)
 
-	# 2. Seguidores de hilo
+	# 2. Seguidores de hilo 
 	#follows = Follow.objects.filter(follow_key=actlog.target_key)
 	#for f in follows:
 	#	notify_users.append(f.user)
@@ -79,20 +91,7 @@ def create_notifications(actlog):
 				if c.user.notify_settings.interaction:
 					email_users.append(c.user)
 
-	# TODO: url!!
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"actor_img": actlog.actor.get_thumbnail(),
-		"target_user": actlog.target_user.username,
-		"target_user_id": actlog.target_user.pk,
-		"target_object_name": ugettext(actlog.target_object._meta.model_name),
-		"extract": actlog.data.get('extract', ''),
-		"url": "http://datea.pe/dateos/"+str(actlog.target_object.pk),
-		"created": actlog.created.isoformat(),
-	}
-	if hasattr(actlog.target_object, 'tags'):
-		notify_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
+	notify_data = {"extract": actlog.data.get('extract', '')}
 
 	for user in notify_users:
 		n = Notification(type="vote", recipient=user, activity=actlog)
@@ -100,7 +99,27 @@ def create_notifications(actlog):
 		n.save()
 
 	if len(email_users) > 0:
-		notify_data['created'] = actlog.created
-		send_mails(email_users, "vote", notify_data)
+		
+		# email using target_object client_domain (for now)
+		client_data = get_client_data(actlog.target_object.client_domain)
+		dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
+					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
+
+		email_data = {
+			"actor": actlog.actor.username,
+			"target_user": actlog.target_user.username,
+			"target_object_name": ugettext(actlog.target_object._meta.model_name),
+			"extract": actlog.data.get('extract', ''),
+			"url": dateo_url,
+			"created": actlog.created,
+			"site": client_data
+		}
+
+		if hasattr(actlog.target_object, 'tags'):
+			email_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
+		if hasattr(actlog.target_object, 'content'):
+			email_data["content"] = actlog.target_object.content
+		
+		send_mails(email_users, "vote", email_data)
 
 

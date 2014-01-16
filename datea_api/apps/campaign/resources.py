@@ -12,6 +12,7 @@ from models import Campaign
 from account.models import User
 from tag.models import Tag
 from tag.resources import TagResource
+from account.utils import get_domain_from_url
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -49,11 +50,13 @@ class CampaignResource(DateaBaseGeoResource):
         if bundle.request.method == 'POST':
             # use request user
             bundle.obj.user = bundle.request.user
+            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
             
         elif bundle.request.method in ('PUT', 'PATCH'):
             #preserve owner
-            orig_object = Campaign.objects.get(pk=bundle.data['id'])
-            bundle.obj.user = orig_object.user
+            #orig_object = Campaign.objects.get(pk=bundle.data['id'])
+            bundle.data['user'] = bundle.obj.user
+            bundle.data['client_domain'] = bundle.obj.client_domain 
     
         return bundle
 
@@ -68,7 +71,7 @@ class CampaignResource(DateaBaseGeoResource):
                 if 'id' in tagdata:
                     tags.append(tagdata['id'])
                 else:
-                    found = Tag.objects.filter(tag=tagdata['tag'])
+                    found = Tag.objects.filter(tag__iexact=tagdata['tag'])
                     if found.count() > 0:
                         tags.append(found[0].pk)
                     else:

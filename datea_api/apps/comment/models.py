@@ -10,7 +10,6 @@ from django.contrib.contenttypes import generic
 from django.utils.html import strip_tags
 
 from django.conf import settings
-from tasks import do_comment_async_tasks
 # Create your models here.
 
 
@@ -29,6 +28,8 @@ class Comment(models.Model):
     # do we need content type relation? perhaps this is more simple and fast...
     #object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever
     object_id = models.PositiveIntegerField(_('Object id')) # object id
+
+    client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
     
     def __unicode__(self):
         return self.user.username+': '+strip_tags(self.comment)[:25]
@@ -38,15 +39,15 @@ class Comment(models.Model):
         verbose_name_plural = _('Comments')
         
 
-
 ####
-#  UPDATE STATS
+#  ASYNC ACTIONS WITH CELERY
 #  better implemented with signals, if you'd like to turn this off.
-#  updating stats on objects is done using celery
+#  updating stats, creating activity stream and sending notifications 
+#  on objects is done using celery
 ###
 from django.db.models.signals import post_init, post_save, pre_delete
-from comment.tasks import update_comment_stats 
-
+import comment.tasks
+ 
 def comment_pre_saved(sender, instance, **kwargs):
     instance.__orig_published = instance.published
 
@@ -64,12 +65,12 @@ def comment_saved(sender, instance, created, **kwargs):
         value = -1
 
     if value != 0:
-        do_comment_async_tasks.delay(instance.pk, value, notify)
+        comment.tasks.do_comment_async_tasks.delay(instance.pk, value, notify)
 
 
 def comment_pre_delete(sender, instance, **kwargs):
     if instance.published:
-        do_comment_async_tasks(instance.pk, -1)
+        comment.tasks.do_comment_async_tasks(instance.pk, -1, False)
 
 post_init.connect(comment_pre_saved, sender=Comment)
 post_save.connect(comment_saved, sender=Comment)

@@ -8,18 +8,22 @@ from notify.models import ActivityLog
 from follow.models import Follow
 import bleach
 from django.utils.text import Truncator
-import comment.models
 from notify.utils import send_mails
 from django.utils.translation import ugettext
+import account.utils
 
 
 @shared_task
-def do_dateo_async_tasks(dateo, stat_value):
+def do_dateo_async_tasks(dateo, stat_value, notify=False):
 
 	if type(dateo) == IntType:
 		dateo = Dateo.objects.get(pk=dateo)
 
 	update_dateo_stats(dateo, value)
+
+	if notify and stat_value > 0:
+		actlog = create_dateo_activity_log(dateo)
+		create_dateo_notifications(actlog)
 
 
 def update_dateo_stats(dateo, value):
@@ -37,7 +41,7 @@ def update_dateo_stats(dateo, value):
 				c.save()
 
 
-def create_activity_log(dateo):
+def create_dateo_activity_log(dateo):
 
 	actlog = ActivityLog()
 	actlog.actor = comment.user
@@ -55,7 +59,7 @@ def create_activity_log(dateo):
 
 
 
-def create_notifications(actlog):
+def create_dateo_notifications(actlog):
 
 	email_users = []
 
@@ -73,23 +77,34 @@ def create_notifications(actlog):
 			for c in tag.campaigns.all():
 				notify_users.append(c.user)
 				if c.user.notify_settings.interaction:
-					email_users.append(c.user)
-
-	# TODO: url!!
-	email_data = {
-		"actor": actlog.actor.username,
-		"content": actlog.action_object.content,
-		"dateo_id": actlog.action_object.pk,
-		"url": "http://datea.pe/dateos/"+str(actlog.target_object.pk),
-		"created": actlog.created.isoformat(),
-	} 
+					email_users.append(c.user) 
 
 	for user in notify_users:
 		n = Notification(type="dateo", recipient=user, activity=actlog)
 		#n.data = notify_data
 		n.save()
 
-	notify_data['created'] = actlog.created
 	if len(email_users) > 0:
-		send_mails(email_users, "dateo", notify_data)
+
+		# email using target_object client_domain (for now)
+		client_data = account.utils.get_client_data(actlog.action_object.client_domain)
+		dateo_url = client_data['dateo_url'].format(username=actlog.action_object.user.username,
+					user_id=actlog.action_object.user.pk, obj_id=actlog.action_object.pk) 
+
+		email_data = {
+			"actor": actlog.actor.username,
+			"extract": actlog.data.get('extract', ''),
+			"content": actlog.action_object.content,
+			"url": dateo_url,
+			"created": actlog.created,
+			"site": client_data
+		}
+
+		if hasattr(actlog.target_object, 'tags'):
+			email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
+
+		send_mails(email_users, "dateo", email_data)
+
+
+
 

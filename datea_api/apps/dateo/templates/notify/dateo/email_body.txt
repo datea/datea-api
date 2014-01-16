@@ -1,22 +1,19 @@
 {% load i18n %}
 {% blocktrans with user as user %}Hi {{ user }}{% endblocktrans %},
 
-{% if target_user == user %}
-{% blocktrans with actor as actor and target_object_name as object_name %}
-{{ actor }} commented your {{ object_name}} on{% endblocktrans %} {{ created|date:"d.m.Y" }}:
+{% blocktrans with actor as actor %}
+{{ actor }} created a new dateo {{ object_name}}{% endblocktrans %}{% if tags %} {% trans "on" %}{% for tag in tags %} #{{tag}}{% endfor %}{% endif %}:
 
-{% else %}{% blocktrans with actor as actor and target_user as target_user and target_object_name as object_name %}
-{{ actor }} commented {{ target_user }}'s {{ object_name }} on{% endblocktrans %} {{ created|date:"d.m.Y" }}:{% endif %}
+{{ extract }}
 
-{{ comment }}
+{% blocktrans with url as url %}You view the dateo on: 
 
-{% blocktrans with url as url %}You can access the comment at: 
 {{ url }}{% endblocktrans %}
 
-{% blocktrans %}
+{% blocktrans with site.name as sitename %}
 best,
 
-Team Datea
+Team {{ sitename }}
 {% endblocktrans %}
 
 ----------------------

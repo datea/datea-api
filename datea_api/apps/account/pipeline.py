@@ -2,7 +2,7 @@ from urllib2 import urlopen, HTTPError
 from image.models import Image
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
-from utils import make_social_username
+from utils import make_social_username, get_domain_from_url
 
 
 def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
@@ -88,6 +88,11 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
     # if we have an email address, confirm the user
     if 'email' in fields and fields['email']:
         fields['status'] = 1
+
+    try:
+        fields['client_domain'] = get_domain_from_url(strategy.request.META.get('HTTP_ORIGIN', ''))
+    except:
+        pass
 
     user = strategy.create_user(**fields)
     user.is_new = True

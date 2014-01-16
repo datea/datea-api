@@ -54,6 +54,12 @@ def get_domain_from_url(url):
     d = urlparse(url).netloc
     if d.split('.')[0] == 'www':
         d = d.replace('wwww.','')
+
+    if d == '':
+        if url == 'localhost':
+            return url
+        elif url == '127.0.0.1':
+            return url
     return d
 
 
@@ -79,7 +85,7 @@ def url_whitelisted(url):
     else:
         return False
 
-def get_client_data(request):
+def get_client_data(domain):
 
     site = Site.objects.get_current()
 
@@ -88,6 +94,7 @@ def get_client_data(request):
         'domain': site.domain,
         'api_domain': site.domain,
         'api_base_url': settings.PROTOCOL + '://'+ site.domain,
+        'name': site.name,
         'register_success_url': None,
         'register_error_url': None,
         'email_change_success_url': None,
@@ -96,12 +103,9 @@ def get_client_data(request):
         'comment_url': 'http://datea.pe/dateos/{object_id}#comment{comment_id}',
         'dateo_url': 'http://datea.pe/dateos/{object_id}',
     }
-
-    # GET DOMAIN FROM ORIGIN
-    domain = get_domain_from_url(request.META.get('HTTP_ORIGIN', 'http://localhost'))
     
     try:
-        client = ClientDomain.objects.get(domain=dom)
+        client = ClientDomain.objects.get(domain=domain)
         for field in data.keys():
             if hasattr(client, field) and getattr(client, field):
                 data[field] = getattr(client, field)        

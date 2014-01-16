@@ -5,6 +5,7 @@ from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
+from account.utils import get_domain_from_url
 
 
 from .models import Vote
@@ -17,12 +18,14 @@ class VoteResource(ModelResource):
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
+            bundle.obj.client_domain = bundle.data['clint_domain'] = get_domain_from_url(bundle.request.META.get("HTTP_ORIGIN", ""))
         return bundle
     
     class Meta:
         queryset = Vote.objects.all()
         resource_name = 'vote'
         allowed_methods = ['get','post','delete']
+        excludes = ['client_domain']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         always_return_data = True

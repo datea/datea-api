@@ -13,6 +13,7 @@ from django.http import HttpResponse, Http404
 
 
 from models import Tag
+from account.utils import get_domain_from_url
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -28,6 +29,16 @@ import unicodedata
 
 class TagResource(ModelResource):
 
+
+    def hydrate(self, bundle):
+
+        if bundle.request.method in ["PATCH", "PUT"]:
+            bundle.data['client_domain'] = bundle.obj.client_domain
+        elif bundle.request.method == "POST":
+            bundle.obj.client_domain = bundle.data['client_domain'] = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
+        return bundle 
+
+
     def prepend_urls(self):
 
         return [ 
@@ -41,7 +52,7 @@ class TagResource(ModelResource):
             self.wrap_view('get_trending'), name="api_tag_trending")
 
         ]
-    
+
 
     def autocomplete(self, request, **kwargs):
 
@@ -205,7 +216,7 @@ class TagResource(ModelResource):
         filtering={
                 'tag' : ALL
                 }
-        excludes = ['dateo_count']
+        excludes = ['dateo_count', 'client_domain']
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()

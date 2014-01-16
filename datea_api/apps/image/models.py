@@ -17,6 +17,8 @@ class Image(models.Model):
     width =  models.PositiveIntegerField(blank=True, null=True)
     height = models.PositiveIntegerField(blank=True, null=True)
 
+    client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+
     def __unicode__(self):
         return self.image.url
 

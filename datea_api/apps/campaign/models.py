@@ -68,6 +68,8 @@ class Campaign(models.Model):
 	comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
 	follow_count = models.PositiveIntegerField(_('Follower count'), default=0)
 
+	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+
 	# Object Manager from geodjango
 	objects = models.GeoManager()
 	    

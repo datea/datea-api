@@ -18,6 +18,8 @@ def send_mails(users, object_type, context_data):
 	for u in users:
 		if u.email:
 			context_data['user'] = u.username
+			notify_settings_url = context_data['site']['notify_settings_url'].format(username=u.username, user_id=u.pk)
+			context_data['notify_settings_url'] = notify_settings_url
 			email = EmailMessage(
 				mail_subject, 
 				mail_body, 

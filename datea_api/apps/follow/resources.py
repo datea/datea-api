@@ -7,6 +7,7 @@ from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
+from account.utils import get_domain_from_url
 
 
 class FollowResource(ModelResource):
@@ -16,7 +17,8 @@ class FollowResource(ModelResource):
     
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':
-            bundle.obj.user = bundle.data['user'] = bundle.request.user  
+            bundle.obj.user = bundle.data['user'] = bundle.request.user
+            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', '')) 
         return bundle
      
     class Meta:
@@ -31,6 +33,7 @@ class FollowResource(ModelResource):
                 'object_id': ['exact'],
                 'follow_key': ['exact']
                 }
+        excludes = ['client_domain']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         limit = 50

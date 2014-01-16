@@ -7,6 +7,7 @@ from django.utils.html import strip_tags
 from tag.models import Tag
 from campaign.models import Campaign
 from category.models import Category
+from account.models import ClientDomain
 from image.models import Image
 import urllib2, json
 
@@ -36,8 +37,7 @@ class Dateo(models.Model):
 	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)
 	address = models.CharField(_('Address'), max_length=255, blank=True, null=True)
     
-    # relation to mapping object: UPDATE -> refer to mapping as an action. More generic!!
-    # mapping = models.ForeignKey('DateaMapping', related_name="map_items_old")
+    # optional relationship to campaign
 	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True)
     
     # category
@@ -50,6 +50,7 @@ class Dateo(models.Model):
 	#follow_count = models.IntegerField(default=0, blank=True, null=True)
 
 	date = models.DateTimeField(_('Date'), blank=True, null=True)
+	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
 	# Administrative levels
 	country = models.CharField(_('Country'), max_length=100, blank=True, null=True)
@@ -129,7 +130,7 @@ class Dateo(models.Model):
 #  updating stats on objects is done using celery
 ###
 from django.db.models.signals import post_init, post_save, pre_delete
-import tasks 
+import dateo.tasks 
 
 def dateo_pre_saved(sender, instance, **kwargs):
 	instance.__orig_published = instance.published
@@ -137,19 +138,21 @@ def dateo_pre_saved(sender, instance, **kwargs):
 def dateo_saved(sender, instance, created, **kwargs):
 	instance.publish_changed = instance.__orig_published != instance.published
 	value = 0
+	notify = False
 	if created and instance.published:
 		value = 1
+		notify = True
 	elif not created and instance.publish_changed and instance.published:
 		value = 1
 	elif not created and instance.publish_changed and not instance.published:
 		value = -1
 
 	if value != 0:
-		tasks.do_dateo_async_tasks.delay(instance.pk, value)
+		dateo.tasks.do_dateo_async_tasks.delay(instance.pk, value, notify)
 
 def dateo_pre_delete(sender, instance, **kwargs):
 	if instance.published:
-		tasks.do_dateo_async_tasks(instance, -1)
+		dateo.tasks.do_dateo_async_tasks(instance, -1, False)
 
 post_init.connect(dateo_pre_saved, sender=Dateo)
 post_save.connect(dateo_saved, sender=Dateo)

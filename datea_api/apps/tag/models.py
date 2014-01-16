@@ -12,7 +12,9 @@ class Tag(models.Model):
 	description = models.TextField(_('Description (optional)'), max_length=500, blank=True, null=True)
 
 	follow_count = models.IntegerField(_('Follow count'), default=0, blank=True, null=True)
-	dateo_count = models.IntegerField(_('Dateo count'), default=0, blank=True, null=True) 
+	dateo_count = models.IntegerField(_('Dateo count'), default=0, blank=True, null=True)
+
+	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
 	class Meta:
 		verbose_name = _('Tag')

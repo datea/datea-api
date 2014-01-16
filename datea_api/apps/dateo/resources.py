@@ -21,6 +21,7 @@ from tag.models import Tag
 from tag.resources import TagResource
 from comment.models import Comment
 from follow.models import Follow
+from account.utils import get_domain_from_url
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -72,10 +73,11 @@ class DateoResource(DateaBaseGeoResource):
                     del bundle.data[f]
 
             bundle.data['user'] = bundle.obj.user = bundle.request.user
+            bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
                 
         elif bundle.request.method in 'PATCH':
             # don't touch some fields
-            forbidden_fields = ['created', 'modified', 'user', 'vote_count', 'follow_count', 'comment_count']
+            forbidden_fields = ['created', 'modified', 'user', 'vote_count', 'follow_count', 'comment_count', 'client_domain']
             for f in forbidden_fields:
                 if f in bundle.data:
                      bundle.data[f] = getattr(bundle.obj, f)
@@ -105,7 +107,7 @@ class DateoResource(DateaBaseGeoResource):
                 if 'id' in tagdata:
                     tags.append(tagdata['id'])
                 else:
-                    found = Tag.objects.filter(tag=tagdata['tag'])
+                    found = Tag.objects.filter(tag__iexact=tagdata['tag'])
                     if found.count() > 0:
                         tags.append(found[0].pk)
                     else:

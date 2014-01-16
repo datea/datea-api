@@ -22,7 +22,7 @@ import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data
+from utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_domain_from_url
 from status_codes import *
 
 from registration.models import RegistrationProfile
@@ -113,10 +113,20 @@ class AccountResource(Resource):
                     'error': 'Duplicate username'}, status= BAD_REQUEST)
         else:
 
-            client_data = get_client_data(request)
+            client_domain = request.META.get('HTTP_ORIGIN', '')
+            client_data = get_client_data(client_domain)
             client_data['activation_mode'] = 'registration'
-            new_user = RegistrationProfile.objects.create_inactive_user(username, email,
-                                                                    password, client_data)   
+            #new_user = RegistrationProfile.objects.create_inactive_user(username, email,
+            #                                                        password, client_data)
+
+            new_user = User.objects.create_user(username, email, password)
+            new_user.is_active = False
+            new_user.client_domain = client_domain
+            new_user.save()
+
+            registration_profile = RegistrationProfile.objects.create_profile(new_user)
+            registration_profile.send_activation_email(client_data)
+
             if new_user:
                 user_rsc = UserResource()
                 request.user = new_user
@@ -188,8 +198,8 @@ class AccountResource(Resource):
             resetForm = CustomPasswordResetForm(data)
         
             if resetForm.is_valid():
-
-                client_data = get_client_data(request)
+                client_domain = request.META.get("HTTP_ORIGIN", '')
+                client_data = get_client_data(client_domain)
                 save_data = {
                     'request': request,
                     'base_url': client_data['base_url'],
@@ -338,7 +348,7 @@ class UserResource(ModelResource):
 
             # don't change created, is_active or is_staff fields
             forbidden_fields = ['date_joined', 'is_staff', 'is_active', 
-                                'dateo_count', 'comment_count', 'vote_count', 'status']
+                                'dateo_count', 'comment_count', 'vote_count', 'status', 'client_domain']
 
             for f in forbidden_fields:
                 if f in bundle.data:
@@ -393,7 +403,8 @@ class UserResource(ModelResource):
                         # create registration profile
                         bundle.obj.date_joined = bundle.data['date_joined'] = datetime.datetime.utcnow().replace(tzinfo=utc)
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
-                        client_data = get_client_data(request)
+                        client_domain = bundle.request.META.get("HTTP_ORIGIN", '')
+                        client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
                         new_profile.send_activation_email(client_data)
 

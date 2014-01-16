@@ -1,13 +1,14 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from models import Comment
+from .models import Comment
 from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.contenttypes.models import ContentType
+from account.utils import get_domain_from_url
 
 
 class CommentResource(ModelResource):
@@ -32,8 +33,8 @@ class CommentResource(ModelResource):
         
         # preserve data
         if bundle.request.method == 'PATCH':
-            #preserve original owner
-            fields = ['user', 'published', 'content_type', 'object_id', 'created']
+            #preserve original fields
+            fields = ['user', 'published', 'content_type', 'object_id', 'created', 'client_domain']
             for f in fields:
                 if f in request.data:
                     request.data[f] = getattr(bundle.obj, f)
@@ -44,6 +45,7 @@ class CommentResource(ModelResource):
             bundle.data['user'] = bundle.request.user.id
             # convert model name into model
             bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
+            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
             del bundle.data['content_type']  
             
         return bundle

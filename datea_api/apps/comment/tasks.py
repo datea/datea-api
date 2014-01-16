@@ -1,24 +1,28 @@
 from __future__ import absolute_import
 from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
+from types import IntType
 from campaign.models import Campaign
 from notify.models import ActivityLog
 from follow.models import Follow
 import bleach
 from django.utils.text import Truncator
-import comment.models
+from .models import Comment
 from notify.utils import send_mails
 from django.utils.translation import ugettext
+import account.utils
 
 
 @shared_task
-def do_comment_async_tasks(comment_id, stat_value, notify=False):
+def do_comment_async_tasks(comment, stat_value, notify=False):
 
-	comment = models.Comment.objects.get(pk=comment_id)
+	if type(comment) == IntType:
+		comment = models.Comment.objects.get(pk=comment)
+
 	update_comment_stats(comment, stat_value)
-	#if notify:
-		#actlog = create_activity_log(comment)
-		#create_notifications(actlog)
+	if notify:
+		actlog = create_comment_activity_log(comment)
+		create_comment_notifications(actlog)
 
 
 def update_comment_stats(comment, value):
@@ -37,7 +41,7 @@ def update_comment_stats(comment, value):
 				c.save()
 
 
-def create_activity_log(comment):
+def create_comment_activity_log(comment):
 
 	actlog = ActivityLog()
 	actlog.actor = comment.user
@@ -60,7 +64,7 @@ def create_activity_log(comment):
 	return actlog
 
 
-def create_notifications(actlog):
+def create_comment_notifications(actlog):
 
 	email_users = []
 
@@ -84,25 +88,30 @@ def create_notifications(actlog):
 				if c.user.notify_settings.interaction:
 					email_users.append(c.user)
 
-	# TODO: url!!
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"target_user": actlog.target_user.username,
-		"target_user_id": actlog.target_user.pk,
-		"target_object_name": ugettext(actlog.target_object._meta.model_name),
-		"comment": actlog.action_object.comment,
-		"url": "http://datea.pe/dateos/"+str(actlog.target_object.pk)+"/comments/"+str(actlog.action_object.pk),
-		"created": actlog.created.isoformat(),
-	} 
-
 	for user in notify_users:
 		n = Notification(type="comment", recipient=user, activity=actlog)
-		n.data = notify_data
+		n.data = {"extract": actlog.data['extract']}
 		n.save()
 
-	notify_data['created'] = actlog.created
-	send_mails(email_users, "comment", notify_data)
+	if len(email_users) > 0:
+		
+		# email using target_object client_domain (for now)
+		client_data = account.utils.get_client_data(actlog.target_object.client_domain)
+		comment_url = client_data['comment_url'].format(username=actlog.target_object.user.username,
+					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk, 
+					comment_id=actlog.action_object.pk) 
+
+		email_data = {
+			"actor": actlog.actor.username,
+			"target_user": actlog.target_user.username,
+			"target_object_name": ugettext(actlog.target_object._meta.model_name),
+			"comment": actlog.action_object.comment,
+			"extract": actlog.data['extract'],
+			"url": comment_url,
+			"created": actlog.created,
+			"site": client_data,
+		}		
+		send_mails(email_users, "comment", email_data)
 
 
 

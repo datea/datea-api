@@ -34,6 +34,8 @@ class Follow(models.Model):
     # for example: 'dateo.15'
     follow_key = models.CharField(max_length=255)
     published = models.BooleanField(default=True)
+
+    client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
     
     def save(self, *args, **kwargs): 
         if self.follow_key is None:

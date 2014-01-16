@@ -3,25 +3,25 @@ from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
 from types import IntType
 from campaign.models import Campaign
-from notify.models import ActivityLog
+from notify.models import ActivityLog, Notification
 from follow.models import Follow
 import bleach
 from django.utils.text import Truncator
-from .models import Comment
+import comment.models
 from notify.utils import send_mails
 from django.utils.translation import ugettext
 import account.utils
 
 
 @shared_task
-def do_comment_async_tasks(comment, stat_value, notify=False):
+def do_comment_async_tasks(comment_obj, stat_value, notify=False):
 
-	if type(comment) == IntType:
-		comment = models.Comment.objects.get(pk=comment)
+	if type(comment_obj) == IntType:
+		comment_obj = comment.models.Comment.objects.get(pk=comment_obj)
 
-	update_comment_stats(comment, stat_value)
-	if notify:
-		actlog = create_comment_activity_log(comment)
+	update_comment_stats(comment_obj, stat_value)
+	if notify and stat_value > 0:
+		actlog = create_comment_activity_log(comment_obj)
 		create_comment_notifications(actlog)
 
 
@@ -66,10 +66,10 @@ def create_comment_activity_log(comment):
 
 def create_comment_notifications(actlog):
 
-	email_users = []
-
 	# 1. Usuario afectado
 	notify_users = [actlog.target_user]
+	email_users = []
+
 	if actlog.target_user.notify_settings.interaction:
 		email_users.append(actlog.target_user)
 
@@ -110,7 +110,7 @@ def create_comment_notifications(actlog):
 			"url": comment_url,
 			"created": actlog.created,
 			"site": client_data,
-		}		
+		}
 		send_mails(email_users, "comment", email_data)
 
 

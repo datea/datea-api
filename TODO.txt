@@ -41,11 +41,12 @@
 
 
 4. History
-
 	ver que informaciones aporta el endpoint
 
 
 5. Asegurarse que tags sean unicos y no se pueda postear 2 veces el mismo tag -> ver eso en tag resource
-
+6. Asegurarse que follows sean unicos.
+7. Meter toda la info en el usuario autenticado
+8. Endpoints de sugerencias de tags por posicion geografica o por texto.
 
 

@@ -1,5 +1,5 @@
 {{object.actor.username}}
 {% for tag in object.tags.all %}#{{tag}} {% endfor %}
 {% for tag in object.tags.all %}tag.{{tag.pk}} {% endfor %}
-{% if object.target_object %}{{ object.target_object._meta.model_name}}.{{object.target_object.pk }}
+{% if object.target_object %}{{ object.target_type.model}}.{{object.target_id }}{% endif %}
 {{object.target_user.username}}

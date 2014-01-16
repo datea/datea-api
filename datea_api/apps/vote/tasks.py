@@ -1,14 +1,14 @@
 from __future__ import absolute_import
 from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
-from notify.models import ActivityLog
+from notify.models import ActivityLog, Notification
 from django.utils.translation import ugettext
 from types import IntType
 import bleach
 from django.utils.text import Truncator
 
 from follow.models import Follow
-from .models import Vote
+import vote.models
 from notify.utils import send_mails
 import account.utils
 from campaign.models import Campaign
@@ -16,15 +16,16 @@ from campaign.models import Campaign
 
 
 @shared_task
-def do_vote_async_tasks(vote, stat_value, notify=False):
+def do_vote_async_tasks(vote_obj, stat_value, notify=False):
 
-	if type(vote) == IntType:
-		vote = Vote.objects.get(pk=vote)
+	if type(vote_obj) == IntType:
+		# doing strange stuff because of circular imports and celery
+		vote_obj = vote.models.Vote.objects.get(pk=vote_obj)
 
-	update_vote_stats(vote, stat_value)
+	update_vote_stats(vote_obj, stat_value)
 
 	if notify and stat_value > 0:
-		actlog = create_activity_log(vote)
+		actlog = create_activity_log(vote_obj)
 		create_notifications(actlog)
 
 
@@ -69,10 +70,10 @@ def create_activity_log(vote):
 
 def create_notifications(actlog):
 
-	email_users = []
-
 	# 1. Usuario afectado
 	notify_users = [actlog.target_user]
+	email_users = []
+
 	if actlog.target_user.notify_settings.interaction:
 		email_users.append(actlog.target_user)
 

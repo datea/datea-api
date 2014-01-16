@@ -10,6 +10,9 @@ from category.models import Category
 from account.models import ClientDomain
 from image.models import Image
 import urllib2, json
+from django.db.models.signals import post_init, post_save, pre_delete
+from api.signals import resource_saved
+import dateo.tasks
 
 
 class Dateo(models.Model):
@@ -129,13 +132,12 @@ class Dateo(models.Model):
 #  better implemented with signals, if you'd like to turn this off.
 #  updating stats on objects is done using celery
 ###
-from django.db.models.signals import post_init, post_save, pre_delete
-import dateo.tasks 
 
 def dateo_pre_saved(sender, instance, **kwargs):
 	instance.__orig_published = instance.published
 
 def dateo_saved(sender, instance, created, **kwargs):
+	print "RESOURCE SAVED SIGNAL LISTENER", instance
 	instance.publish_changed = instance.__orig_published != instance.published
 	value = 0
 	notify = False
@@ -146,15 +148,15 @@ def dateo_saved(sender, instance, created, **kwargs):
 		value = 1
 	elif not created and instance.publish_changed and not instance.published:
 		value = -1
-
 	if value != 0:
 		dateo.tasks.do_dateo_async_tasks.delay(instance.pk, value, notify)
+
 
 def dateo_pre_delete(sender, instance, **kwargs):
 	if instance.published:
 		dateo.tasks.do_dateo_async_tasks(instance, -1, False)
 
+
 post_init.connect(dateo_pre_saved, sender=Dateo)
-post_save.connect(dateo_saved, sender=Dateo)
-pre_delete.connect(dateo_pre_delete, sender=Dateo)
-		
+resource_saved.connect(dateo_saved, sender=Dateo)
+pre_delete.connect(dateo_pre_delete, sender=Dateo)	

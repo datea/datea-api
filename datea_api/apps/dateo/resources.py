@@ -22,6 +22,7 @@ from tag.resources import TagResource
 from comment.models import Comment
 from follow.models import Follow
 from account.utils import get_domain_from_url
+from api.signals import resource_saved
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -119,6 +120,13 @@ class DateoResource(DateaBaseGeoResource):
 
             bundle.obj.tags = Tag.objects.filter(pk__in=tags)
 
+        return bundle
+
+
+    def save(self, bundle, skip_errors=False):
+        created = False if bundle.obj.pk else True
+        bundle = super(DateoResource, self).save(bundle, skip_errors)
+        resource_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         return bundle
 
 

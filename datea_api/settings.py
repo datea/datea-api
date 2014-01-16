@@ -75,9 +75,9 @@ INSTALLED_APPS = (
     'tag',
     'category',
     'image',
-    'comment',
+    #'comment',
     'follow',
-    'vote',
+    #'vote',
     'campaign',
     'notify',
     'api'
@@ -222,7 +222,7 @@ BROKER_URL = 'amqp://guest:guest@localhost//'
 #CELERY_TASK_SERIALIZER = 'json'
 #CELERY_RESULT_SERIALIZER = 'json'
 
-SEND_NOTIFICATION_EMAILS = False
+SEND_NOTIFICATION_EMAILS = True
 
 
 try:

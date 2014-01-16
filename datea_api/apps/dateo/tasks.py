@@ -2,9 +2,9 @@ from __future__ import absolute_import
 from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
 from campaign.models import Campaign
-from .models import Dateo
+import dateo.models
 from types import IntType
-from notify.models import ActivityLog
+from notify.models import ActivityLog, Notification
 from follow.models import Follow
 import bleach
 from django.utils.text import Truncator
@@ -14,15 +14,15 @@ import account.utils
 
 
 @shared_task
-def do_dateo_async_tasks(dateo, stat_value, notify=False):
+def do_dateo_async_tasks(dateo_obj, stat_value, notify=False):
 
-	if type(dateo) == IntType:
-		dateo = Dateo.objects.get(pk=dateo)
+	if type(dateo_obj) == IntType:
+		dateo_obj = dateo.models.Dateo.objects.get(pk=dateo_obj)
 
-	update_dateo_stats(dateo, value)
+	update_dateo_stats(dateo_obj, stat_value)
 
 	if notify and stat_value > 0:
-		actlog = create_dateo_activity_log(dateo)
+		actlog = create_dateo_activity_log(dateo_obj)
 		create_dateo_notifications(actlog)
 
 
@@ -44,7 +44,7 @@ def update_dateo_stats(dateo, value):
 def create_dateo_activity_log(dateo):
 
 	actlog = ActivityLog()
-	actlog.actor = comment.user
+	actlog.actor = dateo.user
 	actlog.verb = 'dateo'
 	actlog.action_object = dateo
 
@@ -53,7 +53,7 @@ def create_dateo_activity_log(dateo):
 	actlog.data = {'extract': extract}
 	actlog.save()
 
-	actlog.tags.add(*dateo.content_object.tags.all())
+	actlog.tags.add(*dateo.tags.all())
 
 	return actlog
 
@@ -62,9 +62,11 @@ def create_dateo_activity_log(dateo):
 def create_dateo_notifications(actlog):
 
 	email_users = []
+	notify_users = []
 
 	# 1. Seguidores de tags
 	follow_keys = ['tag.'+str(tag.pk) for tag in actlog.action_object.tags.all()]
+	print "follow keys", follow_keys
 	follows = Follow.objects.filter(follow_key__in=follow_keys)
 	for f in follows:
 		notify_users.append(f.user)
@@ -100,9 +102,11 @@ def create_dateo_notifications(actlog):
 			"site": client_data
 		}
 
-		if hasattr(actlog.target_object, 'tags'):
+		if hasattr(actlog.action_object, 'tags'):
 			email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
-
+		
+		print "EMAIL USERS", email_users
+		print email_data
 		send_mails(email_users, "dateo", email_data)
 
 

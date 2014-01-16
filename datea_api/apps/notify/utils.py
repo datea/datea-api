@@ -21,12 +21,15 @@ def send_mails(users, object_type, context_data):
 			notify_settings_url = context_data['site']['notify_settings_url'].format(username=u.username, user_id=u.pk)
 			context_data['notify_settings_url'] = notify_settings_url
 			email = EmailMessage(
-				mail_subject, 
-				mail_body, 
-				'Datea <'+settings.DEFAULT_FROM_EMAIL+'>',
+				subject, 
+				body, 
+				context_data['site']['name']+' <'+settings.DEFAULT_FROM_EMAIL+'>',
 				[u.email]
 			)
-			email.send()
+			try:
+				email.send()
+			except:
+				pass
 
 
 

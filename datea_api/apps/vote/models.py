@@ -4,6 +4,9 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+from django.db.models.signals import post_init, post_save, pre_delete
+from .tasks import do_vote_async_tasks
+
 
 class Vote(models.Model):
     
@@ -37,15 +40,12 @@ class Vote(models.Model):
 #  updating stats, creating activity stream and sending notifications 
 #  on objects is done using celery
 ###
-from django.db.models.signals import post_init, post_save, pre_delete
-import vote.tasks
-
 def vote_saved(sender, instance, created, **kwargs):
     if created:
-        vote.tasks.do_vote_async_tasks.delay(instance.object_id, 1)
+        do_vote_async_tasks.delay(instance.object_id, 1)
 
 def vote_pre_delete(sender, instance, **kwargs):
-    vote.tasks.do_vote_async_tasks.delay(instance.object_id, -1, False)
+    do_vote_async_tasks.delay(instance.object_id, -1, False)
 
 post_save.connect(vote_saved, sender=Vote)
 pre_delete.connect(vote_pre_delete, sender=Vote)

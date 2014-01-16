@@ -39,7 +39,7 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
         return obj.action_object.pk
 
     def prepare_action_type(self, obj):
-        return obj.action_object._meta.model_name
+        return obj.action_type.model
 
     def prepare_target_user(self, obj):
         if obj.target_user:
@@ -58,7 +58,7 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_target_type(self, obj):
         if obj.target_object:
-            return obj.target_object._meta.model_name
+            return obj.target_type.model
         return None
 
     def prepare_tags(self, obj):

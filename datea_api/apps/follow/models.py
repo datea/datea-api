@@ -38,8 +38,8 @@ class Follow(models.Model):
     client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
     
     def save(self, *args, **kwargs): 
-        if self.follow_key is None:
-            self.follow_key = self.content_type.model+'.'+str(self.pk)
+        if not self.follow_key:
+            self.follow_key = self.content_type.model+'.'+str(self.object_id)
         super(Follow, self).save(*args, **kwargs)
     
     def __unicode__(self):

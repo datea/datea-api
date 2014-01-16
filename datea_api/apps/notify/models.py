@@ -111,7 +111,7 @@ class ActivityLog(models.Model):
             except:
                 pass
 
-        super(Activity, self).save(*args, **kwargs)
+        super(ActivityLog, self).save(*args, **kwargs)
 
 
 

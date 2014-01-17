@@ -9,7 +9,7 @@ from django.utils.html import strip_tags
 
 from django.conf import settings
 from django.db.models.signals import post_init, post_save, pre_delete
-from .tasks import do_comment_async_tasks
+import comment.tasks
 
 
 class Comment(models.Model):
@@ -62,12 +62,12 @@ def comment_saved(sender, instance, created, **kwargs):
         value = -1
 
     if value != 0:
-        do_comment_async_tasks.delay(instance.pk, value, notify)
+        comment.tasks.do_comment_async_tasks.delay(instance.pk, value, notify)
 
 
 def comment_pre_delete(sender, instance, **kwargs):
     if instance.published:
-        do_comment_async_tasks(instance.pk, -1, False)
+        comment.tasks.do_comment_async_tasks(instance.pk, -1, False)
 
 post_init.connect(comment_pre_saved, sender=Comment)
 post_save.connect(comment_saved, sender=Comment)

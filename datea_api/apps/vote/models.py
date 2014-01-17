@@ -42,10 +42,10 @@ class Vote(models.Model):
 ###
 def vote_saved(sender, instance, created, **kwargs):
     if created:
-        do_vote_async_tasks.delay(instance.object_id, 1)
+        do_vote_async_tasks.delay(instance.pk, 1)
 
 def vote_pre_delete(sender, instance, **kwargs):
-    do_vote_async_tasks.delay(instance.object_id, -1, False)
+    do_vote_async_tasks.delay(instance.pk, -1, False)
 
 post_save.connect(vote_saved, sender=Vote)
 pre_delete.connect(vote_pre_delete, sender=Vote)

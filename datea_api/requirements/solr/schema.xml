@@ -130,7 +130,7 @@
 
   <fields>
     <!-- general -->
-    <field name="_version_" type="long" indexed="true" stored="true" multiValued="false"/>
+	<field name="_version_" type="long" indexed="true" stored="true" multiValued="false"/>
     <field name="id" type="string" indexed="true" stored="true" multiValued="false" required="true"/>
     <field name="django_ct" type="string" indexed="true" stored="true" multiValued="false"/>
     <field name="django_id" type="string" indexed="true" stored="true" multiValued="false"/>
@@ -175,7 +175,15 @@
 
     <field name="published" type="boolean" indexed="true" stored="true" multiValued="false" />
 
+    <field name="dateo_count" type="long" indexed="true" stored="true" multiValued="false" />
+
     <field name="tag_auto" type="ngram" indexed="true" stored="true" multiValued="false" />
+
+    <field name="tag" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="title" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="follow_count" type="long" indexed="true" stored="true" multiValued="false" />
 
     <field name="secondary_tags" type="text_en" indexed="true" stored="true" multiValued="true" />
 

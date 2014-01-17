@@ -60,7 +60,11 @@ class TagResource(ModelResource):
         self.throttle_check(request)
         limit = int(request.GET.get('limit', 5))
 
-        sqs = SearchQuerySet().models(Tag).autocomplete(tag_auto=request.GET.get('q', ''))[0:limit]
+        q = request.GET.get('q','')
+        if len(q) > 0 and len(q) <= 2:
+            sqs = SearchQuerySet().models(Tag).autocomplete(tag__startswith=q).order_by('-dateo_count')[0:limit]
+        else:
+            sqs = SearchQuerySet().models(Tag).autocomplete(tag_auto=request.GET.get('q', ''))[0:limit]
 
         suggestions = {'suggestions': [result.tag_auto for result in sqs]}
 

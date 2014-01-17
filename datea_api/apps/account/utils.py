@@ -100,8 +100,8 @@ def get_client_data(domain):
         'email_change_success_url': None,
         'email_change_error_url': None,
         'pwreset_base_url': settings.PROTOCOL + '://'+ site.domain + '/account/password/reset/confirm',
-        'comment_url': 'http://datea.pe/dateos/{object_id}#comment{comment_id}',
-        'dateo_url': 'http://datea.pe/dateos/{object_id}',
+        'comment_url': 'http://datea.pe/dateos/{obj_id}#comment{comment_id}',
+        'dateo_url': 'http://datea.pe/dateos/{obj_id}',
         'notify_settings_url': 'http://datea.pe/profile/notifications/',
     }
     

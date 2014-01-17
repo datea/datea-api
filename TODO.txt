@@ -43,6 +43,9 @@
 4. History
 	ver que informaciones aporta el endpoint
 
+DB en server:
+	- crear todos los notify_settings
+	- fix_stats 
 
 5. Asegurarse que tags sean unicos y no se pueda postear 2 veces el mismo tag -> ver eso en tag resource
 6. Asegurarse que follows sean unicos.

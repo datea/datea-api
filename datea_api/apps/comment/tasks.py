@@ -94,7 +94,7 @@ def create_comment_notifications(actlog):
 		n.save()
 
 	if len(email_users) > 0:
-		
+
 		# email using target_object client_domain (for now)
 		client_data = account.utils.get_client_data(actlog.target_object.client_domain)
 		comment_url = client_data['comment_url'].format(username=actlog.target_object.user.username,
@@ -104,7 +104,7 @@ def create_comment_notifications(actlog):
 		email_data = {
 			"actor": actlog.actor.username,
 			"target_user": actlog.target_user.username,
-			"target_object_name": ugettext(actlog.target_object._meta.model_name),
+			"target_object_name": ugettext(actlog.target_type.model),
 			"comment": actlog.action_object.comment,
 			"extract": actlog.data['extract'],
 			"url": comment_url,

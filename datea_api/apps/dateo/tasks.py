@@ -32,8 +32,13 @@ def update_dateo_stats(dateo, value):
 		dateo.user.dateo_count += value
 		dateo.user.save()
 
-	# Update campaign stats
+	# Update tag and campaign stats
 	if hasattr(dateo, 'tags') and dateo.tags.all().count() > 0:
+
+		for tag in dateo.tags.all():
+			tag.dateo_count += value
+			tag.save()
+
 		campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
 		for c in campaigns:
 			if hasattr(c, 'dateo_count'):
@@ -66,7 +71,6 @@ def create_dateo_notifications(actlog):
 
 	# 1. Seguidores de tags
 	follow_keys = ['tag.'+str(tag.pk) for tag in actlog.action_object.tags.all()]
-	print "follow keys", follow_keys
 	follows = Follow.objects.filter(follow_key__in=follow_keys)
 	for f in follows:
 		notify_users.append(f.user)
@@ -105,8 +109,6 @@ def create_dateo_notifications(actlog):
 		if hasattr(actlog.action_object, 'tags'):
 			email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
 		
-		print "EMAIL USERS", email_users
-		print email_data
 		send_mails(email_users, "dateo", email_data)
 
 

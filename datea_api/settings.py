@@ -75,9 +75,9 @@ INSTALLED_APPS = (
     'tag',
     'category',
     'image',
-    #'comment',
+    'comment',
     'follow',
-    #'vote',
+    'vote',
     'campaign',
     'notify',
     'api'

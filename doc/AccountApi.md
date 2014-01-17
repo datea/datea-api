@@ -40,15 +40,8 @@ otherwise you'll receive a 400 error:
 * duplicate user: there's an account with the same username
 
 
-If your domain is whitelisted (contact us), then you may also additionally 
-pass the following parameters specific for your app:
-
-	{
-		...
-		success_redirect_url: <url>,
-		error_redirect_url: <url>
-	}
-
+If your domain is whitelisted (contact us), then you may define the redirect urls 
+specific to your app, that are sent to the users in the confirmation email. 
 Otherwise, after clicking the activation link sent in the email, the user will be directed 
 to a page from this system.
 
@@ -121,13 +114,7 @@ When the email address of a user is changed and sent in a PATCH (no PUT allowed,
 * user's status field is set to 0 (unconfirmed)
 * an email will be sent to the new email address to confirm it
 
-If you'd like the API to redirect back to your page when the user clicks the activation link sent to him/her, you need to white list your domain with us and also provide the following additional parameters in the user object:
-	
-	{
-		...
-		success_redirect_url: <url>
-		error_redirect_url: <url>
-	}
+If you'd like the API to redirect back to your page when the user clicks the activation link sent to him/her, you need to white list your domain with us and provide the relevant urls.
 
 
 ####Reset Password
@@ -154,8 +141,7 @@ The url contains is build like this:
 
 ####Reset Password confirm
 
-if your domain is whitelisted, and you sent the "base_url" parameter in the previous step, you'll need to 
-confirm the password reset. Have the user enter his/her new password twice, check if both fields against each other, and then:
+if your domain is whitelisted, and you provided a url to deal with password reset, have the user enter his/her new password twice, check if both fields against each other, and then:
 
 Send a Ajax JSON POST to : */api/v2/account/reset-password-confirm/* with
 	

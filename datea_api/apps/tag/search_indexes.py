@@ -5,7 +5,7 @@ class TagIndex(indexes.SearchIndex, indexes.Indexable):
     
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/tag/tag_index.txt")
     tag = indexes.CharField(model_attr="tag")
-    title = indexes.CharField(model_attr="title")
+    title = indexes.CharField(model_attr="title", null=True)
     obj_id = indexes.IntegerField(model_attr='pk')
     follow_count = indexes.IntegerField(model_attr="follow_count")
     dateo_count = indexes.IntegerField(model_attr="dateo_count")

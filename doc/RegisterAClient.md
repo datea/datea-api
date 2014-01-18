@@ -17,7 +17,7 @@ A registered client may provide:
 * Register error redirect URL
 * Change email success redirect URL
 * Change email error redirect URL
-* Password Reset Base Url, including parameters {uid} and {token}
+* Password Reset Base Url, such as [base_url]/uid/token
 * Dateo URL, that may include: {user_id}, {username}, {obj_id}
 * Comment URL, that may include: {user_id}, {username}, {obj_id}, {comment_id}
 * Notify Settings URL: in the email footer, for users who'd like to change their notification settings. Replacement params {user_id} and {username}

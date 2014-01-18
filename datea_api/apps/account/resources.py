@@ -12,12 +12,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 import re
 
-#from campaign.models import Campaign
-#from campaign.resources import CampaignResource
-#from follow.models import Follow
-#from follow.resources import FollowResource
-#from vote.models import Vote
-#from vote.resources import VoteResource
+from campaign.resources import CampaignResource
+from follow.resources import FollowResource
+from vote.resources import VoteResource
+from notify.resources import NotifySettingsResource, NotificationResource
+
 import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
@@ -333,7 +332,51 @@ class UserResource(ModelResource):
 
         # send all user data user is one's own and is authenticated
         if bundle.request.user and bundle.request.user.id == bundle.obj.id:
+            
             bundle.data['email'] = bundle.obj.email
+
+            # FOLLOWS
+            follows = []
+            follow_rsc = FollowResource()
+            for f in bundle.obj.follows.all():
+                f_bundle = follow_rsc.build_bundle(obj=f)
+                f_bundle = follow_rsc.full_dehydrate(f_bundle)
+                follows.append(f_bundle.data)
+            bundle.data['follows'] = follows
+            
+            # VOTES
+            votes = []
+            vote_rsc = VoteResource()
+            for v in bundle.obj.votes.all():
+                v_bundle = vote_rsc.build_bundle(obj=v)
+                v_bundle = vote_rsc.full_dehydrate(v_bundle)
+                votes.append(v_bundle.data)
+            bundle.data['votes'] = votes
+
+            # CAMPAIGNS
+            campaigns = []
+            campaign_rsc = CampaignResource()
+            for c in bundle.obj.campaigns.all():
+                c_bundle = campaign_rsc.build_bundle(obj=c)
+                c_bundle = campaign_rsc.full_dehydrate(c_bundle)
+                campaigns.append(c_bundle.data)
+            bundle.data['campaigns'] = votes
+
+            # UNREAD NOTIFICATIONS
+            notifications = []
+            notification_rsc = NotificationResource()
+            for n in bundle.obj.notifications.filter(unread=True):
+                n_bundle = notification_rsc.build_bundle(obj=n)
+                n_bundle = notification_rsc.full_dehydrate(n_bundle)
+                notifications.append(n_bundle.data)
+            bundle.data['notifications'] = notifications
+
+            # NOTIFY SETTINGS
+            notifySettings_rsc = NotifiySettingsResource()
+            ns_bundle = notifySettings_rsc.build_bundle(obj=bundle.obj.notify_settings)
+            ns_bundle = notifySettings_rsc.full_dehydrate(ns_bundle)
+            bundle.data['notify_settings'] = ns_bundle.data
+
 
         return bundle
     

@@ -14,6 +14,7 @@ from django.http import HttpResponse, Http404
 
 from models import Tag
 from account.utils import get_domain_from_url
+from dateo.models import Dateo
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -49,7 +50,11 @@ class TagResource(ModelResource):
 
             url(r"^(?P<resource_name>%s)/trending%s$" %
             (self._meta.resource_name, trailing_slash()), 
-            self.wrap_view('get_trending'), name="api_tag_trending")
+            self.wrap_view('get_trending'), name="api_tag_trending"),
+
+            url(r"^(?P<resource_name>%s)/nearby%s$" %
+            (self._meta.resource_name, trailing_slash()), 
+            self.wrap_view('get_nearby'), name="api_tag_nearby")
 
         ]
 
@@ -69,8 +74,36 @@ class TagResource(ModelResource):
         suggestions = {'suggestions': [result.tag_auto for result in sqs]}
 
         self.log_throttled_access(request)
-
         return HttpResponse(json.dumps(suggestions), content_type="application/json")
+
+
+    def get_nearby(self, request, **kwargs):
+
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+
+        limit = int(request.GET.get('limit', 5))
+        limit = limit if limit <= 20 else 20
+
+        suggestions = []
+
+        if 'position' in request.GET:
+            pos = [float(c) for c in request.GET.get('position').split(',')]
+            position = Point(pos[0], pos[1])
+            dateos = SearchQuerySet().models(Dateo).load_all().distance('position', position).order_by('distance')[0:3*limit]
+            for d in dateos:
+                for t in sorted(d.tags):
+                    if t not in suggestions:
+                        suggestions.append(t)
+                        if len(suggestions) == limit:
+                            break
+                if len(suggestions) >= limit:
+                    break
+
+        result = {"suggestions": suggestions}
+
+        self.log_throttled_access(request)
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
 
     # Replace GET dispatch_list with HAYSTACK SEARCH

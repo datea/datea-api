@@ -9,6 +9,7 @@ Endpoints:
 * Schema: /api/v2/tag/schema/
 * Autocomplete: /api/v2/tag/autocomplete/
 * Trending: /api/v2/tag/trending/
+* Nearby: /api/v2/tag/nearby/
 
 
 ####List and Search Tags
@@ -59,6 +60,19 @@ Number of results and pagingation:
 * 'offset': paging offset (e.g 5 for next page) [int]
 
 This endpoint caches the results for 10 minutes.
+
+
+####Nearby
+
+get nearby tags. Limited by default to 5 results
+
+Endpoint: */api/v2/tag/nearby/*
+
+Params:
+
+* position: format is lat,lng (eg. -77.0842903555518717,-12.0090909568483948)
+* limit: number of results [default 5, max 20]
+
 
 ###POST 
 

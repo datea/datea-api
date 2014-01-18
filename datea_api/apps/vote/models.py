@@ -30,7 +30,10 @@ class Vote(models.Model):
         super(Vote, self).save(*args, **kwargs)
     
     def __unicode__(self):
-        return _("Vote")
+        return "Vote "+self.user.username+" "+self.content_type.model+"."+str(self.object_id)
+
+    class Meta:
+        unique_together = ("user", "content_type", "object_id")
 
 
 

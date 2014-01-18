@@ -38,7 +38,7 @@ class Notification(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(_('Type of Notifications'), max_length=30)
-    recipient = models.ForeignKey(User, verbose_name=_("User"))
+    recipient = models.ForeignKey(User, verbose_name=_("User"), related_name="notifications")
     unread = models.BooleanField(_("Unread"), default=True)
 
     data = JSONField(verbose_name=_("Data"), blank=True, null=True)

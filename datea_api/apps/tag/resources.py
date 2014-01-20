@@ -14,7 +14,7 @@ from django.http import HttpResponse, Http404
 
 from models import Tag
 from account.utils import get_domain_from_url
-from dateo.models import Dateo
+import dateo.models
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -90,7 +90,7 @@ class TagResource(ModelResource):
         if 'position' in request.GET:
             pos = [float(c) for c in request.GET.get('position').split(',')]
             position = Point(pos[0], pos[1])
-            dateos = SearchQuerySet().models(Dateo).load_all().distance('position', position).order_by('distance')[0:3*limit]
+            dateos = SearchQuerySet().models(dateo.models.Dateo).load_all().distance('position', position).order_by('distance')[0:3*limit]
             for d in dateos:
                 for t in sorted(d.tags):
                     if t not in suggestions:
@@ -253,7 +253,7 @@ class TagResource(ModelResource):
         filtering={
                 'tag' : ALL
                 }
-        excludes = ['dateo_count', 'client_domain']
+        excludes = ['client_domain']
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()

@@ -11,6 +11,7 @@ import comment.models
 from notify.utils import send_mails
 from django.utils.translation import ugettext
 import account.utils
+import comment.resources
 
 
 @shared_task
@@ -88,15 +89,35 @@ def create_comment_notifications(actlog):
 				if c.user.notify_settings.interaction:
 					email_users.append(c.user)
 
+	comment_rsc = comment.resources.CommentResource()
+	c_bundle = comment_rsc.build_bundle(obj=actlog.action_object)
+	c_bundle = comment_rsc.full_dehydrate(c_bundle)
+
+	notify_data = {
+		"actor": actlog.actor.username,
+		"actor_id": actlog.actor.pk,
+		"actor_img": actlog.actor.get_small_image(),
+		"action_object": c_bundle.data,
+		"target_user": actlog.target_user.username,
+		"target_user_id": actlog.target_user.pk,
+		"target_user_img": actlog.target_user.get_small_image(),
+		"target_object_name": actlog.target_type.model,
+		"target_object_id": actlog.target_object.pk,
+		"extract": actlog.data.get('extract', ''),
+		"verb": "commented",
+	}
+
 	for user in notify_users:
 		n = Notification(type="comment", recipient=user, activity=actlog)
-		n.data = {"extract": actlog.data['extract']}
+		n.data = notify_data
 		n.save()
 
 	if len(email_users) > 0:
 
 		# email using target_object client_domain (for now)
 		client_data = account.utils.get_client_data(actlog.target_object.client_domain)
+		if not client_data['send_notification_mail']:
+			return
 		comment_url = client_data['comment_url'].format(username=actlog.target_object.user.username,
 					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk, 
 					comment_id=actlog.action_object.pk) 

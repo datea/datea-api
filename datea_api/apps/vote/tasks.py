@@ -13,6 +13,8 @@ from notify.utils import send_mails
 import account.utils
 from campaign.models import Campaign
 
+import dateo.resources
+
 
 
 @shared_task
@@ -92,7 +94,24 @@ def create_notifications(actlog):
 				if c.user.notify_settings.interaction:
 					email_users.append(c.user)
 
-	notify_data = {"extract": actlog.data.get('extract', '')}
+	dateo_rsc = dateo.resources.DateoResource()
+	d_bundle = dateo_rsc.build_bundle(obj=actlog.target_object)
+	d_bundle = dateo_rsc.full_dehydrate(d_bundle)
+
+	notify_data = {
+		"actor": actlog.actor.username,
+		"actor_id": actlog.actor.pk,
+		"actor_img": actlog.actor.get_small_image(),
+		"action_object_name": actlog.action_type.model,
+		"target_user": actlog.target_user.username,
+		"target_user_id": actlog.target_user.pk,
+		"target_user_img": actlog.target_user.get_small_image(),
+		"target_object_name": actlog.target_type.model,
+		"target_object_id": actlog.target_object.pk,
+		"extract": actlog.data.get('extract', ''),
+		"target_object": d_bundle.data,
+		"verb": "voted",
+	}
 
 	for user in notify_users:
 		n = Notification(type="vote", recipient=user, activity=actlog)
@@ -103,13 +122,15 @@ def create_notifications(actlog):
 		
 		# email using target_object client_domain (for now)
 		client_data = get_client_data(actlog.target_object.client_domain)
+		if not client_data['send_notification_mail']:
+			return
 		dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
 					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
 
 		email_data = {
 			"actor": actlog.actor.username,
 			"target_user": actlog.target_user.username,
-			"target_object_name": ugettext(actlog.target_object._meta.model_name),
+			"target_object_name": ugettext(actlog.target_type.model),
 			"extract": actlog.data.get('extract', ''),
 			"url": dateo_url,
 			"created": actlog.created,
@@ -122,5 +143,6 @@ def create_notifications(actlog):
 			email_data["content"] = actlog.target_object.content
 		
 		send_mails(email_users, "vote", email_data)
+
 
 

@@ -12,7 +12,6 @@ from image.models import Image
 import urllib2, json
 from django.db.models.signals import post_init, post_save, pre_delete
 from api.signals import resource_saved
-import dateo.tasks
 
 
 class Dateo(models.Model):
@@ -128,10 +127,12 @@ class Dateo(models.Model):
 
 
 ####
-#  UPDATE STATS
+#  ASYNC ACTIONS WITH CELERY
 #  better implemented with signals, if you'd like to turn this off.
-#  updating stats on objects is done using celery
+#  updating stats, creating activity stream and sending notifications 
+#  on objects is done using celery
 ###
+import dateo.tasks
 
 def dateo_pre_saved(sender, instance, **kwargs):
 	instance.__orig_published = instance.published

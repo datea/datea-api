@@ -8,6 +8,7 @@ from django.core import validators
 from django.utils import timezone
 from urllib import quote as urlquote
 import re
+from django.core.cache import cache
 
 from image.models import Image
 
@@ -186,7 +187,13 @@ class ClientDomain(models.Model):
 
 	notify_settings_url = models.CharField(_('Notify settings url template'), max_length=255, 
 					help_text=_("Available vars: {user_id} and {username}"), 
-					blank=True, null=True) 
+					blank=True, null=True)
+
+	send_notification_mail = models.BooleanField(_('Send notification mail'), default=True)
+
+	def save(self, *args, **kwargs):
+		cache.delete('client-'+self.domain)
+		super(ClientDomain, self).save(*args, **kwargs)
 
 	class Meta:
 		verbose_name = _('Whitelisted client domain')

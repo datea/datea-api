@@ -383,7 +383,7 @@ class UserResource(ModelResource):
 
     def hydrate(self, bundle):
             
-        if bundle.request.method == 'PATCH':
+        if bundle.request.method == 'PATCH' and bundle.obj.status != 2:
             
             # only change one's own user
             if bundle.request.user.id != bundle.obj.id:
@@ -418,7 +418,7 @@ class UserResource(ModelResource):
                     bundle.obj.username = bundle.data['username']
 
                 # Allow to change ones own email
-                if 'email' in bundle.data and bundle.obj.status != 2:
+                if 'email' in bundle.data:
 
                     if bundle.obj.email != bundle.data['email'] or bundle.obj.status == 0:
 
@@ -450,6 +450,13 @@ class UserResource(ModelResource):
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
                         new_profile.send_activation_email(client_data)
+
+                if 'notify_settings' in bundle.data:
+
+                    ns_rsc = NotifySettingsResource()
+                    ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], request=bundle.request)
+                    ns_bundle = ns_rsc.full_hydrate(ns_bundle)
+                    ns_bundle.obj.save()
 
         return bundle
         

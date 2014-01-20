@@ -9,6 +9,7 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
 from django.conf import settings
+from django.core.cache import cache
 
 def getOrCreateKey(user):
     try:
@@ -87,6 +88,10 @@ def url_whitelisted(url):
 
 def get_client_data(domain):
 
+    data = cache.get('client-'+domain)
+    if data is not None:
+        return data
+
     site = Site.objects.get_current()
 
     # default data
@@ -103,6 +108,9 @@ def get_client_data(domain):
         'comment_url': 'http://datea.pe/dateos/{obj_id}#comment{comment_id}',
         'dateo_url': 'http://datea.pe/dateos/{obj_id}',
         'notify_settings_url': 'http://datea.pe/profile/notifications/',
+        'create_activity_stream': True,
+        'create_notifications': True,
+        'send_notification_mail': True
     }
     
     try:
@@ -112,6 +120,8 @@ def get_client_data(domain):
                 data[field] = getattr(client, field)        
     except:
         pass
+
+    cache.set('client-'+domain, data, 3600)
 
     return data
 

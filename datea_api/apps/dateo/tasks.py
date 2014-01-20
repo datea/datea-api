@@ -3,6 +3,7 @@ from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
 from campaign.models import Campaign
 import dateo.models
+import dateo.resources
 from types import IntType
 from notify.models import ActivityLog, Notification
 from follow.models import Follow
@@ -85,15 +86,31 @@ def create_dateo_notifications(actlog):
 				if c.user.notify_settings.interaction:
 					email_users.append(c.user) 
 
+	dateo_rsc = dateo.resources.DateoResource()
+	d_bundle = dateo_rsc.build_bundle(obj=actlog.action_object)
+	d_bundle = dateo_rsc.full_dehydrate(d_bundle)
+
+	notify_data = {
+		"actor": actlog.actor.username,
+		"actor_id": actlog.actor.pk,
+		"actor_img": actlog.actor.get_small_image(),
+		"action_object_name": actlog.action_type.model,
+		"extract": actlog.data.get('extract', ''),
+		"target_object": d_bundle.data,
+		"verb": "dateo",
+	}
+
 	for user in notify_users:
 		n = Notification(type="dateo", recipient=user, activity=actlog)
-		#n.data = notify_data
+		n.data = notify_data
 		n.save()
 
 	if len(email_users) > 0:
 
 		# email using target_object client_domain (for now)
 		client_data = account.utils.get_client_data(actlog.action_object.client_domain)
+		if not client_data['send_notification_mail']:
+			return
 		dateo_url = client_data['dateo_url'].format(username=actlog.action_object.user.username,
 					user_id=actlog.action_object.user.pk, obj_id=actlog.action_object.pk) 
 

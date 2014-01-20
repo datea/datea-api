@@ -9,7 +9,6 @@ from django.utils.html import strip_tags
 
 from django.conf import settings
 from django.db.models.signals import post_init, post_save, pre_delete
-import comment.tasks
 
 
 class Comment(models.Model):
@@ -44,6 +43,8 @@ class Comment(models.Model):
 #  updating stats, creating activity stream and sending notifications 
 #  on objects is done using celery
 ###
+
+import comment.tasks
  
 def comment_pre_saved(sender, instance, **kwargs):
     instance.__orig_published = instance.published

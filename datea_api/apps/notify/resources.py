@@ -7,6 +7,18 @@ from api.authentication import ApiKeyPlusWebAuthentication
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
+from tastypie.contrib.contenttypes.fields import GenericForeignKeyField
+
+from comment.models import Comment
+from comment.resources import CommentResource
+from dateo.models import Dateo
+from dateo.resources import DateoResource
+from vote.models import Vote
+from vote.resources import VoteResource
+
+from haystack.query import SearchQuerySet
+from haystack.inputs import AutoQuery
+from django.core.paginator import Paginator, InvalidPage, EmptyPage 
 
 
 class NotifySettingsResource(ModelResource):
@@ -20,7 +32,7 @@ class NotifySettingsResource(ModelResource):
             bundle.data[f] = getattr(bundle.obj, f)
 
     class Meta:
-        allowed_methods = ['get', 'put', 'patch']
+        allowed_methods = ['get', 'patch']
         resource_name = "notify_settings"
         limit = 1
         thottle = CacheThrottle()
@@ -29,10 +41,16 @@ class NotifySettingsResource(ModelResource):
         always_return_data = True
 
 
+
 class NotificationResource(ModelResource):
         
     recipient = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
         attribute='recipient', full=False, readonly=True)
+
+    def dehydrate(self, bundle):
+
+        bundle.data['data'] = bundle.obj.data
+        return bundle 
 
     def hydrate(self, bundle):
         allowed_fields = ['unread']
@@ -46,8 +64,8 @@ class NotificationResource(ModelResource):
         resource_name = 'notification'
         allowed_methods =['get', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
-        authorization = OwnerOnlyAuthorization()
-        limit = 10
+        authorization = DateaBaseAuthorization()
+        limit = 7
         cache = SimpleCache(timeout=60)
         thottle = CacheThrottle()
         filtering = {
@@ -61,13 +79,29 @@ class NotificationResource(ModelResource):
 
 
 class ActivityLogResource(ModelResource):
+
+    actor = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+        attribute='actor', full=True, readonly=True)
+
+    target_user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+        attribute='target_user', full=True, null=True, readonly=True)
+
+    action_object = GenericForeignKeyField({
+        Comment: CommentResource,
+        Vote: VoteResource,
+        Dateo: DateoResource,
+    }, 'action_object', full=True, readonly=True)
+
+
+    target_object = GenericForeignKeyField({
+        Dateo: DateoResource,
+    }, 'target_object', null=True, full=True, readonly=True)
+
     
     def dehydrate(self, bundle):
 
-        bundle.data['actor'] = bundle.obj.actor.username
-        bundle.data['actor_img'] = bundle.obj.actor.get_small_image()
-        bundle.data['target_user'] = bundle.obj.target_user.username
-        bundle.data['target_user_img'] = bundle.obj.actor.get_small_image()
+        bundle.data['data'] = bundle.obj.data
+
         return bundle
 
     class Meta:
@@ -76,9 +110,10 @@ class ActivityLogResource(ModelResource):
         allowed_methods =['get']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        limit = 10
+        limit = 5
         cache = SimpleCache(timeout=60)
-        #thottle = CacheThrottle()
+        thottle = CacheThrottle(throttle_at=300)
+        excludes = ['published', 'action_key', 'target_key']
         always_return_data = True
 
 
@@ -108,7 +143,6 @@ class ActivityLogResource(ModelResource):
 
         if 'tags' in request.GET:
             q_args['tags__in'] = request.GET.get('tags').split(',')
-
 
         # GET FOLLOW KEYS
         elif 'user' in request.GET and 'mode' in request.GET:

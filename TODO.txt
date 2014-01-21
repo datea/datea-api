@@ -1,55 +1,20 @@
 
 
-1. Notificaciones
+- Asegurarse que tags sean unicos y no se pueda postear 2 veces el mismo tag -> ver eso en tag resource
+- Asegurarse que follows sean unicos. -> falta error
+- Endpoints de sugerencias de tags por posicion por texto.
 
-	When:
+- Investigar invite friends
+- asociar cuenta extra de oauth
 
-		- tags i follow: nuevos dateos
-			-> como determino? -> follow.key al tag
+- Agregar campos extra a usuario: background image, con imaganes standard
 
-		- tags i follow: reportes dateros de iniciativas
-			-> follow.key al tag
+- Agregar campos extra a campaign: kml field
+- Pensar en reportes
 
-		- interacciones con mi contenido: apoyos, comentarios en dateo propio, dateo en mi iniciativa
-			-> contenido que me pertenece
-
-		- conversaciones que sigo/participo (comentarios)
-			-> follow.key al dateo
-
-		- novedades dateras
-			-> extern newsletter / see api
-
-	notificaciones:
-		-> nuevo dateo
-		-> nuevo comentario
-		-> nuevo reporte / mensaje de iniciativas
-		-> nuevo apoyo
+- image field con resize.
+- file field para kml
 
 
-	que informaciones da la notificacion:
-
-		-> usuario actor:
-			username, imagen, userid
-		-> usuario receptor ( si no es uno mismo):
-			idem
-		-> objeto actor:
-			completo?
-		-> objeto target:
-			completo?
-		-> tiempo
-
-
-
-4. History
-	ver que informaciones aporta el endpoint
-
-DB en server:
-	- crear todos los notify_settings
-	- fix_stats 
-
-5. Asegurarse que tags sean unicos y no se pueda postear 2 veces el mismo tag -> ver eso en tag resource
-6. Asegurarse que follows sean unicos.
-7. Meter toda la info en el usuario autenticado
-8. Endpoints de sugerencias de tags por posicion geografica o por texto.
 
 

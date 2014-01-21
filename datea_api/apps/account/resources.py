@@ -372,7 +372,7 @@ class UserResource(ModelResource):
             bundle.data['notifications'] = notifications
 
             # NOTIFY SETTINGS
-            notifySettings_rsc = NotifiySettingsResource()
+            notifySettings_rsc = NotifySettingsResource()
             ns_bundle = notifySettings_rsc.build_bundle(obj=bundle.obj.notify_settings)
             ns_bundle = notifySettings_rsc.full_dehydrate(ns_bundle)
             bundle.data['notify_settings'] = ns_bundle.data

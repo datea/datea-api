@@ -62,6 +62,8 @@ class Campaign(models.Model):
 	center = models.PointField(_("Center"), blank=True, null=True, spatial_index=False)
 	boundary = models.PolygonField(_("Boundary"), blank=True, null=True, spatial_index=False)
 
+	#kmlfile = models.FileField(_('KML File'), upload_to="kml_files")
+
 	# statistics
 	dateo_count = models.PositiveIntegerField(_("Item count"), default=0)
 	#user_count = models.PositiveIntegerField(_("Participant count"), default=0)

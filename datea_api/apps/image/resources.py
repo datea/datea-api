@@ -5,7 +5,7 @@ from api.authorization import DateaBaseAuthorization
 from api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from b64field import Base64FileField
+from api.b64field import Base64FileField
 
 class ImageResource(ModelResource):
 

@@ -451,7 +451,7 @@ class UserResource(ModelResource):
                         client_data['activation_mode'] = 'change_email'
                         new_profile.send_activation_email(client_data)
 
-                if 'notify_settings' in bundle.data:
+                if 'notify_settings' in bundle.data and bundle.data['notify_settings']:
 
                     ns_rsc = NotifySettingsResource()
                     ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], request=bundle.request)

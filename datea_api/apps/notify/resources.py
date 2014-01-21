@@ -30,6 +30,7 @@ class NotifySettingsResource(ModelResource):
         forbidden_fields = ['user']
         for f in forbidden_fields:
             bundle.data[f] = getattr(bundle.obj, f)
+        return bundle
 
     class Meta:
         allowed_methods = ['get', 'patch']

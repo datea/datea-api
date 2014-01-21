@@ -385,7 +385,7 @@ class UserResource(ModelResource):
             
         if bundle.request.method == 'PATCH' and bundle.obj.status != 2:
 
-            postData = json.loads(request.body)
+            postData = json.loads(bundle.request.body)
             print postData
             
             # only change one's own user

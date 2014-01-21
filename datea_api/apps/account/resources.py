@@ -384,6 +384,9 @@ class UserResource(ModelResource):
     def hydrate(self, bundle):
             
         if bundle.request.method == 'PATCH' and bundle.obj.status != 2:
+
+            postData = json.loads(request.body)
+            print postData
             
             # only change one's own user
             if bundle.request.user.id != bundle.obj.id:
@@ -405,9 +408,9 @@ class UserResource(ModelResource):
                     del bundle.data['password']
 
 
-            if 'email' in bundle.data or 'username' in bundle.data:
+            if 'email' in bundle.data or 'username' in postData:
 
-                if 'username' in bundle.data and bundle.data['username'] != bundle.obj.username:
+                if 'username' in postData and bundle.data['username'] != bundle.obj.username:
 
                     if bundle.data['username'].strip() == '':
                         raise ValidationError('Username cannot be empty')
@@ -451,12 +454,12 @@ class UserResource(ModelResource):
                         client_data['activation_mode'] = 'change_email'
                         new_profile.send_activation_email(client_data)
 
-                if 'notify_settings' in bundle.data and bundle.data['notify_settings']:
+            if 'notify_settings' in postData:
 
-                    ns_rsc = NotifySettingsResource()
-                    ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], request=bundle.request)
-                    ns_bundle = ns_rsc.full_hydrate(ns_bundle)
-                    ns_bundle.obj.save()
+                ns_rsc = NotifySettingsResource()
+                ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], request=bundle.request)
+                ns_bundle = ns_rsc.full_hydrate(ns_bundle)
+                ns_bundle.obj.save()
 
         return bundle
         

@@ -1,13 +1,13 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.contenttypes.models import ContentType
-from account.utils import get_domain_from_url
+from datea_api.apps.account.utils import get_domain_from_url
 from .models import Comment
 
 
@@ -68,4 +68,8 @@ class CommentResource(ModelResource):
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle(throttle_at=500)
         always_return_data = True
+
+
+def get_comment_resource_class():
+    return CommentResource
 

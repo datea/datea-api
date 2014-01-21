@@ -70,17 +70,17 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
 
     # DATEA APPS
-    'account',
-    'dateo',
-    'tag',
-    'category',
-    'image',
-    'comment',
-    'follow',
-    'vote',
-    'campaign',
-    'notify',
-    'api'
+    'datea_api.apps.account',
+    'datea_api.apps.dateo',
+    'datea_api.apps.tag',
+    'datea_api.apps.category',
+    'datea_api.apps.image',
+    'datea_api.apps.comment',
+    'datea_api.apps.follow',
+    'datea_api.apps.vote',
+    'datea_api.apps.campaign',
+    'datea_api.apps.notify',
+    'datea_api.apps.api',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -222,7 +222,7 @@ BROKER_URL = 'amqp://guest:guest@localhost//'
 #CELERY_TASK_SERIALIZER = 'json'
 #CELERY_RESULT_SERIALIZER = 'json'
 
-SEND_NOTIFICATION_EMAILS = True
+SEND_NOTIFICATION_EMAILS = False
 
 
 try:

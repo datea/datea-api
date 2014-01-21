@@ -1,5 +1,5 @@
 from haystack import indexes
-from models import Tag
+from .models import Tag
 
 class TagIndex(indexes.SearchIndex, indexes.Indexable):
     

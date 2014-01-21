@@ -2,17 +2,17 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from api.base_resources import DateaBaseGeoResource
-from api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.base_resources import DateaBaseGeoResource
+from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
 import os
 
-from models import Campaign
-from account.models import User
-from tag.models import Tag
-from tag.resources import TagResource
-from account.utils import get_domain_from_url
+from .models import Campaign
+from datea_api.apps.account.models import User
+from datea_api.apps.tag.models import Tag
+from datea_api.apps.tag.resources import TagResource
+from datea_api.apps.account.utils import get_domain_from_url
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance

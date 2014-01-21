@@ -2,8 +2,8 @@ from account.models import User
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
-from api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.utils import trailing_slash
@@ -12,9 +12,9 @@ import json
 from django.http import HttpResponse, Http404
 
 
-from models import Tag
-from account.utils import get_domain_from_url
-import dateo.models
+from .models import Tag
+from datea_api.apps.account.utils import get_domain_from_url
+from datea_api.apps.dateo.models import Dateo
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -90,7 +90,7 @@ class TagResource(ModelResource):
         if 'position' in request.GET:
             pos = [float(c) for c in request.GET.get('position').split(',')]
             position = Point(pos[0], pos[1])
-            dateos = SearchQuerySet().models(dateo.models.Dateo).load_all().distance('position', position).order_by('distance')[0:3*limit]
+            dateos = SearchQuerySet().models(Dateo).load_all().distance('position', position).order_by('distance')[0:3*limit]
             for d in dateos:
                 for t in sorted(d.tags):
                     if t not in suggestions:

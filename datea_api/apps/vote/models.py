@@ -4,8 +4,6 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from django.db.models.signals import post_init, post_save, pre_delete
-
 
 class Vote(models.Model):
     
@@ -34,24 +32,5 @@ class Vote(models.Model):
     class Meta:
         unique_together = ("user", "content_type", "object_id")
 
-
-
-####
-#  ASYNC ACTIONS WITH CELERY
-#  better implemented with signals, if you'd like to turn this off.
-#  updating stats, creating activity stream and sending notifications 
-#  on objects is done using celery
-###
-import vote.tasks
-
-def vote_saved(sender, instance, created, **kwargs):
-    if created:
-        vote.tasks.do_vote_async_tasks.delay(instance.pk, 1)
-
-def vote_pre_delete(sender, instance, **kwargs):
-    vote.tasks.do_vote_async_tasks.delay(instance.pk, -1, False)
-
-post_save.connect(vote_saved, sender=Vote)
-pre_delete.connect(vote_pre_delete, sender=Vote)
     
 

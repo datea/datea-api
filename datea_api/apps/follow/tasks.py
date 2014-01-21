@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
-from campaign.models import Campaign
+from datea_api.apps.campaign.models import Campaign
 
 @shared_task
 def update_follow_stats(followed_obj_type, followed_obj_id, value):

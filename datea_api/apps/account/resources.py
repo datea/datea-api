@@ -4,25 +4,25 @@ from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
 from django.conf.urls import url
 from django.conf import settings
-from api.authentication import ApiKeyPlusWebAuthentication
-from api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.authorization import DateaBaseAuthorization
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 import re
 
-from campaign.resources import CampaignResource
-from follow.resources import FollowResource
-from vote.resources import VoteResource
-from notify.resources import NotifySettingsResource, NotificationResource
+from datea_api.apps.campaign.resources import CampaignResource
+from datea_api.apps.follow.resources import FollowResource
+from datea_api.apps.vote.resources import VoteResource
+from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource
 
 import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_domain_from_url
-from status_codes import *
+from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_domain_from_url
+from .status_codes import *
 
 from registration.models import RegistrationProfile
 from registration import signals
@@ -331,7 +331,7 @@ class UserResource(ModelResource):
         bundle.data['url'] = bundle.obj.get_absolute_url()
 
         # send all user data user is one's own and is authenticated
-        if bundle.request.user and bundle.request.user.id == bundle.obj.id:
+        if hasattr(bundle.request, 'user') and bundle.request.user.id == bundle.obj.id:
             
             bundle.data['email'] = bundle.obj.email
 

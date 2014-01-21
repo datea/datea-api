@@ -5,9 +5,9 @@ from django.utils.translation import ugettext
 from django.conf import settings
 from django.utils import timezone
 
-from category.models import Category
-from tag.models import Tag
-from image.models import Image
+from datea_api.apps.category.models import Category
+from datea_api.apps.tag.models import Tag
+from datea_api.apps.image.models import Image
 
 
 class Campaign(models.Model):

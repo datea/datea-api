@@ -1,20 +1,20 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from models import ActivityLog, Notification, NotifySettings
-from api.authorization import DateaBaseAuthorization, OwnerOnlyAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from .models import ActivityLog, Notification, NotifySettings
+from datea_api.apps.api.authorization import DateaBaseAuthorization, OwnerOnlyAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.contrib.contenttypes.fields import GenericForeignKeyField
 
-from comment.models import Comment
-from comment.resources import CommentResource
-from dateo.models import Dateo
-from dateo.resources import DateoResource
-from vote.models import Vote
-from vote.resources import VoteResource
+from datea_api.apps.comment.models import Comment
+from datea_api.apps.comment.resources import CommentResource
+from datea_api.apps.dateo.models import Dateo
+from datea_api.apps.dateo.resources import DateoResource
+from datea_api.apps.vote.models import Vote
+from datea_api.apps.vote.resources import VoteResource
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery

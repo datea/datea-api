@@ -60,7 +60,7 @@ class Follow(models.Model):
 #  updating stats on objects is done using celery
 ###
 from django.db.models.signals import post_save, pre_delete
-from follow.tasks import update_follow_stats 
+from .tasks import update_follow_stats 
 
 def follow_saved(sender, instance, created, **kwargs):
     if created:

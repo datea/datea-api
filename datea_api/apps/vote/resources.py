@@ -1,11 +1,11 @@
 from tastypie.resources import ModelResource
 from tastypie import fields
-from api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from account.utils import get_domain_from_url
+from datea_api.apps.account.utils import get_domain_from_url
 
 
 from .models import Vote

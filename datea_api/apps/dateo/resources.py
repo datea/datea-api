@@ -8,28 +8,27 @@ from django.utils.html import strip_tags
 from django.conf.urls import url
 from django.http import Http404
 
-from tastypie.authentication import ApiKeyAuthentication
+#from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.base_resources import DateaBaseGeoResource
 from datea_api.apps.api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.utils import trailing_slash
 
 from .models import Dateo
-from image.models import Image
-from image.resources import ImageResource
-from tag.models import Tag
-from tag.resources import TagResource
-from comment.models import Comment
-from follow.models import Follow
-from account.utils import get_domain_from_url
-from api.signals import resource_saved
+from datea_api.apps.image.models import Image
+from datea_api.apps.image.resources import ImageResource
+from datea_api.apps.tag.models import Tag
+from datea_api.apps.tag.resources import TagResource
+from datea_api.apps.comment.models import Comment
+from datea_api.apps.follow.models import Follow
+from datea_api.apps.account.utils import get_domain_from_url
+from datea_api.apps.api.signals import resource_saved
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from pprint import pprint as pp
 
 
 class DateoResource(DateaBaseGeoResource):
@@ -45,6 +44,28 @@ class DateoResource(DateaBaseGeoResource):
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
+
+
+    class Meta:
+        queryset = Dateo.objects.all()
+        resource_name = 'dateo'
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get', 'post', 'patch', 'delete']
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
+        filtering = {
+            'action': ALL_WITH_RELATIONS,
+            'id': ['exact'],
+            'created': ['range', 'gt', 'gte', 'lt', 'lte'],
+            'position': ['distance', 'contained','latitude', 'longitude'],
+            'published': ['exact'],
+            'user': ALL_WITH_RELATIONS
+        }
+        ordering = ['name', 'created', 'distance']
+        limit = 200
+        cache = SimpleCache(timeout=10)
+        throttle = CacheThrottle(throttle_at=300)
+        always_return_data = True
 
 
     def dehydrate(self, bundle):
@@ -130,28 +151,6 @@ class DateoResource(DateaBaseGeoResource):
         return bundle
 
 
-    class Meta:
-        queryset = Dateo.objects.all()
-        resource_name = 'dateo'
-        list_allowed_methods = ['get', 'post']
-        detail_allowed_methods = ['get', 'post', 'patch', 'delete']
-        authentication = ApiKeyPlusWebAuthentication()
-        authorization = DateaBaseAuthorization()
-        filtering = {
-            'action': ALL_WITH_RELATIONS,
-            'id': ['exact'],
-            'created': ['range', 'gt', 'gte', 'lt', 'lte'],
-            'position': ['distance', 'contained','latitude', 'longitude'],
-            'published': ['exact'],
-            'user': ALL_WITH_RELATIONS
-        }
-        ordering = ['name', 'created', 'distance']
-        limit = 200
-        cache = SimpleCache(timeout=10)
-        throttle = CacheThrottle(throttle_at=300)
-        always_return_data = True
-
-
     # Replace GET dispatch_list with HAYSTACK SEARCH
     def dispatch_list(self, request, **kwargs):
         if request.method == "GET":
@@ -223,7 +222,7 @@ class DateoResource(DateaBaseGeoResource):
             del q_args['published']
 
         # INIT THE QUERY
-        sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
+        sqs = SearchQuerySet().models(datea_api.apps.dateo.models.Dateo).load_all().filter(**q_args)
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY

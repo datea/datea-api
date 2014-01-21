@@ -10,7 +10,7 @@ from urllib import quote as urlquote
 import re
 from django.core.cache import cache
 
-from image.models import Image
+from datea_api.apps.image.models import Image
 
 class CustomUserManager(BaseUserManager):
 

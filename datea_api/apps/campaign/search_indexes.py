@@ -1,5 +1,5 @@
 from haystack import indexes
-from models import Campaign
+from .models import Campaign
 
 class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     

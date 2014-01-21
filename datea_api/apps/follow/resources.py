@@ -1,13 +1,13 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from models import Follow
-from api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from .models import Follow
+from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
-from account.utils import get_domain_from_url
+from datea_api.apps.account.utils import get_domain_from_url
 
 
 class FollowResource(ModelResource):

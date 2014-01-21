@@ -1,11 +1,11 @@
 from tastypie import fields
 from tastypie.resources import ModelResource
 from .models import Image
-from api.authorization import DateaBaseAuthorization
-from api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from api.b64field import Base64FileField
+from datea_api.apps.api.b64field import Base64FileField
 
 class ImageResource(ModelResource):
 

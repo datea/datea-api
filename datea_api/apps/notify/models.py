@@ -12,7 +12,7 @@ from django.conf import settings
 from jsonfield import JSONField
 from django.db.models.signals import post_save
 
-from tag.models import Tag
+from datea_api.apps.tag.models import Tag
 
 
 class NotifySettings(models.Model):

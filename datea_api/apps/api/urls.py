@@ -2,16 +2,16 @@
 from django.conf.urls import patterns, include, url
 
 from tastypie.api import Api
-from account.resources import UserResource , AccountResource
-from dateo.resources import DateoResource
-from campaign.resources import CampaignResource
-from category.resources import CategoryResource
-from comment.resources import CommentResource
-from follow.resources import FollowResource
-from image.resources import ImageResource
-from tag.resources import TagResource
-from vote.resources import VoteResource
-from notify.resources import NotifySettingsResource, NotificationResource, ActivityLogResource
+from datea_api.apps.account.resources import UserResource , AccountResource
+from datea_api.apps.dateo.resources import DateoResource
+from datea_api.apps.campaign.resources import CampaignResource
+from datea_api.apps.category.resources import CategoryResource
+from datea_api.apps.comment.resources import CommentResource
+from datea_api.apps.follow.resources import FollowResource
+from datea_api.apps.image.resources import ImageResource
+from datea_api.apps.tag.resources import TagResource
+from datea_api.apps.vote.resources import VoteResource
+from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource, ActivityLogResource
 
 v2_api = Api(api_name='v2')
 v2_api.register(AccountResource())

@@ -222,7 +222,7 @@ class DateoResource(DateaBaseGeoResource):
             del q_args['published']
 
         # INIT THE QUERY
-        sqs = SearchQuerySet().models(datea_api.apps.dateo.models.Dateo).load_all().filter(**q_args)
+        sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY

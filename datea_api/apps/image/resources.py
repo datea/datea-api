@@ -6,6 +6,7 @@ from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from datea_api.apps.api.b64field import Base64FileField
+from datea_api.apps.account.utils import get_domain_from_url
 
 class ImageResource(ModelResource):
 

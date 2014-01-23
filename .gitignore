@@ -8,8 +8,8 @@ datea_api/local_settings.py
 .git
 .gitignore
 env
-datea_api/media
-datea_api/static
-static
-media
+datea_api/media/
+datea_api/static/
+static/
+media/
 impdata

@@ -1,5 +1,6 @@
 Django==1.6.1
 Pillow==2.2.2
+PyPDF2==1.19
 South==0.8.4
 amqp==1.4.1
 anyjson==0.3.3
@@ -20,9 +21,11 @@ haystack==0.15
 html5lib==1.0b3
 jsonfield==0.9.20
 kombu==3.0.10
+lxml==3.3.0beta5
 oauthlib==0.6.0
 psycopg2==2.5.1
 pyelasticsearch==0.6.1
+pykml==0.1.0
 pysolr==3.1.0
 python-dateutil==2.2
 python-memcached==1.53

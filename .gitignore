@@ -12,4 +12,5 @@ datea_api/media/
 datea_api/static/
 static/
 media/
+!datea_api/apps/media
 impdata

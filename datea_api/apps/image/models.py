@@ -12,7 +12,7 @@ from django.conf import settings
 class Image(models.Model):
  
     image =  ImageField(upload_to="images")  
-    user =   models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="images")
+    user =   models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="images_old")
     order =  models.IntegerField(blank=True, null=True, default=0)
     width =  models.PositiveIntegerField(blank=True, null=True)
     height = models.PositiveIntegerField(blank=True, null=True)
@@ -67,3 +67,5 @@ class Image(models.Model):
     class Meta:
         verbose_name = _("Image")
         verbose_name_plural = _('Images')
+
+

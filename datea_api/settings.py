@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'datea_api.apps.tag',
     'datea_api.apps.category',
     'datea_api.apps.image',
+    'datea_api.apps.media',
     'datea_api.apps.comment',
     'datea_api.apps.follow',
     'datea_api.apps.vote',

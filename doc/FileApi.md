@@ -1,10 +1,11 @@
-###Image Api
+###File Api
 
-Image uploads work with base64 data_uris. This resource is thought to work in conjunction
+File uploads work with base64 data_uris (similar to images). 
 
 Endpoints:
-* /api/v2/image/
-* /api/v2/image/\<id\>/
+
+* /api/v2/file/
+* /api/v2/file/\<id\>/
 
 Allowed methods: GET, POST, PATCH, DELETE
 
@@ -19,13 +20,10 @@ user filters:
 ####POST
 
 	{
-		image: {
+		file: {
     		data_uri: <data uri base64>,
-    		name: 'somefilename.png'
+    		name: 'somefilename.pdf'   			// pdf or kml supportes at the moment
     	}
 
     	order: 0 				// optional integer for ordering
 	}
-
-
-

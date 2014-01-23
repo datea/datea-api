@@ -56,10 +56,11 @@ class CampaignResource(DateaBaseGeoResource):
             bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
             
         elif bundle.request.method in ('PUT', 'PATCH'):
-            #preserve owner
-            #orig_object = Campaign.objects.get(pk=bundle.data['id'])
-            bundle.data['user'] = bundle.obj.user
-            bundle.data['client_domain'] = bundle.obj.client_domain 
+            
+            forbidden_fields ['user', 'client_domain', 'comment_count', 'dateo_count', 
+                                'follow_count', 'featured', 'created', 'user']
+            for f in forbidden_fields:
+                bundle.data[f] = getattr(bundle.obj, f)
     
         return bundle
 

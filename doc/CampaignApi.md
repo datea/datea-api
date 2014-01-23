@@ -59,3 +59,63 @@ options:
 * 'distance': for dateos to be ordered by distance, you also need to specify a 'center' parameter, similar to the 'Within distance to point' filter above
 
 
+####POST
+
+	{
+		name: <string>, 				// max 100 chars
+		published: <boolean>,  			// 0 or 1
+		end_date: <date in iso format>,	// (optional)
+		short_description: <text>	  	// max 140 chars
+		mission: <text>, 			  	// 500 chars
+		information_destiny: <text>,  	// 500 chars
+
+		category: <existing category resource> // check category endpoint
+
+		main_tag: { 					// new or existing tag resource
+			tag: "Jamsession",
+			title: "longer title", 		optional
+		},
+
+		secondary_tags: [				// new or existing tag resources
+			{
+				tag: "Jamsession",
+				title: "longer title",  // optional
+			},
+			...
+		],
+
+		image: {						// new or existing image resource
+			image:	{
+						data_uri: <data uri base64>,
+						name: 'somefilename.png'
+					},
+			order: 0 				// optional integer for ordering
+		}
+		
+		center: {						// geoJSON POINT
+			type        : 'Point',
+			coordinates : [ -77.027772, -12.121937 ],
+		},
+
+		boundary: {						// optional geoJSON POLYGON
+			"type": "Polygon",
+	         "coordinates": [
+	           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+	             [100.0, 1.0], [100.0, 0.0] ]
+	           ]
+		},
+
+		kmlfiles: [						// optional new or existing File Resource objects (kml) 
+			{
+				file:	{
+						data_uri: <data uri base64>,
+						name: 'somefilename.png'
+					},
+				order: 0 				// optional integer for ordering
+			},
+			...
+		]
+	
+	}
+
+

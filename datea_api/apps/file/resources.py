@@ -1,6 +1,6 @@
 from tastypie import fields
 from tastypie.resources import ModelResource
-from .models import Image
+from .models import File
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.cache import SimpleCache
@@ -8,11 +8,11 @@ from tastypie.throttle import CacheThrottle
 from datea_api.apps.api.b64field import Base64FileField
 from datea_api.apps.account.utils import get_domain_from_url
 
-class ImageResource(ModelResource):
+class FileResource(ModelResource):
 
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
-    image = Base64FileField('image')
+    file = Base64FileField('file')
 
     def dehydrate(self, bundle):
         bundle.data['thumb'] = bundle.obj.get_thumb()
@@ -35,8 +35,8 @@ class ImageResource(ModelResource):
         
     
     class Meta:
-        queryset = Image.objects.all()
-        resource_name = 'image'
+        queryset = File.objects.all()
+        resource_name = 'file'
         allowed_methods = ['get', 'post', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()

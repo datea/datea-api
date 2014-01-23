@@ -13,10 +13,14 @@ from datea_api.apps.api.base_resources import DateaBaseGeoResource
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.utils import trailing_slash
+from tastypie.exceptions import ImmediateHttpResponse
+from datea_api.apps.api.status_codes import *
 
 from .models import Dateo
 from datea_api.apps.image.models import Image
 from datea_api.apps.image.resources import ImageResource
+from datea_api.apps.file.models import File
+from datea_api.apps.file.resources import FileResource
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.comment.models import Comment
@@ -41,6 +45,8 @@ class DateoResource(DateaBaseGeoResource):
             attribute='tags', related_name='tags', null=True, full=True, readonly=True)
     images = fields.ToManyField('datea_api.apps.image.resources.ImageResource',
             attribute='images', null=True, full=True, readonly=True)
+    files = fields.ToManyField('datea_api.apps.files.resources.FileResource',
+            attribute='files', null=True, full=True, readonly=True)
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
@@ -122,6 +128,30 @@ class DateoResource(DateaBaseGeoResource):
                     imgbundle.obj.save()
                     imgs.append(imgbundle.obj.pk)
             bundle.obj.images = Image.objects.filter(pk__in=imgs)
+
+
+        if 'files' in bundle.data and bundle.data['files']:
+            files = []
+            for filedata in bundle.data['files']:
+
+                # validate files (only by name, the custom model filefield validates by content) 
+                if hasattr(filedata['file'], 'name'):
+                    # only pdf files for now
+                    if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']: 
+                        response = self.create_response(request,{'status': BAD_REQUEST,
+                                'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
+                        raise ImmediateHttpResponse(response=response)
+
+                if 'id' in filedata:
+                    files.append(filedata['id'])
+                else:
+                    frsc = FileResource()
+                    fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
+                    fbundle = frsc.full_hydrate(fbundle)
+                    fbundle.obj.save()
+                    files.append(fbundle.obj.pk)
+            bundle.obj.files = File.objects.filter(pk__in=files)
+
 
         if 'tags' in bundle.data and bundle.data['tags']:
             tags = []

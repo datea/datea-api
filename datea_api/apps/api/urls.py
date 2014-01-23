@@ -9,6 +9,7 @@ from datea_api.apps.category.resources import CategoryResource
 from datea_api.apps.comment.resources import CommentResource
 from datea_api.apps.follow.resources import FollowResource
 from datea_api.apps.image.resources import ImageResource
+from datea_api.apps.file.resources import FileResource
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource, ActivityLogResource
@@ -22,6 +23,7 @@ v2_api.register(CategoryResource())
 v2_api.register(CommentResource())
 v2_api.register(FollowResource())
 v2_api.register(ImageResource())
+v2_api.register(FileResource())
 v2_api.register(TagResource())
 v2_api.register(VoteResource())
 v2_api.register(NotifySettingsResource())
@@ -31,4 +33,5 @@ v2_api.register(ActivityLogResource())
 urlpatterns = patterns('',
     (r'^api/', include(v2_api.urls)),
     url(r"image/", include('datea_api.apps.image.urls')),
+    url(r"file/", include('datea_api.apps.file.urls')),
 )

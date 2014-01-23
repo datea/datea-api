@@ -22,7 +22,7 @@ from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
 from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_domain_from_url
-from .status_codes import *
+from datea_api.apps.api.status_codes import *
 
 from registration.models import RegistrationProfile
 from registration import signals

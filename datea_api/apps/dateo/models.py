@@ -4,11 +4,12 @@ from django.conf import settings
 from django_extensions.db.models import TimeStampedModel
 from django.utils.html import strip_tags
 
-from tag.models import Tag
-from campaign.models import Campaign
-from category.models import Category
-from account.models import ClientDomain
-from image.models import Image
+from datea_api.apps.tag.models import Tag
+from datea_api.apps.campaign.models import Campaign
+from datea_api.apps.category.models import Category
+from datea_api.apps.account.models import ClientDomain
+from datea_api.apps.image.models import Image
+from datea_api.apps.file.models import File
 import urllib2, json
 
 
@@ -33,6 +34,7 @@ class Dateo(models.Model):
 	# content
 	content = models.TextField(_("Content"))
 	images = models.ManyToManyField(Image, verbose_name=_('Images'), null=True, blank=True, related_name="dateo")
+	files = models.ManyToManyField(File, verbose_name=_('Files'), null=True, blank=True, related_name="dateo")
     
     # location
 	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)

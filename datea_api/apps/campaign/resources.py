@@ -12,7 +12,10 @@ from .models import Campaign
 from datea_api.apps.account.models import User
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
+from datea_api.apps.file.models import File
+from datea_api.apps.file.resources import FileResource
 from datea_api.apps.account.utils import get_domain_from_url
+
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -83,6 +86,28 @@ class CampaignResource(DateaBaseGeoResource):
 
             bundle.obj.tags = Tag.objects.filter(pk__in=tags)
 
+        if 'kmlfiles' in bundle.data and bundle.data['kmlfiles']:
+            files = []
+            for filedata in bundle.data['kmlfiles']:
+
+                # validate files (only by name, the custom model filefield validates by content) 
+                if hasattr(filedata['file'], 'name'):
+                    # only pdf files for now
+                    if filedata['file']['name'].split('.')[-1].lower() not in ['kml']: 
+                        response = self.create_response(request,{'status': BAD_REQUEST,
+                                'error': 'allowed filetypes: kml'}, status=BAD_REQUEST)
+                        raise ImmediateHttpResponse(response=response)
+
+                if 'id' in filedata:
+                    files.append(filedata['id'])
+                else:
+                    frsc = FileResource()
+                    fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
+                    fbundle = frsc.full_hydrate(fbundle)
+                    fbundle.obj.save()
+                    files.append(fbundle.obj.pk)
+            bundle.obj.kmlfiles = File.objects.filter(pk__in=files)
+
         return bundle
 
     # Replace GET dispatch_list with HAYSTACK SEARCH
@@ -147,7 +172,7 @@ class CampaignResource(DateaBaseGeoResource):
             del q_args['published']
 
         # INIT THE QUERY
-        sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
+        sqs = SearchQuerySet().models(Campaign).load_all().filter(**q_args)
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY

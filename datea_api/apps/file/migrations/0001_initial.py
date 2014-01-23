@@ -8,35 +8,20 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Image'
-        db.create_table(u'media_image', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('image', self.gf('sorl.thumbnail.fields.ImageField')(max_length=100)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='images', to=orm['account.User'])),
-            ('order', self.gf('django.db.models.fields.IntegerField')(default=0, null=True, blank=True)),
-            ('width', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('height', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('client_domain', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'media', ['Image'])
-
         # Adding model 'File'
-        db.create_table(u'media_file', (
+        db.create_table(u'file_file', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='files', to=orm['account.User'])),
-            ('file', self.gf('datea_api.apps.media.fields.ContentTypeRestrictedFileField')(max_length=100)),
+            ('file', self.gf('datea_api.apps.file.fields.ContentTypeRestrictedFileField')(max_length=100)),
             ('order', self.gf('django.db.models.fields.IntegerField')(default=0, null=True, blank=True)),
             ('client_domain', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
         ))
-        db.send_create_signal(u'media', ['File'])
+        db.send_create_signal(u'file', ['File'])
 
 
     def backwards(self, orm):
-        # Deleting model 'Image'
-        db.delete_table(u'media_image')
-
         # Deleting model 'File'
-        db.delete_table(u'media_file')
+        db.delete_table(u'file_file')
 
 
     models = {
@@ -83,6 +68,14 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'file.file': {
+            'Meta': {'object_name': 'File'},
+            'client_domain': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'file': ('datea_api.apps.file.fields.ContentTypeRestrictedFileField', [], {'max_length': '100'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'files'", 'to': u"orm['account.User']"})
+        },
         u'image.image': {
             'Meta': {'object_name': 'Image'},
             'client_domain': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
@@ -92,25 +85,7 @@ class Migration(SchemaMigration):
             'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'images_old'", 'to': u"orm['account.User']"}),
             'width': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        u'media.file': {
-            'Meta': {'object_name': 'File'},
-            'client_domain': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'file': ('datea_api.apps.media.fields.ContentTypeRestrictedFileField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'files'", 'to': u"orm['account.User']"})
-        },
-        u'media.image': {
-            'Meta': {'object_name': 'Image'},
-            'client_domain': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'height': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('sorl.thumbnail.fields.ImageField', [], {'max_length': '100'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'images'", 'to': u"orm['account.User']"}),
-            'width': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'})
         }
     }
 
-    complete_apps = ['media']
+    complete_apps = ['file']

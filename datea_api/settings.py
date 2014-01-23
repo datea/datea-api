@@ -60,28 +60,28 @@ INSTALLED_APPS = (
     'south',
     'django_extensions',
     'sorl.thumbnail',
-    'registration',
     'tastypie',
     'corsheaders',
     'haystack',
     'bootstrap3',
 
-    # PYTHON SOCIAL AUTH
-    'social.apps.django_app.default',
-
     # DATEA APPS
-    'datea_api.apps.account',
+    'account',
     'datea_api.apps.dateo',
     'datea_api.apps.tag',
     'datea_api.apps.category',
     'datea_api.apps.image',
-    'datea_api.apps.media',
+    'datea_api.apps.file',
     'datea_api.apps.comment',
     'datea_api.apps.follow',
     'datea_api.apps.vote',
     'datea_api.apps.campaign',
     'datea_api.apps.notify',
     'datea_api.apps.api',
+
+    # USER STUFF
+    'registration',
+    'social.apps.django_app.default',
 )
 
 MIDDLEWARE_CLASSES = (

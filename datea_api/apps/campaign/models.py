@@ -8,6 +8,7 @@ from django.utils import timezone
 from datea_api.apps.category.models import Category
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.image.models import Image
+from datea_api.apps.file.models import File
 
 
 class Campaign(models.Model):
@@ -61,8 +62,7 @@ class Campaign(models.Model):
 	# GEO:
 	center = models.PointField(_("Center"), blank=True, null=True, spatial_index=False)
 	boundary = models.PolygonField(_("Boundary"), blank=True, null=True, spatial_index=False)
-
-	#kmlfile = models.FileField(_('KML File'), upload_to="kml_files")
+	kmlfiles = models.ManyToManyField(File, verbose_name=_('KML Files'), null=True, blank=True)
 
 	# statistics
 	dateo_count = models.PositiveIntegerField(_("Item count"), default=0)

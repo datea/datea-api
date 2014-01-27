@@ -163,7 +163,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return self.username
 
 
-def before_user_delete(sender, instance, using):
+def before_user_delete(sender, instance, using, **kwargs):
 	instance.__user_delete = True
 
 pre_delete.connect(before_user_delete, sender=User)

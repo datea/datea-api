@@ -21,6 +21,8 @@ import datea_api.apps.vote.resources
 from datea_api.apps.notify.utils import send_mails
 from datea_api.apps.account.utils import get_client_data
 
+from django.db import IntegrityError, transaction
+
 
 ################################### DATEO ASYNC TASKS #######################################
 
@@ -28,7 +30,8 @@ from datea_api.apps.account.utils import get_client_data
 def do_dateo_async_tasks(dateo_obj, stat_value, notify=False):
 
 	if type(dateo_obj) == IntType:
-		dateo_obj = Dateo.objects.get(pk=dateo_obj)
+		with transaction.atomic():
+			dateo_obj = Dateo.objects.get(pk=dateo_obj)
 
 	update_dateo_stats(dateo_obj, stat_value)
 
@@ -39,28 +42,25 @@ def do_dateo_async_tasks(dateo_obj, stat_value, notify=False):
 @shared_task
 def update_dateo_stats(dateo, value):
 
-	if hasattr(dateo.user, 'dateo_count'):
-		try:
+	#try:
+	with transaction.atomic():
+		if hasattr(dateo.user, 'dateo_count'):
 			dateo.user.dateo_count += value
 			dateo.user.save()
-		except:
-			pass
 
-	# Update tag and campaign stats
-	try:
-		if hasattr(dateo, 'tags') and dateo.tags.all().count() > 0:
+		# Update tag and campaign stats
+		tags = dateo.tags.all()
+		if tags.count() > 0:
 
-			for tag in dateo.tags.all():
+			for tag in tags:
 				tag.dateo_count += value
 				tag.save()
 
-			campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
+			campaigns = Campaign.objects.filter(main_tag__in=tags)
 			for c in campaigns:
 				if hasattr(c, 'dateo_count'):
 					c.dateo_count += value
 					c.save()
-	except:
-		pass
 
 @shared_task
 def create_dateo_activity_log(dateo):
@@ -152,7 +152,8 @@ def create_dateo_notifications(actlog):
 def do_comment_async_tasks(comment_obj, stat_value, notify=False):
 
 	if type(comment_obj) == IntType:
-		comment_obj = Comment.objects.get(pk=comment_obj)
+		with transaction.atomic():
+			comment_obj = Comment.objects.get(pk=comment_obj)
 
 	update_comment_stats(comment_obj, stat_value)
 	if notify and stat_value > 0:
@@ -164,22 +165,18 @@ def update_comment_stats(comment, value):
 
 	obj = comment.content_object
 	if hasattr(obj, 'comment_count'):
-		try:
+		with transaction.atomic():
 			obj.comment_count += value
 			obj.save()
-		except:
-			pass
 
 	# if commented object is part of campaign, update comment stats there
 	if hasattr(obj, 'tags') and obj.tags.all().count() > 0:
 		campaigns = Campaign.objects.filter(main_tag__in=obj.tags.all())
 		for c in campaigns:
 			if hasattr(c, 'comment_count'):
-				try:
+				with transaction.atomic():
 					c.comment_count += value
 					c.save()
-				except:
-					pass
 
 @shared_task
 def create_comment_activity_log(comment):
@@ -283,7 +280,8 @@ def do_vote_async_tasks(vote_obj, stat_value, notify=False):
 
 	if type(vote_obj) == IntType:
 		# doing strange stuff because of circular imports and celery
-		vote_obj = Vote.objects.get(pk=vote_obj)
+		with transaction.atomic():
+			vote_obj = Vote.objects.get(pk=vote_obj)
 
 	update_vote_stats(vote_obj, stat_value)
 
@@ -298,18 +296,15 @@ def update_vote_stats(vote, value):
 	obj = vote.content_object
 
 	if hasattr(obj, 'vote_count'):
-		try:
+		with transaction.atomic():
 			obj.vote_count += value
 			obj.save()
-		except:
-			pass
 
 	if hasattr(obj, 'user') and hasattr(obj.user, 'voted_count'):
-		try:
+		with transaction.atomic():
 			obj.user.voted_count += value
 			obj.user.save()
-		except: 
-			pass
+			
 
 @shared_task
 def create_activity_log(vote):

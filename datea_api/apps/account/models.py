@@ -9,8 +9,10 @@ from django.utils import timezone
 from urllib import quote as urlquote
 import re
 from django.core.cache import cache
+from django.db.models.signals import pre_delete
 
 from datea_api.apps.image.models import Image
+
 
 class CustomUserManager(BaseUserManager):
 
@@ -159,6 +161,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return "{uname} ({full_name})".format(uname=self.username, full_name=self.full_name)
 		else:
 			return self.username
+
+
+def before_user_delete(sender, instance, using):
+	instance.__user_delete = True
+
+pre_delete.connect(before_user_delete, sender=User)
 
 
 

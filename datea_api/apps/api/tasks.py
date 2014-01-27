@@ -40,8 +40,11 @@ def do_dateo_async_tasks(dateo_obj, stat_value, notify=False):
 def update_dateo_stats(dateo, value):
 
 	if hasattr(dateo.user, 'dateo_count'):
-		dateo.user.dateo_count += value
-		dateo.user.save()
+		try:
+			dateo.user.dateo_count += value
+			dateo.user.save()
+		except:
+			pass
 
 	# Update tag and campaign stats
 	if hasattr(dateo, 'tags') and dateo.tags.all().count() > 0:
@@ -53,8 +56,11 @@ def update_dateo_stats(dateo, value):
 		campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
 		for c in campaigns:
 			if hasattr(c, 'dateo_count'):
-				c.dateo_count += value
-				c.save()
+				try:
+					c.dateo_count += value
+					c.save()
+				except:
+					pass
 
 @shared_task
 def create_dateo_activity_log(dateo):
@@ -158,16 +164,22 @@ def update_comment_stats(comment, value):
 
 	obj = comment.content_object
 	if hasattr(obj, 'comment_count'):
-		obj.comment_count += value
-		obj.save()
+		try:
+			obj.comment_count += value
+			obj.save()
+		except:
+			pass
 
 	# if commented object is part of campaign, update comment stats there
 	if hasattr(obj, 'tags') and obj.tags.all().count() > 0:
 		campaigns = Campaign.objects.filter(main_tag__in=obj.tags.all())
 		for c in campaigns:
 			if hasattr(c, 'comment_count'):
-				c.comment_count += value
-				c.save()
+				try:
+					c.comment_count += value
+					c.save()
+				except:
+					pass
 
 @shared_task
 def create_comment_activity_log(comment):
@@ -286,13 +298,18 @@ def update_vote_stats(vote, value):
 	obj = vote.content_object
 
 	if hasattr(obj, 'vote_count'):
-		obj.vote_count += value
-		obj.save()
+		try:
+			obj.vote_count += value
+			obj.save()
+		except:
+			pass
 
 	if hasattr(obj, 'user') and hasattr(obj.user, 'voted_count'):
-		obj.user.voted_count += value
-		obj.user.save()
-
+		try:
+			obj.user.voted_count += value
+			obj.user.save()
+		except: 
+			pass
 
 @shared_task
 def create_activity_log(vote):

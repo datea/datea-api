@@ -82,6 +82,10 @@ class DateaBaseAuthorization(Authorization):
 class OwnerOnlyAuthorization(Authorization):
 
     def read_list(self, object_list, bundle):
+
+        if not bundle.request.user.is_authenticated():
+            return []
+
         allowed = []
         # Since they may not all be saved, iterate over them.
         for obj in object_list:
@@ -94,6 +98,10 @@ class OwnerOnlyAuthorization(Authorization):
         
 
     def read_detail(self, object_list, bundle):
+
+        if not bundle.request.user.is_authenticated():
+            return False
+
         if request.user.is_active and request.user.status != 2 and bundle.obj.user == bundle.request.user:
             return True
         else:

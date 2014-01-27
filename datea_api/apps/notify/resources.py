@@ -39,7 +39,7 @@ class NotifySettingsResource(ModelResource):
         limit = 1
         thottle = CacheThrottle()
         authentication = ApiKeyPlusWebAuthentication()
-        authorization = OwnerOnlyAuthorization()
+        authorization = DateaBaseAuthorization()
         always_return_data = True
 
 

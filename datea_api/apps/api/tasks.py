@@ -47,20 +47,20 @@ def update_dateo_stats(dateo, value):
 			pass
 
 	# Update tag and campaign stats
-	if hasattr(dateo, 'tags') and dateo.tags.all().count() > 0:
+	try:
+		if hasattr(dateo, 'tags') and dateo.tags.all().count() > 0:
 
-		for tag in dateo.tags.all():
-			tag.dateo_count += value
-			tag.save()
+			for tag in dateo.tags.all():
+				tag.dateo_count += value
+				tag.save()
 
-		campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
-		for c in campaigns:
-			if hasattr(c, 'dateo_count'):
-				try:
+			campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
+			for c in campaigns:
+				if hasattr(c, 'dateo_count'):
 					c.dateo_count += value
 					c.save()
-				except:
-					pass
+	except:
+		pass
 
 @shared_task
 def create_dateo_activity_log(dateo):

@@ -33,6 +33,7 @@ class NotifySettingsResource(ModelResource):
         return bundle
 
     class Meta:
+        queryset = NotifySettings.objects.all()
         allowed_methods = ['get', 'patch']
         resource_name = "notify_settings"
         limit = 1

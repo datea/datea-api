@@ -186,9 +186,9 @@ def update_comment_stats(comment, value):
 			if hasattr(obj, 'tags') and obj.tags.all().count() > 0:
 				campaigns = Campaign.objects.filter(main_tag__in=obj.tags.all())
 				for c in campaigns:
-				if hasattr(c, 'comment_count'):
-					c.comment_count += value
-					c.save()
+					if hasattr(c, 'comment_count'):
+						c.comment_count += value
+						c.save()
 	except IntegrityError:
 		pass
 

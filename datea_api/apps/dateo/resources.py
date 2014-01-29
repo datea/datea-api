@@ -258,9 +258,9 @@ class DateoResource(DateaBaseGeoResource):
         # WITHIN QUERY
         if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left', 'top_right')):
             bleft = [float(c) for c in request.GET.get('bottom_left').split(',')]
-            bottom_left = Point(bleft[0], bleft[1])
+            bottom_left = Point(bleft[1], bleft[0])
             tright = [float(c) for c in request.GET.get('top_right').split(',')]
-            top_right = Point(tright[0], tright[1])
+            top_right = Point(tright[1], tright[0])
 
             sqs = sqs.within('position', bottom_left, top_right)
 
@@ -268,7 +268,7 @@ class DateoResource(DateaBaseGeoResource):
         if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'position')):
             dist = Distance( m = int(request.GET.get('distance')))
             pos = [float(c) for c in request.GET.get('position').split(',')]
-            position = Point(pos[0], pos[1])
+            position = Point(pos[1], pos[0])
 
             sqs = sqs.dwithin('position', position, dist)
 

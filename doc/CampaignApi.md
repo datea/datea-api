@@ -22,6 +22,7 @@ Filters:
 * main_tag: filter only by main tag (without hash) [string]
 * main_tag_id: filter by main_tag id [integer]
 * tags: comma separated tags (without hash) [strings]
+* featured: boolean [0 or 1]
 
 date related filters:
 * created__year: year dateo was created [four digits] (watch for double underscore -> django filters)

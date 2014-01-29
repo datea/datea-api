@@ -214,7 +214,7 @@ class DateoResource(DateaBaseGeoResource):
 
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id', 
-                  'published', 'status', 'id', 
+                  'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3']
 

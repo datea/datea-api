@@ -144,7 +144,7 @@ class CampaignResource(DateaBaseGeoResource):
 
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id', 
-                  'published', 'is_active', 'id', 
+                  'published', 'is_active', 'id', 'featured',
                   'created__year', 'created__month', 'created__day', 
                   'main_tag', 'main_tag_id']
         for p in params:

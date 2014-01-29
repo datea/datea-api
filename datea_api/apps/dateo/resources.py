@@ -256,19 +256,23 @@ class DateoResource(DateaBaseGeoResource):
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY
-        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left', 'top_right')):
-            bleft = [float(c) for c in request.GET.get('bottom_left').split(',')]
-            bottom_left = Point(bleft[1], bleft[0])
-            tright = [float(c) for c in request.GET.get('top_right').split(',')]
-            top_right = Point(tright[1], tright[0])
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left_latitude', 
+            'bottom_left_longitude','top_right_latitude', 'top_right_longitude')):
+            bl_x = float(request.GET.get('bottom_left_longitude'))
+            bl_y = float(request.GET.get('bottom_left_latitude'))
+            tr_x = float(request.GET.get('top_right_longitude'))
+            tr_y = float(request.GET.get('top_right_latitude'))
+            bottom_left = Point(bl_x, bl_y)
+            top_right = Point(tr_x, tr_y)
 
             sqs = sqs.within('position', bottom_left, top_right)
 
         # DWITHIN QUERY
-        if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'position')):
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'latitude', 'longitude')):
             dist = Distance( m = int(request.GET.get('distance')))
-            pos = [float(c) for c in request.GET.get('position').split(',')]
-            position = Point(pos[1], pos[0])
+            x = float(request.GET.get('longitude'))
+            y = float(request.GET.get('latitude'))
+            position = Point(x, y)
 
             sqs = sqs.dwithin('position', position, dist)
 

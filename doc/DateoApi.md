@@ -46,8 +46,11 @@ At the moment we have fields for 3 administrative levels besides 'Country'. In P
 * admin_level3: District (Perú) [string]
 
 spatial filters:
-* Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter dateos by a geographic bounding box. Each param has \<latitude,longitude\> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
-* Within distance to point: 'distance' and 'position' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as \<latitude,longitude\>, distance in meters as an integer.
+
+* Within bounding box: 
+  'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right). 
+
+* Within distance to point: 'distance', 'latitude' and 'longitude' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as decimal latitude and longitude params, distance in meters as an integer.
 
 
 ######Order_options

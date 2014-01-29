@@ -15,6 +15,7 @@ from datea_api.apps.dateo.models import Dateo
 from datea_api.apps.dateo.resources import DateoResource
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.vote.resources import VoteResource
+from datea_api.apps.follow.models import Follow
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery

@@ -265,8 +265,8 @@ class DateoResource(DateaBaseGeoResource):
             sqs = sqs.within('position', bottom_left, top_right)
 
         # DWITHIN QUERY
-        if all(k in request.GET and request.GET.get(k) != '' for k in ('max_distance', 'position')):
-            dist = Distance( m = int(request.GET.get('max_distance')))
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'position')):
+            dist = Distance( m = int(request.GET.get('distance')))
             pos = [float(c) for c in request.GET.get('position').split(',')]
             position = Point(pos[0], pos[1])
 

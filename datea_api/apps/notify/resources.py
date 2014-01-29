@@ -167,7 +167,7 @@ class ActivityLogResource(ModelResource):
 
             elif mode == 'all':
                 follow_keys = [f.follow_key for f in Follow.objects.filter(user__id=uid)]
-                sqs.filter(**q_args).filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid).distinct()
+                sqs.filter(**q_args).filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid)
 
         sqs = sqs.order_by('-created')
         

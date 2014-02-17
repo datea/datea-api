@@ -86,6 +86,10 @@ def url_whitelisted(url):
     else:
         return False
 
+def get_client_domain(request):
+    return request.META.get("HTTP_ORIGIN", '').replace('http://','').replace('https://', '')
+
+
 def get_client_data(domain):
 
     data = cache.get('client-'+domain)

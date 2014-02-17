@@ -21,7 +21,7 @@ import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_domain_from_url
+from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url
 from datea_api.apps.api.status_codes import *
 
 from registration.models import RegistrationProfile
@@ -112,7 +112,7 @@ class AccountResource(Resource):
                     'error': 'Duplicate username'}, status= BAD_REQUEST)
         else:
 
-            client_domain = request.META.get('HTTP_ORIGIN', '')
+            client_domain = get_client_domain(request)
             print "CLIENT DOMAIN", client_domain
             client_data = get_client_data(client_domain)
             client_data['activation_mode'] = 'registration'
@@ -199,7 +199,7 @@ class AccountResource(Resource):
             resetForm = CustomPasswordResetForm(data)
         
             if resetForm.is_valid():
-                client_domain = request.META.get("HTTP_ORIGIN", '')
+                client_domain = get_client_domain(request)
                 client_data = get_client_data(client_domain)
                 save_data = {
                     'request': request,
@@ -450,7 +450,7 @@ class UserResource(ModelResource):
                         # create registration profile
                         bundle.obj.date_joined = bundle.data['date_joined'] = datetime.datetime.utcnow().replace(tzinfo=utc)
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
-                        client_domain = bundle.request.META.get("HTTP_ORIGIN", '')
+                        client_domain = get_client_domain(bundle.request)
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
 

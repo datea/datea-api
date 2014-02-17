@@ -453,6 +453,10 @@ class UserResource(ModelResource):
                         client_domain = bundle.request.META.get("HTTP_ORIGIN", '')
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
+
+                        print "CLIENT DOMAIN", client_domain
+                        print "CLIENT DATA", client_data
+
                         new_profile.send_activation_email(client_data)
 
             if 'notify_settings' in postData:

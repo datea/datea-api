@@ -45,7 +45,7 @@ class CommentResource(ModelResource):
             bundle.data['user'] = bundle.request.user.id
             # convert model name into model
             bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
-            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
+            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
             del bundle.data['content_type']  
             
         return bundle

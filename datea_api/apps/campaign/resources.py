@@ -53,7 +53,7 @@ class CampaignResource(DateaBaseGeoResource):
         if bundle.request.method == 'POST':
             # use request user
             bundle.obj.user = bundle.request.user
-            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
+            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
             
         elif bundle.request.method in ('PUT', 'PATCH'):
             

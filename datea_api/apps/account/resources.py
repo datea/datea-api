@@ -113,8 +113,10 @@ class AccountResource(Resource):
         else:
 
             client_domain = request.META.get('HTTP_ORIGIN', '')
+            print "CLIENT DOMAIN", client_domain
             client_data = get_client_data(client_domain)
             client_data['activation_mode'] = 'registration'
+            print "CLIENT DATA", client_data
             #new_user = RegistrationProfile.objects.create_inactive_user(username, email,
             #                                                        password, client_data)
 

@@ -113,10 +113,8 @@ class AccountResource(Resource):
         else:
 
             client_domain = get_client_domain(request)
-            print "CLIENT DOMAIN", client_domain
             client_data = get_client_data(client_domain)
             client_data['activation_mode'] = 'registration'
-            print "CLIENT DATA", client_data
             #new_user = RegistrationProfile.objects.create_inactive_user(username, email,
             #                                                        password, client_data)
 
@@ -453,9 +451,6 @@ class UserResource(ModelResource):
                         client_domain = get_client_domain(bundle.request)
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
-
-                        print "CLIENT DOMAIN", client_domain
-                        print "CLIENT DATA", client_data
 
                         new_profile.send_activation_email(client_data)
 

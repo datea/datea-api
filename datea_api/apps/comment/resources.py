@@ -21,7 +21,6 @@ class CommentResource(ModelResource):
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
-                     'url': bundle.data['user'].data['url'],
                      'resource_uri': bundle.data['user'].data['resource_uri'],
                      'id': bundle.data['user'].data['id'] 
                      }

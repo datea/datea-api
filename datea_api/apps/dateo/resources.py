@@ -79,12 +79,11 @@ class DateoResource(DateaBaseGeoResource):
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
-                     'url': bundle.data['user'].data['url'],
-                     'resource_uri': bundle.data['user'].data['resource_uri']
+                     'resource_uri': bundle.data['user'].data['resource_uri'],
+                     'id': bundle.data['user'].data['id']
                      }
         bundle.data['user'] = user_data
         bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
-        bundle.data['url'] = bundle.obj.get_absolute_url()
         bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
         bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
         return bundle

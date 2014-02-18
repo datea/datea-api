@@ -464,8 +464,9 @@ class UserResource(ModelResource):
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
 
-            if 'image' in postData:
-                if 'id' in postData['image'] and 'data_uri' not in postData['image']['image']:
+            if 'image' in bundle.data:
+                print "IMAGE": bundle.data['image']
+                if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
                     bundle.obj.image_id = postData['image']['id']
                 else:
                     imgrsc = ImageResource()

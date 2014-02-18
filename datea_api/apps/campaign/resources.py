@@ -41,7 +41,6 @@ class CampaignResource(DateaBaseGeoResource):
 
     def dehydrate(self, bundle):
         bundle.data['image_thumb'] = bundle.obj.get_image_thumb('image_thumb_medium')
-        bundle.data['url'] = bundle.obj.get_absolute_url()
         bundle.data['is_active'] = bundle.obj.is_active()
         return bundle
 

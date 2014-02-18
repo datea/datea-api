@@ -14,6 +14,7 @@ from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.file.models import File
 from datea_api.apps.file.resources import FileResource
+from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.account.utils import get_domain_from_url
 
 
@@ -36,7 +37,7 @@ class CampaignResource(DateaBaseGeoResource):
     secondary_tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource', 
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
-            attribute='image', full=True, null=True, readonly=False)
+            attribute='image', full=True, null=True, readonly=True)
     
 
     def dehydrate(self, bundle):
@@ -60,6 +61,22 @@ class CampaignResource(DateaBaseGeoResource):
                                 'follow_count', 'featured', 'created', 'user']
             for f in forbidden_fields:
                 bundle.data[f] = getattr(bundle.obj, f)
+
+
+        if 'image' in bundle.data and 'image' in bundle.data['image']:
+                
+            if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
+                bundle.obj.image_id = postData['image']['id']
+            else:
+                orig_method = bundle.request.method
+                if not 'id' in bundle.data['image']:
+                    bundle.request.method = "POST"
+                imgrsc = ImageResource()
+                imgbundle = imgrsc.build_bundle(data=bundle.data['image'], request=bundle.request)
+                imgbundle = imgrsc.full_hydrate(imgbundle)
+                imgbundle.obj.save()
+                bundle.obj.image_id = imgbundle.obj.pk
+                bundle.request.method = orig_method
     
         return bundle
 

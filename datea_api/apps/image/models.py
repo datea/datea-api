@@ -36,8 +36,6 @@ class Image(models.Model):
 
 
     def save(self, *args, **kwargs):
-        from pprint import pprint
-        pprint(self.image)
         if not self.image._file:
             image = default.engine.get_image(self.image)
             (self.width, self.height) = default.engine.get_image_size(image)

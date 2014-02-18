@@ -329,9 +329,9 @@ class UserResource(ModelResource):
     
     def dehydrate(self, bundle):
         # profile images
-        bundle.data['image_small'] = bundle.obj.get_small_image()
-        bundle.data['image'] = bundle.obj.get_image()
-        bundle.data['image_large'] = bundle.obj.get_large_image()
+        bundle.data['image_thumb_small'] = bundle.obj.get_small_image()
+        bundle.data['image_thumb'] = bundle.obj.get_image()
+        bundle.data['image_thumb_large'] = bundle.obj.get_large_image()
 
         # send all user data user is one's own and is authenticated
         if hasattr(bundle.request, 'user') and bundle.request.user.id == bundle.obj.id:
@@ -465,7 +465,7 @@ class UserResource(ModelResource):
                 ns_bundle.obj.save()
 
             if 'image' in bundle.data and 'image' in bundle.data['image']:
-                print "IMAGE", bundle.data['image']
+                
                 if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
                     bundle.obj.image_id = postData['image']['id']
                 else:

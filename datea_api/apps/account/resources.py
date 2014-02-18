@@ -327,6 +327,8 @@ class UserResource(ModelResource):
 
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)
+    bg_image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+            attribute='bg_image', full=True, null=True, readonly=True)
     
     def dehydrate(self, bundle):
         # profile images
@@ -465,20 +467,22 @@ class UserResource(ModelResource):
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
 
-            if 'image' in bundle.data and type(bundle.data['image']) == DictType and 'image' in bundle.data['image']:
-                
-                if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
-                    bundle.obj.image_id = postData['image']['id']
-                else:
-                    orig_method = bundle.request.method
-                    if not 'id' in bundle.data['image']:
-                        bundle.request.method = "POST"
-                    imgrsc = ImageResource()
-                    imgbundle = imgrsc.build_bundle(data=bundle.data['image'], request=bundle.request)
-                    imgbundle = imgrsc.full_hydrate(imgbundle)
-                    imgbundle.obj.save()
-                    bundle.obj.image_id = imgbundle.obj.pk
-                    bundle.request.method = orig_method
+            for imgfield in ['image', 'bg_image']:
+
+                if imgfield in bundle.data and type(bundle.data[imgfield]) == DictType and 'image' in bundle.data[imgfield]:
+                    
+                    if 'id' in bundle.data[imgfield] and 'data_uri' not in bundle.data[imgfield]['image']:
+                        bundle.obj.image_id = bundle.data[imgfield]['id']
+                    else:
+                        orig_method = bundle.request.method
+                        if not 'id' in bundle.data[imgfield]:
+                            bundle.request.method = "POST"
+                        imgrsc = ImageResource()
+                        imgbundle = imgrsc.build_bundle(data=bundle.data[imgfield], request=bundle.request)
+                        imgbundle = imgrsc.full_hydrate(imgbundle)
+                        imgbundle.obj.save()
+                        bundle.obj.image_id = imgbundle.obj.pk
+                        bundle.request.method = orig_method
 
         return bundle
         

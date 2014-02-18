@@ -67,7 +67,7 @@ class CampaignResource(DateaBaseGeoResource):
         if 'image' in bundle.data and type(bundle.data['image']) == DictType and 'image' in bundle.data['image']:
             print bundle.data['image']
             if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
-                bundle.obj.image_id = postData['image']['id']
+                bundle.obj.image_id = bundle.data['image']['id']
             else:
                 orig_method = bundle.request.method
                 if not 'id' in bundle.data['image']:

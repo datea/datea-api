@@ -40,6 +40,7 @@ from django.core.exceptions import ValidationError
 from tastypie.exceptions import Unauthorized
 import datetime
 from django.utils.timezone import utc
+from types import DictType
 
 
 
@@ -329,9 +330,9 @@ class UserResource(ModelResource):
     
     def dehydrate(self, bundle):
         # profile images
-        bundle.data['image_thumb_small'] = bundle.obj.get_small_image()
-        bundle.data['image_thumb'] = bundle.obj.get_image()
-        bundle.data['image_thumb_large'] = bundle.obj.get_large_image()
+        bundle.data['image_small'] = bundle.obj.get_small_image()
+        bundle.data['image_medium'] = bundle.obj.get_image()
+        bundle.data['image_large'] = bundle.obj.get_large_image()
 
         # send all user data user is one's own and is authenticated
         if hasattr(bundle.request, 'user') and bundle.request.user.id == bundle.obj.id:
@@ -464,8 +465,7 @@ class UserResource(ModelResource):
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
 
-            print bundle.data['image']
-            if 'image' in bundle.data and 'image' in bundle.data['image']:
+            if 'image' in bundle.data and type(bundle.data['image']) == DictType and 'image' in bundle.data['image']:
                 
                 if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
                     bundle.obj.image_id = postData['image']['id']

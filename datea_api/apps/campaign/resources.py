@@ -24,6 +24,7 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import Http404
+from types import DictType
 
 
 class CampaignResource(DateaBaseGeoResource):
@@ -63,7 +64,7 @@ class CampaignResource(DateaBaseGeoResource):
                 bundle.data[f] = getattr(bundle.obj, f)
 
 
-        if 'image' in bundle.data and 'image' in bundle.data['image']:
+        if 'image' in bundle.data and type(bundle.data['image']) == DictType and 'image' in bundle.data['image']:
                 
             if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
                 bundle.obj.image_id = postData['image']['id']

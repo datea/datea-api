@@ -16,6 +16,7 @@ from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.follow.resources import FollowResource
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource
+from datea_api.apps.image.resources import ImageResource
 
 import json
 from django.contrib.auth import authenticate
@@ -324,7 +325,7 @@ def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
 class UserResource(ModelResource):
 
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
-            attribute='image', full=True, null=True, readonly=False)
+            attribute='image', full=True, null=True, readonly=True)
     
     def dehydrate(self, bundle):
         # profile images
@@ -462,6 +463,16 @@ class UserResource(ModelResource):
                 ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], request=bundle.request)
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
+
+            if 'image' in postData:
+                if 'id' in postData['image'] and 'data_uri' not in postData['image']['image']:
+                    bundle.obj.image_id = postData['image']['id']
+                else:
+                    imgrsc = ImageResource()
+                    imgbundle = imgrsc.build_bundle(data=bundle.data['image'], request=bundle.request)
+                    imgbundle = imgrsc.full_hydrate(imgbundle)
+                    imgbundle.obj.save()
+                    bundle.obj.image_id = imgbundle.obj.pk
 
         return bundle
         

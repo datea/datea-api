@@ -464,6 +464,7 @@ class UserResource(ModelResource):
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
 
+            print bundle.data['image']
             if 'image' in bundle.data and 'image' in bundle.data['image']:
                 
                 if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:

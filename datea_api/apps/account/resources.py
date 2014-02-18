@@ -331,7 +331,7 @@ class UserResource(ModelResource):
     def dehydrate(self, bundle):
         # profile images
         bundle.data['image_small'] = bundle.obj.get_small_image()
-        bundle.data['image_medium'] = bundle.obj.get_image()
+        bundle.data['image'] = bundle.obj.get_image()
         bundle.data['image_large'] = bundle.obj.get_large_image()
 
         # send all user data user is one's own and is authenticated

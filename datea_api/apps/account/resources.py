@@ -469,11 +469,15 @@ class UserResource(ModelResource):
                 if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
                     bundle.obj.image_id = postData['image']['id']
                 else:
+                    orig_method = bundle.request.method
+                    if not 'id' in bundle.data['image']:
+                        bundle.request.method = "POST"
                     imgrsc = ImageResource()
                     imgbundle = imgrsc.build_bundle(data=bundle.data['image'], request=bundle.request)
                     imgbundle = imgrsc.full_hydrate(imgbundle)
                     imgbundle.obj.save()
                     bundle.obj.image_id = imgbundle.obj.pk
+                    bundle.request.method = orig_method
 
         return bundle
         

@@ -36,7 +36,7 @@ class CampaignResource(DateaBaseGeoResource):
     secondary_tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource', 
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
-            attribute='image', full=True, null=True, readonly=True)
+            attribute='image', full=True, null=True, readonly=False)
     
 
     def dehydrate(self, bundle):

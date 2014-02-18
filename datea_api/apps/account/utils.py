@@ -92,9 +92,9 @@ def get_client_domain(request):
 
 def get_client_data(domain):
 
-    #data = cache.get('client-'+domain)
-    #if data is not None:
-    #    return data
+    data = cache.get('client-'+domain)
+    if data is not None:
+        return data
 
     site = Site.objects.get_current()
 

@@ -322,13 +322,15 @@ def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
 
 
 class UserResource(ModelResource):
+
+    image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+            attribute='image', full=True, null=True, readonly=False)
     
     def dehydrate(self, bundle):
         # profile images
         bundle.data['image_small'] = bundle.obj.get_small_image()
         bundle.data['image'] = bundle.obj.get_image()
         bundle.data['image_large'] = bundle.obj.get_large_image()
-        bundle.data['url'] = bundle.obj.get_absolute_url()
 
         # send all user data user is one's own and is authenticated
         if hasattr(bundle.request, 'user') and bundle.request.user.id == bundle.obj.id:

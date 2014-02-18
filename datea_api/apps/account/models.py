@@ -69,6 +69,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 	email = models.EmailField(_('email address'), max_length=254, unique=True, null=True, blank=True)
 	message = models.CharField(_('personal message'), max_length=140, blank=True, null=True)
 
+	url = models.URLField(_('External URL'), max_length=200, blank=True, null=True)
+	url_facebook = models.URLField(_('Facebook URL'), max_length=200, blank=True, null=True)
+	url_twitter = models.URLField(_('Twitter URL'), max_length=200, blank=True, null=True)
+	url_youtube = models.URLField(_('Youtube URL'), max_length=200, blank=True, null=True)
+
 	image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar")
 	bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background")
 

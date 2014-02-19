@@ -481,7 +481,7 @@ class UserResource(ModelResource):
                         imgbundle = imgrsc.build_bundle(data=bundle.data[imgfield], request=bundle.request)
                         imgbundle = imgrsc.full_hydrate(imgbundle)
                         imgbundle.obj.save()
-                        bundle.obj.image_id = imgbundle.obj.pk
+                        setattr(bundle.obj, imgfield+"_id", imgbundle.obj.pk)
                         bundle.request.method = orig_method
 
         return bundle

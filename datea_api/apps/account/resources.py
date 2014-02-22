@@ -203,7 +203,7 @@ class AccountResource(Resource):
                 client_data = get_client_data(client_domain)
                 save_data = {
                     'request': request,
-                    'base_url': client_data['base_url'],
+                    'base_url': client_data['pwreset_base_url'],
                     'sitename_override': client_data['name'],
                     'domain_override': client_data['domain']
                 } 

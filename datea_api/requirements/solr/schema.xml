@@ -149,6 +149,16 @@
 
     <field name="status" type="text_en" indexed="true" stored="true" multiValued="false" />
 
+    <field name="has_images" type="boolean" indexed="true" stored="true" multiValued="false" />
+
+    <field name="tags" type="text_en" indexed="true" stored="true" multiValued="true" />
+
+    <field name="text" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="comment_count" type="long" indexed="true" stored="true" multiValued="false" />
+
+    <field name="user" type="text_en" indexed="true" stored="true" multiValued="false" />
+
     <field name="category" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="admin_level1" type="text_en" indexed="true" stored="true" multiValued="false" />
@@ -157,23 +167,19 @@
 
     <field name="obj_id" type="long" indexed="true" stored="true" multiValued="false" />
 
-    <field name="text" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="tags" type="text_en" indexed="true" stored="true" multiValued="true" />
-
-    <field name="modified" type="date" indexed="true" stored="true" multiValued="false" />
+    <field name="country" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="created" type="date" indexed="true" stored="true" multiValued="false" />
 
-    <field name="user" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="modified" type="date" indexed="true" stored="true" multiValued="false" />
 
-    <field name="country" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="vote_count" type="long" indexed="true" stored="true" multiValued="false" />
+
+    <field name="published" type="boolean" indexed="true" stored="true" multiValued="false" />
 
     <field name="position" type="location" indexed="true" stored="true" multiValued="false" />
 
     <field name="category_id" type="long" indexed="true" stored="true" multiValued="false" />
-
-    <field name="published" type="boolean" indexed="true" stored="true" multiValued="false" />
 
     <field name="dateo_count" type="long" indexed="true" stored="true" multiValued="false" />
 

@@ -67,7 +67,7 @@ class DateoResource(DateaBaseGeoResource):
             'published': ['exact'],
             'user': ALL_WITH_RELATIONS
         }
-        ordering = ['name', 'created', 'distance']
+        ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
         limit = 200
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle(throttle_at=300)
@@ -215,7 +215,8 @@ class DateoResource(DateaBaseGeoResource):
         params = ['category_id', 'category', 'user', 'user_id', 
                   'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
-                  'country', 'admin_level1', 'admin_level2', 'admin_level3']
+                  'country', 'admin_level1', 'admin_level2', 'admin_level3',
+                  'has_images']
 
         for p in params:
             if p in request.GET:

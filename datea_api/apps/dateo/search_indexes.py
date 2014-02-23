@@ -21,6 +21,10 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
     admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
 
+    vote_count = indexes.IntegerField(model_attr="vote_count")
+    comment_count = indexes.IntegerField(model_attr="comment_count")
+    has_images = indexes.BooleanField()
+
     def get_model(self):
         return Dateo
     
@@ -38,3 +42,6 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
             return int(obj.category.pk)
         else:
             return None
+
+    def prepare_has_images(self, obj):
+        return obj.images.count() > 0

@@ -21,6 +21,7 @@ Filters:
 * show_unpublished: also show unpublished dateos. Only for one's own dateos, used in combination with user_id [boolean: 0 or 1]
 * id: object id
 * tags: comma separated tags (without hash) [strings]
+* has_images: [boolean 0 or 1]
 
 Number of results and pagingation:
 * 'limit': number of results, defaults to 100 [int]

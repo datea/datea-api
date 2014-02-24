@@ -335,6 +335,10 @@ class UserResource(ModelResource):
         bundle.data['image_small'] = bundle.obj.get_small_image()
         bundle.data['image'] = bundle.obj.get_image()
         bundle.data['image_large'] = bundle.obj.get_large_image()
+        if bundle.obj.bg_image:
+            bundle.data['bg_image'] = bundle.obj.bg_image.image.url
+        else:
+            bundle.data['bg_image'] = None
 
         # send all user data user is one's own and is authenticated
         if hasattr(bundle.request, 'user') and bundle.request.user.id == bundle.obj.id:
@@ -472,7 +476,7 @@ class UserResource(ModelResource):
                 if imgfield in bundle.data and type(bundle.data[imgfield]) == DictType and 'image' in bundle.data[imgfield]:
                     
                     if 'id' in bundle.data[imgfield] and 'data_uri' not in bundle.data[imgfield]['image']:
-                        bundle.obj.image_id = bundle.data[imgfield]['id']
+                        setattr(bundle.obj, imgfield+"_id", bundle.data[imgfield]['id'])
                     else:
                         orig_method = bundle.request.method
                         if not 'id' in bundle.data[imgfield]:

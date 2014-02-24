@@ -155,19 +155,19 @@ class ActivityLogResource(ModelResource):
 
             if mode == 'actor':
                 q_args['actor_id'] = uid
-                sqs.filter(**q_args)
+                sqs = sqs.filter(**q_args)
 
             elif mode == 'target_user':
                 q_args['target_user_id'] = uid
-                sqs.filter(**q_args)
+                sqs = sqs.filter(**q_args)
 
             elif mode == 'follow':
                 q_args['follow_keys__in'] = [f.follow_key for f in Follow.objects.filter(user__id=uid)]
-                sqs.filter(**q_args)
+                sqs = sqs.filter(**q_args)
 
             elif mode == 'all':
                 follow_keys = [f.follow_key for f in Follow.objects.filter(user__id=uid)]
-                sqs.filter(**q_args).filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid)
+                sqs = sqs.filter(**q_args).filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid)
 
         sqs = sqs.order_by('-created')
         

@@ -392,10 +392,7 @@ class UserResource(ModelResource):
             # GEO IP LOCATIONS
             ip = get_real_ip(bundle.request)
             match = geolite2.lookup(ip)
-
             bundle.data['ip_location'] = {'latitude': match.location[0], 'longitude': match.location[1]}
-            from pprint import pprint
-            pprint(bundle.data)
 
 
         return bundle

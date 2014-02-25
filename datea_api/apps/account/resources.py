@@ -261,6 +261,9 @@ class AccountResource(Resource):
 
     def social_auth(self, request, **kwargs):
 
+        from pprint import pprint
+        pprint(request.META)
+
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)
 

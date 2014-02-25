@@ -28,6 +28,8 @@ pyelasticsearch==0.6.1
 pykml==0.1.0
 pysolr==3.1.0
 python-dateutil==2.2
+python-geoip==1.2
+python-geoip-geolite2==2014.0207
 python-memcached==1.53
 python-mimeparse==0.1.4
 python-openid==2.2.5

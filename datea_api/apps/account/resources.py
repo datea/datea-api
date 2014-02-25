@@ -263,8 +263,6 @@ class AccountResource(Resource):
 
     def social_auth(self, request, **kwargs):
 
-        print "REAL IP", get_real_ip(request)
-
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)
 
@@ -392,9 +390,12 @@ class UserResource(ModelResource):
             bundle.data['notify_settings'] = ns_bundle.data
 
             # GEO IP LOCATIONS
+            ip = get_real_ip(bundle.request)
+            match = geolite2.lookup(ip)
 
-            #match = geolite2.lookup(bundle.request.META.get('HTTP_X_REAL_IP', '')
-
+            bundle.data['ip_location'] = {'latitude': match.location[0], 'longitude': match.location[1]}
+            from pprint import pprint
+            pprint(bundle.data)
 
 
         return bundle

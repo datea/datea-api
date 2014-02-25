@@ -42,6 +42,8 @@ import datetime
 from django.utils.timezone import utc
 from types import DictType
 
+from geoip import geolite2
+from ipware.ip import get_real_ip
 
 
 class AccountResource(Resource):
@@ -261,8 +263,7 @@ class AccountResource(Resource):
 
     def social_auth(self, request, **kwargs):
 
-        from pprint import pprint
-        pprint(request.META)
+        print "REAL IP", get_real_ip(request)
 
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)
@@ -389,6 +390,11 @@ class UserResource(ModelResource):
             ns_bundle = notifySettings_rsc.build_bundle(obj=bundle.obj.notify_settings)
             ns_bundle = notifySettings_rsc.full_dehydrate(ns_bundle)
             bundle.data['notify_settings'] = ns_bundle.data
+
+            # GEO IP LOCATIONS
+
+            #match = geolite2.lookup(bundle.request.META.get('HTTP_X_REAL_IP', '')
+
 
 
         return bundle

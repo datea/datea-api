@@ -6,7 +6,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from datea_api.apps.account.utils import get_domain_from_url
-
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Vote
 
@@ -15,10 +15,13 @@ class VoteResource(ModelResource):
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     
-    def hydrate(self,bundle):
+    def hydrate(self, bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
             bundle.obj.client_domain = bundle.data['clint_domain'] = get_domain_from_url(bundle.request.META.get("HTTP_ORIGIN", ""))
+            if 'content_type' in bundle.data:
+                bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
+
         return bundle
     
     class Meta:

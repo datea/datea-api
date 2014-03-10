@@ -23,9 +23,9 @@ class Follow(models.Model):
     created = models.DateTimeField(_('created'), auto_now_add=True)
     
     # generic content type relation to followed object
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    object_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(null=True, blank=True)
 
     #object_type = models.CharField(max_length=255)
     
@@ -40,6 +40,11 @@ class Follow(models.Model):
     def save(self, *args, **kwargs): 
         if not self.follow_key:
             self.follow_key = self.content_type.model+'.'+str(self.object_id)
+        elif not self.content_type and self.follow_key:
+            model, pk = self.follow_key.split('.')
+            self.content_type = ContentType.objects.get(model=model)
+            self.object_id = int(pk)
+
         super(Follow, self).save(*args, **kwargs)
     
     def __unicode__(self):

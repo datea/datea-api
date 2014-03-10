@@ -8,6 +8,7 @@ from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.account.utils import get_domain_from_url
+from django.contrib.contenttypes.models import ContentType
 
 
 class FollowResource(ModelResource):
@@ -18,7 +19,10 @@ class FollowResource(ModelResource):
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
-            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', '')) 
+            bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
+            if 'content_type' in bundle.data:
+                bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
+
         return bundle
      
     class Meta:
@@ -29,7 +33,7 @@ class FollowResource(ModelResource):
         filtering={
                 'id' : ['exact'],
                 'user': ALL_WITH_RELATIONS,
-                'comntent_type__model': ['exact'],
+                'content_type__model': ['exact'],
                 'object_id': ['exact'],
                 'follow_key': ['exact']
                 }

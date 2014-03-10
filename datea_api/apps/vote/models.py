@@ -16,14 +16,19 @@ class Vote(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    
-    #object_type = models.CharField(max_length=255)
-    object_id = models.PositiveIntegerField()
+
+    vote_key = models.CharField(max_length=255, blank=True, null=True)
 
     client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
     
     def save(self, *args, **kwargs):
-        # update comment stats on voted object  
+        # something here
+        if not self.vote_key:
+            self.vote_key = self.content_type.model+'.'+str(self.object_id)
+        elif not self.content_type and self.follow_key:
+            model, pk = self.vote_key.split('.')
+            self.content_type = ContentType.objects.get(model=model)
+            self.object_id = int(pk)  
         super(Vote, self).save(*args, **kwargs)
     
     def __unicode__(self):

@@ -361,14 +361,14 @@ class UserResource(ModelResource):
 
             # TAGS FOLLOWED
             tag_ids = [f.object_id for f in bundle.obj.follows.filter(content_type__model='tag')]
-            tags = []
+            followed_tags = []
             if len(tag_ids) > 0:
                 tags = Tag.objects.filter(pk__in=tag_ids)
                 tag_rsc = TagResource()
                 for t in tags:
                     t_bundle = tag_rsc.build_bundle(obj=t)
                     t_bundle = tag_rsc.full_dehydrate(t_bundle)
-                    tags.append(t_bundle.data)
+                    followed_tags.append(t_bundle.data)
             bundle.data['tags_followed'] = tags
             
             # VOTES

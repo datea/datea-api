@@ -369,7 +369,7 @@ class UserResource(ModelResource):
                     t_bundle = tag_rsc.build_bundle(obj=t)
                     t_bundle = tag_rsc.full_dehydrate(t_bundle)
                     followed_tags.append(t_bundle.data)
-            bundle.data['tags_followed'] = tags
+            bundle.data['tags_followed'] = followed_tags
             
             # VOTES
             votes = []

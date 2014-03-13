@@ -364,7 +364,7 @@ class UserResource(ModelResource):
             tags = []
             if len(tag_ids) > 0:
                 tags = Tag.objects.filter(pk__in=tag_ids)
-                t_resource = TagResource()
+                tag_rsc = TagResource()
                 for t in tags:
                     t_bundle = tag_rsc.build_bundle(obj=t)
                     t_bundle = tag_rsc.full_dehydrate(t_bundle)

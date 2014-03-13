@@ -12,11 +12,14 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 import re
 
+from datea_api.apps.tag.models import Tag
+
 from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.follow.resources import FollowResource
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource
 from datea_api.apps.image.resources import ImageResource
+from datea_api.apps.tag.resources import TagResource
 
 import json
 from django.contrib.auth import authenticate
@@ -348,13 +351,25 @@ class UserResource(ModelResource):
             bundle.data['email'] = bundle.obj.email
 
             # FOLLOWS
-            follows = []
-            follow_rsc = FollowResource()
-            for f in bundle.obj.follows.all():
-                f_bundle = follow_rsc.build_bundle(obj=f)
-                f_bundle = follow_rsc.full_dehydrate(f_bundle)
-                follows.append(f_bundle.data)
-            bundle.data['follows'] = follows
+            #follows = []
+            #follow_rsc = FollowResource()
+            #for f in bundle.obj.follows.all():
+            #    f_bundle = follow_rsc.build_bundle(obj=f)
+            #    f_bundle = follow_rsc.full_dehydrate(f_bundle)
+            #    follows.append(f_bundle.data)
+            #bundle.data['follows'] = follows
+
+            # TAGS FOLLOWED
+            tad_ids = [f.object_id for f in bundle.obj.follows.filter(content_type__model='tag')]
+            tags = []
+            if len(tag_ids) > 0:
+                tags = Tag.objects.filter(pk__in=tag_ids)
+                t_resource = TagResource()
+                for t in tags:
+                    t_bundle = tag_rsc.build_bundle(obj=t)
+                    t_bundle = tag_rsc.full_dehydrate(t_bundle)
+                    tags.append(t_bundle.data)
+            bundle.data['tags_followed'] = tags
             
             # VOTES
             votes = []

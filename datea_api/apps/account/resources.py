@@ -360,7 +360,7 @@ class UserResource(ModelResource):
             #bundle.data['follows'] = follows
 
             # TAGS FOLLOWED
-            tad_ids = [f.object_id for f in bundle.obj.follows.filter(content_type__model='tag')]
+            tag_ids = [f.object_id for f in bundle.obj.follows.filter(content_type__model='tag')]
             tags = []
             if len(tag_ids) > 0:
                 tags = Tag.objects.filter(pk__in=tag_ids)

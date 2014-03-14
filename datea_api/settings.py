@@ -16,6 +16,7 @@ PROJECT_DIR = os.path.join(BASE_DIR, 'datea_api')
 sys.path.insert(0, os.path.join(BASE_DIR, 'datea_api/apps'))
 
 SITE_ID = 1
+GRAPPELLI_ADMIN_TITLE = "DATEA API"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/

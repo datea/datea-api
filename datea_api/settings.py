@@ -40,6 +40,17 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_DIR , "templates"),
 )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",   #grappelli
+)
+
 
 ALLOWED_HOSTS = []
 
@@ -48,6 +59,7 @@ AUTH_USER_MODEL = 'account.User'
 # Application definition
 
 INSTALLED_APPS = (
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,6 +89,7 @@ INSTALLED_APPS = (
     'datea_api.apps.vote',
     'datea_api.apps.campaign',
     'datea_api.apps.notify',
+    'datea_api.apps.flag',
     'datea_api.apps.api',
 
     # USER STUFF
@@ -190,6 +203,11 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_DIR ,'site-static'),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
 # media deliver

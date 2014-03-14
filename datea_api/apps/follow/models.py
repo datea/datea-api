@@ -1,21 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-
-
 from django.conf import settings
 
-"""
-from django.db.models.signals import post_save, pre_delete, m2m_changed
-
-from datea.datea_comment.models import DateaComment
-from datea.datea_vote.models import DateaVote
-from datea.datea_mapping.models import DateaMapping, DateaMapItem, DateaMapItemResponse
-from datea.datea_mapping.signals import map_item_response_created
-"""
 
 class Follow(models.Model):
     

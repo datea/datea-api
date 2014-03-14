@@ -17,11 +17,13 @@ from datea_api.apps.dateo.models import Dateo
 from datea_api.apps.dateo.resources import DateoResource
 from datea_api.apps.vote.models import Vote
 import datea_api.apps.vote.resources
+from datea_api.apps.flag.models import Flag
 
 from datea_api.apps.notify.utils import send_mails
 from datea_api.apps.account.utils import get_client_data
 
 from django.db import IntegrityError, transaction
+from django.conf import settings
 
 
 ################################### DATEO ASYNC TASKS #######################################
@@ -301,8 +303,8 @@ def do_vote_async_tasks(vote_obj, stat_value, notify=False):
 	update_vote_stats(vote_obj, stat_value)
 
 	if notify and stat_value > 0:
-		actlog = create_activity_log(vote_obj)
-		create_notifications(actlog)
+		actlog = create_vote_activity_log(vote_obj)
+		create_vote_notifications(actlog)
 
 
 @shared_task
@@ -328,7 +330,7 @@ def update_vote_stats(vote, value):
 
 
 @shared_task
-def create_activity_log(vote):
+def create_vote_activity_log(vote):
 
 	actlog = ActivityLog()
 	actlog.actor = vote.user
@@ -352,7 +354,7 @@ def create_activity_log(vote):
 	return actlog
 
 @shared_task
-def create_notifications(actlog):
+def create_vote_notifications(actlog):
 
 	# 1. Usuario afectado
 	notify_users = [actlog.target_user]
@@ -426,6 +428,39 @@ def create_notifications(actlog):
 			email_data["content"] = actlog.target_object.content
 		
 		send_mails(email_users, "vote", email_data)
+
+
+
+############################################## FLAG ASYNC TASKS ##########################################
+
+@shared_task
+def do_flag_async_tasks(flag_obj_id):
+
+	# doing strange stuff because of circular imports and celery
+	with transaction.atomic():
+		flag_obj = FLag.objects.get(pk=flag_obj_id)
+
+	users = User.objects.filter(pk__in=settings.CONTENT_ADMIN_IDS)
+
+	# email using target_object client_domain (for now)
+	client_data = get_client_data(flag_obj.client_domain)
+
+	email_data = {
+		"user": flag_obj.user.username,
+		"app_label": flag_obj.content_type.app_label,
+		"model": flag_obj.content_type.model,
+		"comment": flag_obj.comment,
+		"site": client_data
+	}
+
+	send_mails(users, "flag", email_data)
+
+
+
+
+
+
+
 
 
 

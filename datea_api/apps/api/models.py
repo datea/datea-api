@@ -23,6 +23,7 @@ from celery.execute import send_task
 from datea_api.apps.dateo.models import Dateo
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.comment.models import Comment
+from datea_api.apps.flag.models import Flag
 
 
 def dateo_pre_saved(sender, instance, **kwargs):
@@ -110,5 +111,21 @@ def comment_pre_delete(sender, instance, **kwargs):
 post_init.connect(comment_pre_saved, sender=Comment)
 post_save.connect(comment_saved, sender=Comment)
 pre_delete.connect(comment_pre_delete, sender=Comment)
+
+
+
+#######
+#	FLAG SAVED
+######
+
+def flag_saved(sender, instance, created, **kwargs):
+	if created:
+		global do_flag_async_tasks
+		from .tasks import do_flag_async_tasks
+		do_flag_async_tasks.delay(instance.pk)
+
+post_save.connect(flag_saved, sender=Flag)
+
+
 
 

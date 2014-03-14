@@ -17,6 +17,8 @@ class Flag(models.Model):
 
 	comment = models.TextField(_("Comentario"))
 
+	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+
 	def __unicode__(self):
 		return self.user.username + ": " + self.content_type.model + "." + str(self.object_id)
 

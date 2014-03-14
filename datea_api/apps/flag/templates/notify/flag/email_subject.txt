@@ -1,0 +1,1 @@
+{% spaceless %}{% load i18n %}{% blocktrans with user as user and model as model %}{{ user }} flagged a {{model}}{% endblocktrans %}{% endspaceless %}

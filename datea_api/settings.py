@@ -160,6 +160,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
 
+CONTENT_ADMIN_IDS = [1]
 
 # HAYSTACK WITH ELASTICSEARCH
 # Ngram fields appear to be broken on elasticsearch (switching to solr, more work on config!)

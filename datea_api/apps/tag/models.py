@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+import re
 
 
 class Tag(models.Model):
@@ -15,6 +16,10 @@ class Tag(models.Model):
 	dateo_count = models.IntegerField(_('Dateo count'), default=0, blank=True, null=True)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+
+	def save(self, *args, **kwargs):
+		self.tag = re.sub("[\W_]", '', self.tag, flags=re.UNICODE)
+		super(self, Tag).save(*args, **kwargs)
 
 	class Meta:
 		verbose_name = _('Tag')

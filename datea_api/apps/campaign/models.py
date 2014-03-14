@@ -59,6 +59,7 @@ class Campaign(models.Model):
 	                        null=True, 
 	                        help_text=_("Long description (optional)"))
 
+
 	# GEO:
 	center = models.PointField(_("Center"), blank=True, null=True, spatial_index=False)
 	boundary = models.PolygonField(_("Boundary"), blank=True, null=True, spatial_index=False)

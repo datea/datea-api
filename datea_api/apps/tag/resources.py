@@ -30,6 +30,21 @@ import unicodedata
 
 class TagResource(ModelResource):
 
+    campaigns = fields.ToManyField('datea_api.apps.campaign.resources.CampaignResource',
+            attribute='campaigns', null=True, full=False, readonly=True)
+
+    def dehydrate(self, bundle):
+
+        campaigns = []
+        for c in bundle.obj.campaigns.all():
+            campaigns.append({
+                    "id": c.id,
+                    "name": c.name,
+                    "secondary_tags": [t.tag for t in c.secondary_tags.all()]  
+                })
+        bundle.data['campaigns'] = campaigns
+        
+        return bundle
 
     def hydrate(self, bundle):
 

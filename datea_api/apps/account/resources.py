@@ -520,6 +520,12 @@ class UserResource(ModelResource):
         ]
 
 
+    def get_object_list(self, request):
+        if 'follow_key' in request.GET:
+            return super(UserResource, self).get_object_list(request).filter(follows__follow_key=request.GET.get('follow_key'))
+        else:
+            return super(UserResource, self).get_object_list(request)
+
     class Meta:
         queryset = User.objects.all()
         resource_name = 'user'

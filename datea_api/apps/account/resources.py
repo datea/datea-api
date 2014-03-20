@@ -530,6 +530,7 @@ class UserResource(ModelResource):
         #throttle = CacheThrottle(throttle_at=100)
         filtering = {
             'username': ALL,
+            'follows': ALL,
             'id': ALL,
         }
         fields = ['username', 'id', 'date_joined', 'last_login', 

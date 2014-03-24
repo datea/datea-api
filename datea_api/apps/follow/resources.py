@@ -28,8 +28,7 @@ class FollowResource(ModelResource):
     class Meta:
         queryset = Follow.objects.all()
         resource_name = 'follow'
-        list_allowed_methods =['get', 'post', 'delete']
-        detail_allowed_methods = ['get', 'post', 'delete']
+        allowed_methods =['get', 'post', 'delete']
         filtering={
                 'id' : ['exact'],
                 'user': ALL_WITH_RELATIONS,

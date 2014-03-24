@@ -69,18 +69,12 @@ class DateaBaseAuthorization(Authorization):
 
     def delete_list(self, object_list, bundle):
         # Sorry user, no deletes for you!
-        print "DELETE LIST"
         raise Unauthorized("Sorry, no list deletes.")
 
     def delete_detail(self, object_list, bundle):
-        print "DELETE DETAIL"
         user = bundle.request.user
-        print user
         if not user or not user.is_active or not user.email or user.status != 1:
-            print "DETAIL UNAUTHORIZED"
             raise Unauthorized('user is not active or needs to validate email')
-
-        print "RESULT: ", user.is_staff or (bundle.obj.user == user)
         return user.is_staff or (bundle.obj.user == user)
 
 

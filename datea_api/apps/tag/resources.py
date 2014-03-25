@@ -40,6 +40,7 @@ class TagResource(ModelResource):
             campaigns.append({
                     "id": c.id,
                     "name": c.name,
+                    "username": c.user.username,
                     "secondary_tags": [t.tag for t in c.secondary_tags.all()]  
                 })
         bundle.data['campaigns'] = campaigns

@@ -23,7 +23,7 @@ Number of results and pagingation:
 * 'offset': paging offset (e.g 5 for next page) [int]
 
 
-POST:
+*POST:*
 	{
 		follow_key: 'tag.1001',
 	}
@@ -34,4 +34,17 @@ or (both are valid options)
 		content_type: 'tag',
 		object_id: 1001
 	}
+
+
+*DELETE:*
+
+You can only delete follow objects that belong to your user. You need to send the api key and user name in the header, as described in There are 3 ways to delete follow objects. Examples:
+
+1. Issue a DELETE request to /api/v2/follow/366/
+
+2. DELETE request to /api/v2/follow/?user=\<user id\>&content_type=tag&object_id=366
+
+3. DELETE request to /api/v2/follow/?user=\<user id\>&follow_key=tag.366
+
+
 

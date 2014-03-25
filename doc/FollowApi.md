@@ -13,10 +13,12 @@ Comments:
 * "follow_key" is a convenience field to describe the object type and object id in one string. Example: 'tag.1000'.
 * Follow objects always use the currently authenticated user. One can only create and delete follow objects for one's own user.
 
-List follow filters:
+*GET filters:*
 
 * 'user__id': user id [int]
-* 'follow_key': \<object type\>.\<id\> [String] (example: 'dateo.465' )
+* 'follow_key': \<object type\>.\<id\> [String] (example: 'tag.465' )
+* 'content_type': \<object name>\  [String] (example: 'tag')
+* 'object_id': \<id\> [int]
 
 Number of results and pagingation:
 * 'limit': number of results, defaults to 5 [int]
@@ -38,7 +40,7 @@ or (both are valid options)
 
 *DELETE:*
 
-You can only delete follow objects that belong to your user. You need to send the api key and user name in the header, as described in There are 3 ways to delete follow objects. Examples:
+You can only delete follow objects that belong to your user. You need to send the api key and user name in the header, as described in AccounApi. in There are 3 ways to delete follow objects. Examples:
 
 1. Issue a DELETE request to /api/v2/follow/366/
 

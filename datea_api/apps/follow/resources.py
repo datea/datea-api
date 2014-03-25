@@ -24,6 +24,13 @@ class FollowResource(ModelResource):
                 bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
 
         return bundle
+
+
+    def get_object_list(self, request):
+        if 'content_type' in request.GET:
+            return super(FollowResource, self).get_object_list(request).filter(content_type__model=request.GET.get('follow_key'))
+        else:
+            return super(FollowResource, self).get_object_list(request)
      
     class Meta:
         queryset = Follow.objects.all()

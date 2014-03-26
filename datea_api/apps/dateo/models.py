@@ -72,6 +72,9 @@ class Dateo(models.Model):
 			self.date = self.created
 		super(Dateo, self).save(*args, **kwargs)
 
+	def has_images(self):
+		return self.images.all().count() > 0
+
 	def get_absolute_url(self):
 		return '/'+self.user.username+'/dateos/'+str(self.pk)
 

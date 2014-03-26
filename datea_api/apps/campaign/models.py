@@ -70,7 +70,6 @@ class Campaign(models.Model):
 	#user_count = models.PositiveIntegerField(_("Participant count"), default=0)
 	comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
 	follow_count = models.PositiveIntegerField(_('Follower count'), default=0)
-	has_images = models.BooleanField(_("Has images"), default=False)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 

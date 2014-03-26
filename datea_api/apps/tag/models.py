@@ -14,6 +14,7 @@ class Tag(models.Model):
 
 	follow_count = models.IntegerField(_('Follow count'), default=0, blank=True, null=True)
 	dateo_count = models.IntegerField(_('Dateo count'), default=0, blank=True, null=True)
+	num_images = models.IntegerField(_("Has images"), default=0)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 

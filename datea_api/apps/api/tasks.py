@@ -44,7 +44,7 @@ def do_dateo_async_tasks(dateo_obj, stat_value, notify=False):
 @shared_task
 def update_dateo_stats(dateo, value):
 
-	#try:
+
 	if hasattr(dateo.user, 'dateo_count'):
 		try:
 			with transaction.atomic():
@@ -53,23 +53,25 @@ def update_dateo_stats(dateo, value):
 		except IntegrityError:
 			pass
 
-		# Update tag and campaign stats
-		try:
-			with transaction.atomic():
-				tags = dateo.tags.all()
-				if tags.count() > 0:
+	# Update tag and campaign stats
+	try:
+		with transaction.atomic():
+			tags = dateo.tags.all()
+			if tags.count() > 0:
 
-					for tag in tags:
-						tag.dateo_count += value
-						tag.save()
+				for tag in tags:
+					tag.dateo_count += value
+					if dateo.has_images():
+						tag.num_images += 1
+					tag.save()
 
-					campaigns = Campaign.objects.filter(main_tag__in=tags)
-					for c in campaigns:
-						if hasattr(c, 'dateo_count'):
-							c.dateo_count += value
-							c.save()
-		except IntegrityError:
-			pass
+				campaigns = Campaign.objects.filter(main_tag__in=tags)
+				for c in campaigns:
+					if hasattr(c, 'dateo_count'):
+						c.dateo_count += value
+						c.save()
+	except IntegrityError:
+		pass
 
 
 @shared_task

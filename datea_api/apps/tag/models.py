@@ -14,13 +14,13 @@ class Tag(models.Model):
 
 	follow_count = models.IntegerField(_('Follow count'), default=0, blank=True, null=True)
 	dateo_count = models.IntegerField(_('Dateo count'), default=0, blank=True, null=True)
-	num_images = models.IntegerField(_("Has images"), default=0)
+	image_count = models.IntegerField(_("Image count"), default=0)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
 	def save(self, *args, **kwargs):
 		self.tag = re.sub("[\W_]", '', self.tag, flags=re.UNICODE)
-		super(self, Tag).save(*args, **kwargs)
+		super(Tag, self).save(*args, **kwargs)
 
 	class Meta:
 		verbose_name = _('Tag')

@@ -62,7 +62,7 @@ def update_dateo_stats(dateo, value):
 				for tag in tags:
 					tag.dateo_count += value
 					if dateo.has_images():
-						tag.num_images += 1
+						tag.image_count += 1
 					tag.save()
 
 				campaigns = Campaign.objects.filter(main_tag__in=tags)

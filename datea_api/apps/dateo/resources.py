@@ -188,7 +188,9 @@ class DateoResource(DateaBaseGeoResource):
             return self.dispatch('list', request, **kwargs)
 
     rename_get_filters = {   
-        'id': 'obj_id', 
+        'id': 'obj_id',
+        'category': 'category_exact',
+        'user': 'user_exact',
     }
 
     # HAYSTACK SEARCH
@@ -229,7 +231,11 @@ class DateoResource(DateaBaseGeoResource):
                 q_args[p] = models.DateTimeField().to_python(request.get(p))
 
         if 'tags' in request.GET:
-            q_args['tags__in'] = request.GET.get('tags').split(',')
+            tags = request.GET.get('tags').split(',')
+            if len(tags) == 1 and tags[0].strip() != '':
+                q_args['tags_exact'] = tags[0]
+            else: 
+                q_args['tags_exact__in'] = tags
 
 
         # GET ONLY DATEOS I FOLLOW INDIVIDUALLY

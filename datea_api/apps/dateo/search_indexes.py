@@ -5,13 +5,13 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/dateo/dateo_index.txt")
     obj_id = indexes.IntegerField(model_attr='pk')
-    user = indexes.CharField(model_attr='user')
-    user_id = indexes.IntegerField()
+    user = indexes.CharField(model_attr='user__username', faceted=True)
+    user_id = indexes.IntegerField(model_attr='user__pk')
     published = indexes.BooleanField(model_attr='published')
     status = indexes.CharField(model_attr='status', null=True)
-    category = indexes.CharField(model_attr='category', null=True)
+    category = indexes.CharField(model_attr='category', null=True, faceted=True)
     category_id = indexes.IntegerField(null=True)
-    tags = indexes.MultiValueField(boost=1.125)
+    tags = indexes.MultiValueField(boost=1.125, null=True, faceted=True)
     position = indexes.LocationField(model_attr='position', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
@@ -33,9 +33,6 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     
     def prepare_tags(self, obj):
         return [tag.tag for tag in obj.tags.all()]
-
-    def prepare_user_id(self, obj):
-        return int(obj.user.pk)
 
     def prepare_category_id(self, obj):
         if obj.category:

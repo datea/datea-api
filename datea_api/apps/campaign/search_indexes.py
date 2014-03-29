@@ -6,15 +6,15 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/campaign/campaign_index.txt")
     obj_id = indexes.IntegerField(model_attr='pk')
     name = indexes.CharField(model_attr='name', boost=1.25)
-    user = indexes.CharField(model_attr='user')
-    user_id = indexes.IntegerField()
-    category = indexes.CharField(model_attr='category', null=True)
+    user = indexes.CharField(model_attr='user__username', faceted=True)
+    user_id = indexes.IntegerField(model_attr="user__pk")
+    category = indexes.CharField(model_attr='category', null=True, faceted=True)
     category_id = indexes.IntegerField(null=True)
     published = indexes.BooleanField(model_attr='published', null=True) 
     featured = indexes.BooleanField(model_attr='featured', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
-    main_tag = indexes.CharField(model_attr='main_tag', boost=1.25)
+    main_tag = indexes.CharField(model_attr='main_tag__tag', boost=1.25, faceted=True)
     main_tag_id = indexes.IntegerField()
     secondary_tags = indexes.MultiValueField(boost=1.125, null=True)
     is_active = indexes.CharField()
@@ -32,9 +32,6 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_main_tag_id(self, obj):
         return obj.main_tag.id
-    
-    def prepare_user_id(self, obj):
-        return int(obj.user.pk)
 
     def prepare_is_active(self, obj):
         return obj.is_active()

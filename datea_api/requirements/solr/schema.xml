@@ -203,7 +203,7 @@
 
     <field name="main_tag_id" type="long" indexed="true" stored="true" multiValued="false" />
 
-    <field name="main_tag" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="main_tag" type="text_exact" indexed="true" stored="true" multiValued="false" />
 
     <field name="follow_keys" type="text_en" indexed="true" stored="true" multiValued="true" />
 

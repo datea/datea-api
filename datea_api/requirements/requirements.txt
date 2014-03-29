@@ -4,7 +4,6 @@ PyPDF2==1.19
 South==0.8.4
 amqp==1.4.4
 anyjson==0.3.3
-argparse==1.2.1
 billiard==3.3.0.16
 bleach==1.4
 celery==3.1.9
@@ -12,12 +11,12 @@ django-bootstrap3==2.5.1
 django-cors-headers==0.12
 django-extensions==1.2.5
 django-grappelli==2.5.2
-django-haystack==2.1.0
+-e git+https://github.com/toastdriven/django-haystack.git@366e7489169d460d36ac4d942c22c0e97e58c26b#egg=django_haystack-master
 django-ipware==0.0.6
 django-jsonfield==0.9.12
 django-registration==1.0
 django-tastypie==0.11.0
-elasticsearch==0.4.4
+elasticsearch==1.0.0
 geopy==0.97
 gunicorn==18.0
 html5lib==1.0b3
@@ -43,5 +42,5 @@ requests-oauthlib==0.4.0
 simplejson==3.3.3
 six==1.6.1
 sorl-thumbnail==11.12
-urllib3==1.7.1
+urllib3==1.8
 wsgiref==0.1.2

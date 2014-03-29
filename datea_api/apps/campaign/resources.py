@@ -21,7 +21,7 @@ from datea_api.apps.account.utils import get_domain_from_url
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
 from haystack.query import SearchQuerySet
-from haystack.inputs import AutoQuery
+from haystack.inputs import AutoQuery, Exact
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import Http404
 from types import DictType
@@ -136,7 +136,10 @@ class CampaignResource(DateaBaseGeoResource):
             return self.dispatch('list', request, **kwargs)
 
     rename_get_filters = {   
-        'id': 'obj_id', 
+        'id': 'obj_id',
+        'main_tag': 'main_tag_exact',
+        'category': 'category_exact',
+        'user': 'user_exact',
     }
 
     # HAYSTACK SEARCH
@@ -166,7 +169,7 @@ class CampaignResource(DateaBaseGeoResource):
                   'main_tag', 'main_tag_id']
         for p in params:
             if p in request.GET:
-                q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
+                q_args[self.rename_get_filters.get(p, p)] = Exact(request.GET.get(p))
 
         # check for additional date filters (with datetime objects)      
         date_params = ['created__gt', 'created__lt']

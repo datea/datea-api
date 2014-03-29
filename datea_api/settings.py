@@ -164,7 +164,7 @@ CONTENT_ADMIN_IDS = [1]
 
 # HAYSTACK WITH ELASTICSEARCH
 # Ngram fields appear to be broken on elasticsearch (switching to solr, more work on config!)
-'''
+
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
@@ -180,7 +180,7 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1:8983/solr',
         'TIMEOUT': 30  # large timeout because of celery 
     },
-}
+}'''
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # Internationalization

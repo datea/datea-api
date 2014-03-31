@@ -6,6 +6,7 @@ Endpoints:
 
 * List (Search): /api/v2/tag/
 * Detail: /api/v2/tag/\<id\>/
+* Detail 2: /api/v2/tag/by_name/<tag>/
 * Schema: /api/v2/tag/schema/
 * Autocomplete: /api/v2/tag/autocomplete/
 * Trending: /api/v2/tag/trending/
@@ -17,6 +18,8 @@ Endpoints:
 The following parameters may be given for the GET method:
 
 * 'q': search for a phrase [string]
+* 'tag': filter by tag [string]
+* 'id': filter by object_id [int]
 
 Number of results and pagingation:
 * 'limit': number of results, defaults to 5 [int]

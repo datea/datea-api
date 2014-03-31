@@ -58,7 +58,11 @@ class TagResource(ModelResource):
 
     def prepend_urls(self):
 
-        return [ 
+        return [
+
+            url(r"^(?P<resource_name>%s)/(?P<pk>[0-9]+)%s$" % 
+            (self._meta.resource_name, trailing_slash()), 
+            self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
 
             url(r"^(?P<resource_name>%s)/autocomplete%s$" %
             (self._meta.resource_name, trailing_slash()), 
@@ -70,7 +74,11 @@ class TagResource(ModelResource):
 
             url(r"^(?P<resource_name>%s)/nearby%s$" %
             (self._meta.resource_name, trailing_slash()), 
-            self.wrap_view('get_nearby'), name="api_tag_nearby")
+            self.wrap_view('get_nearby'), name="api_tag_nearby"),
+
+            url(r"^(?P<resource_name>%s)/by_name/(?P<tag>[\w\d]+)%s$" % 
+            (self._meta.resource_name, trailing_slash()), 
+            self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
 
         ]
 
@@ -129,6 +137,11 @@ class TagResource(ModelResource):
         else:
             return self.dispatch('list', request, **kwargs)
 
+    rename_get_filters = {   
+        'id': 'obj_id',
+        'tag': 'tag_exact',
+    }
+
 
     def get_search(self, request, **kwargs):
 
@@ -146,11 +159,10 @@ class TagResource(ModelResource):
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(request.GET['q'])
 
-        #filters = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
-        #for f in filters:
-        #    if f in request.GET:
-        #        cache_key_elems.append(f)
-        #      q_args[f] = f
+        params = ['tag', 'id']
+        for p in params:
+            if p in request.GET:
+                q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
 
         if 'followed' in request.GET:
             uid = int(request.GET['followed'])
@@ -272,7 +284,7 @@ class TagResource(ModelResource):
         queryset = Tag.objects.all()
         resource_name = 'tag'
         filtering={
-                'tag' : ALL
+                'tag' : ['exact']
                 }
         excludes = ['client_domain']
         list_allowed_methods = ['get', 'post']

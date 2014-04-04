@@ -275,7 +275,7 @@ class DateoResource(DateaBaseGeoResource):
 
         # DWITHIN QUERY
         if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'latitude', 'longitude')):
-            dist = Distance( m = int(request.GET.get('distance')))
+            dist = Distance( m = request.GET.get('distance'))
             x = float(request.GET.get('longitude'))
             y = float(request.GET.get('latitude'))
             position = Point(x, y)
@@ -285,15 +285,14 @@ class DateoResource(DateaBaseGeoResource):
 
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')
-        
-        # in elastic search 'score' is '_score'
-        #order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
-
 
         if 'q' in request.GET: 
             if order_by == ['-created'] and '-created' not in request.GET:
-                #order_by = ['_score']
-                order_by = ['score']
+                order_by = ['_score']
+                #order_by = ['score']
+
+        # in elastic search 'score' is '_score'
+        order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
     
         # if q is set, then order will be relevance first
         # if not, then do normal order by

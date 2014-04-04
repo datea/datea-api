@@ -15,5 +15,8 @@ class TagIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
     	return Tag
 
+    def prepare_tag(self, obj):
+        return obj.tag.lower()
+
     def index_queryset(self, using=None):
         return self.get_model().objects.all()

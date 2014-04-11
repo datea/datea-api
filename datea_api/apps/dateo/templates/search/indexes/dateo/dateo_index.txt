@@ -1,6 +1,7 @@
 {{object.content}}
 {% for tag in object.tags.all %}#{{tag}} {% endfor %}
+{% for tag in object.tags.all %}{% if tag.title %}tag.title, {% endif %}{% endfor %}
 {{object.category.name}}
-{{object.user.username}}
+@{{object.user.username}}
 {% if object.address %}{{object.address}}{% endif %}
 {{ object.country }} {{ object.admin_level1 }} {{ objects.admin_level2 }} {{ object.admin_level3 }}

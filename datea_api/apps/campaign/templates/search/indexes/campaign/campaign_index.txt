@@ -1,6 +1,8 @@
 {{object.name}}
 {{objects.main_tag.tag}}
 {% for tag in object.secondary_tags.all %}#{{tag.tag}} {% endfor %}
+{% for tag in object.secondary_tags.all %}{% if tag.title %}{{tag.title}}, {% endif %}{% endfor %}
 {{object.short_description}}
+@{{object.user.username}}
 {{object.mission}}
 {{object.category.name}}

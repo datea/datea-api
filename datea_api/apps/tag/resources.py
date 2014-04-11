@@ -168,7 +168,7 @@ class TagResource(ModelResource):
         if 'followed' in request.GET:
             uid = int(request.GET['followed'])
             tag_ids = [f.object_id for f in Follow.objects.filter(content_type__model='tag', user__id=uid)]
-            q_args['id__in'] = tag_ids
+            q_args['obj_id__in'] = tag_ids
 
         sqs = SearchQuerySet().models(Tag).load_all().filter(**q_args)
 

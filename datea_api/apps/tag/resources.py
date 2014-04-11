@@ -15,6 +15,7 @@ from django.http import HttpResponse, Http404
 from .models import Tag
 from datea_api.apps.account.utils import get_domain_from_url
 from datea_api.apps.dateo.models import Dateo
+from datea_api.apps.follow.models import Follow
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance

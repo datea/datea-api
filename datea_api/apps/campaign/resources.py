@@ -284,5 +284,5 @@ class CampaignResource(DateaBaseGeoResource):
             'position': ['distance', 'contained','latitude', 'longitude']
         }
         cache = SimpleCache(timeout=10)
-        throttle = CacheThrottle()
+        throttle = CacheThrottle(throttle_at=200)
         always_return_data = True

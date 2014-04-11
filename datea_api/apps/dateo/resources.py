@@ -288,11 +288,11 @@ class DateoResource(DateaBaseGeoResource):
 
         if 'q' in request.GET: 
             if order_by == ['-created'] and '-created' not in request.GET:
-                order_by = ['_score']
-                #order_by = ['score']
+                #order_by = ['_score']
+                order_by = ['score']
 
         # in elastic search 'score' is '_score'
-        order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
+        # order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
     
         # if q is set, then order will be relevance first
         # if not, then do normal order by

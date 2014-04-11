@@ -20,6 +20,7 @@ The following parameters may be given for the GET method:
 * 'q': search for a phrase [string]
 * 'tag': filter by tag [string]
 * 'id': filter by object_id [int]
+* 'followed': user id [int]  -> only tags a user follows
 
 Number of results and pagingation:
 * 'limit': number of results, defaults to 5 [int]

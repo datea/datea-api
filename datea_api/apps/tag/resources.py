@@ -140,7 +140,7 @@ class TagResource(ModelResource):
 
     rename_get_filters = {   
         'id': 'obj_id',
-        'tag': 'tag_exact',
+        'tag': 'tag__exact',
     }
 
 

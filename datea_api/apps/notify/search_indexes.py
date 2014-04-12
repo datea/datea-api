@@ -7,21 +7,21 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
     obj_id = indexes.IntegerField(model_attr='pk')
 
     created = indexes.DateTimeField(model_attr='created')
-    actor = indexes.CharField()
+    actor = indexes.CharField(faceted=True)
     actor_id = indexes.IntegerField()
-    action_key = indexes.CharField(model_attr="action_key")
+    action_key = indexes.CharField(model_attr="action_key", faceted=True)
     action_id = indexes.IntegerField()
     action_type = indexes.CharField()
 
-    target_user = indexes.CharField(null=True)
+    target_user = indexes.CharField(null=True, faceted=True)
     target_user_id = indexes.IntegerField(null=True)
-    target_key = indexes.CharField(model_attr="target_key", null=True)
+    target_key = indexes.CharField(model_attr="target_key", null=True, faceted=True)
     target_id = indexes.IntegerField(null=True)
     target_type = indexes.CharField(null=True)
 
     follow_keys = indexes.MultiValueField()
 
-    tags = indexes.MultiValueField()
+    tags = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return ActivityLog

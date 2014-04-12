@@ -140,7 +140,7 @@ class TagResource(ModelResource):
 
     rename_get_filters = {   
         'id': 'obj_id',
-        'tag': 'tag__exact',
+        'tag': 'tag_exact',
     }
 
 
@@ -160,10 +160,11 @@ class TagResource(ModelResource):
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(request.GET['q'])
 
-        params = ['tag', 'id']
-        for p in params:
-            if p in request.GET:
-                q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
+        if 'tag' in request.GET:
+            q_args['tag_exact'] = request.GET.get('tag').lower()
+
+        if 'id' in request.GET:
+            q_args['object_id'] = int(request.GET.get('id'))
 
         if 'followed' in request.GET:
             uid = int(request.GET['followed'])
@@ -171,7 +172,6 @@ class TagResource(ModelResource):
             q_args['obj_id__in'] = tag_ids
 
         sqs = SearchQuerySet().models(Tag).load_all().filter(**q_args)
-
         paginator = Paginator(sqs, limit)
         
         try:

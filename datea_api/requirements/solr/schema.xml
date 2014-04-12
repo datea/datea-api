@@ -219,25 +219,33 @@
 
     <field name="main_tag" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="follow_keys" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="actor_exact" type="string" indexed="true" stored="true" multiValued="false" />
+
+    <field name="action_type" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="action_key" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="target_key_exact" type="string" indexed="true" stored="true" multiValued="false" />
 
     <field name="target_id" type="long" indexed="true" stored="true" multiValued="false" />
 
     <field name="target_type" type="text_en" indexed="true" stored="true" multiValued="false" />
 
+    <field name="target_user_exact" type="string" indexed="true" stored="true" multiValued="false" />
+
+    <field name="follow_keys" type="text_en" indexed="true" stored="true" multiValued="true" />
+
+    <field name="target_user" type="text_en" indexed="true" stored="true" multiValued="false" />
+
     <field name="actor" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="actor_id" type="long" indexed="true" stored="true" multiValued="false" />
-
-    <field name="action_type" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="target_key" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="target_user_id" type="long" indexed="true" stored="true" multiValued="false" />
 
-    <field name="target_user" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="actor_id" type="long" indexed="true" stored="true" multiValued="false" />
+
+    <field name="action_key_exact" type="string" indexed="true" stored="true" multiValued="false" />
+
+    <field name="target_key" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="action_id" type="long" indexed="true" stored="true" multiValued="false" />
 

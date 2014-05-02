@@ -1,7 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django_extensions.db.models import TimeStampedModel
 from django.utils.html import strip_tags
 
 from datea_api.apps.tag.models import Tag
@@ -11,7 +10,6 @@ from datea_api.apps.account.models import ClientDomain
 from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
 import urllib2, json
-
 
 
 class Dateo(models.Model):

@@ -252,7 +252,8 @@ class AccountResource(Resource):
                 {'status': NOT_FOUND, 'message': 'User not found'}, status=NOT_FOUND)
 
         if user is not None and default_token_generator.check_token(user, token):
-            user.set_password('password')
+            user.set_password(password)
+            user.save()
             response = self.create_response(request, {'status': OK, 'message': 'Your password was successfully reset', 
                 'userid': uid}, status=OK)
         else:

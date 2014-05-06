@@ -25,7 +25,7 @@ class Vote(models.Model):
         # something here
         if not self.vote_key:
             self.vote_key = self.content_type.model+'.'+str(self.object_id)
-        elif not self.content_type and self.follow_key:
+        elif not self.content_type and self.vote_key:
             model, pk = self.vote_key.split('.')
             self.content_type = ContentType.objects.get(model=model)
             self.object_id = int(pk)  

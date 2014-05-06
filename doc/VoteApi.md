@@ -15,7 +15,7 @@ Comments:
 
 *GET filters:*
 
-* 'user__id': user id [int]
+* 'user': user id [int]
 * 'vote_key': \<object type\>.\<id\> [String] (example: 'dateo.465' )
 * 'content_type': \<object name>\  [String] (example: 'dateo')
 * 'object_id': \<id\> [int]

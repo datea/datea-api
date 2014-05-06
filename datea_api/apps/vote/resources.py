@@ -35,7 +35,7 @@ class VoteResource(ModelResource):
         allowed_methods = ['get','post','delete']
         excludes = ['client_domain']
         filtering = {
-            'user': ALL_WITH_RELATIONS
+            'user': ALL_WITH_RELATIONS,
             'vote_key': ALL,
             'object_id': ALL,
             'content_type': ALL_WITH_RELATIONS

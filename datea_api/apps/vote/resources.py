@@ -1,4 +1,4 @@
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
@@ -21,7 +21,6 @@ class VoteResource(ModelResource):
             bundle.obj.client_domain = bundle.data['clint_domain'] = get_domain_from_url(bundle.request.META.get("HTTP_ORIGIN", ""))
             if 'content_type' in bundle.data:
                 bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
-
         return bundle
 
     def get_object_list(self, request):
@@ -35,6 +34,12 @@ class VoteResource(ModelResource):
         resource_name = 'vote'
         allowed_methods = ['get','post','delete']
         excludes = ['client_domain']
+        filtering = {
+            user: ALL_WITH_RELATIONS
+            vote_key: ALL,
+            object_id: ALL,
+            content_type: ALL_WITH_RELATIONS
+        }
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         always_return_data = True

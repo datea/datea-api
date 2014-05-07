@@ -3,6 +3,7 @@ from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.base_resources import JSONDefaultMixin
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -11,7 +12,7 @@ from datea_api.apps.account.utils import get_domain_from_url
 from .models import Comment
 
 
-class CommentResource(ModelResource):
+class CommentResource(JSONDefaultMixin, ModelResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=True, readonly=True)

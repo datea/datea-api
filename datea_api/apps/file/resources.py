@@ -3,12 +3,13 @@ from tastypie.resources import ModelResource
 from .models import File
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.base_resources import JSONDefaultMixin
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from datea_api.apps.api.b64field import Base64FileField
 from datea_api.apps.account.utils import get_domain_from_url
 
-class FileResource(ModelResource):
+class FileResource(JSONDefaultMixin, ModelResource):
 
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)

@@ -2,7 +2,7 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from datea_api.apps.api.base_resources import DateaBaseGeoResource
+from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.authentication import ApiKeyAuthentication
@@ -27,7 +27,7 @@ from django.http import Http404
 from types import DictType
 
 
-class CampaignResource(DateaBaseGeoResource):
+class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=True, readonly=True)

@@ -6,9 +6,10 @@ from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
+from datea_api.apps.api.base_resources import JSONDefaultMixin
 
 
-class CategoryResource(ModelResource):
+class CategoryResource(JSONDefaultMixin, ModelResource):
      
     class Meta:
         queryset = Category.objects.all()

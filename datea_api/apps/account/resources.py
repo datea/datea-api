@@ -6,6 +6,7 @@ from django.conf.urls import url
 from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
+from datea_api.apps.api.base_resources import JSONDefaultMixin
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
@@ -49,7 +50,7 @@ from geoip import geolite2
 from ipware.ip import get_real_ip
 
 
-class AccountResource(Resource):
+class AccountResource(JSONDefaultMixin, Resource):
 
     class Meta:
         allowed_methods = ['post']
@@ -329,7 +330,7 @@ def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
 
 
 
-class UserResource(ModelResource):
+class UserResource(JSONDefaultMixin, ModelResource):
 
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)

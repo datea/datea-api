@@ -4,6 +4,7 @@ from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.base_resources import JSONDefaultMixin
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.utils import trailing_slash
@@ -29,7 +30,7 @@ from django.db.models import Count
 import unicodedata
 
 
-class TagResource(ModelResource):
+class TagResource(JSONDefaultMixin, ModelResource):
 
     campaigns = fields.ToManyField('datea_api.apps.campaign.resources.CampaignResource',
             attribute='campaigns', null=True, full=False, readonly=True)

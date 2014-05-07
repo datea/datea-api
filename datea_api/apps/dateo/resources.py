@@ -9,7 +9,7 @@ from django.conf.urls import url
 from django.http import Http404
 
 #from tastypie.authentication import ApiKeyAuthentication
-from datea_api.apps.api.base_resources import DateaBaseGeoResource
+from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.utils import trailing_slash
@@ -35,7 +35,7 @@ from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 
-class DateoResource(DateaBaseGeoResource):
+class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
             attribute="user", null=False, full=True, readonly=True)

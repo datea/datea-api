@@ -16,5 +16,17 @@
 - file field para kml
 
 
+++++++++++++++++++++++++
+
+- hacer una prueba general de los dateos que devuelve la app. Sospechamos que cambia el orden y la cantidad de dateos que devuelve la api.
+
+- quitar el fuckin format=json
+
+- un array de colores
+
+-  
+
+ 
+
 
 

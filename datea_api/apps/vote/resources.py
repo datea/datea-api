@@ -2,6 +2,7 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.base_resources import JSONDefaultMixin
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -10,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from .models import Vote
 
-class VoteResource(ModelResource):
+class VoteResource(JSONDefaultMixin, ModelResource):
 
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)

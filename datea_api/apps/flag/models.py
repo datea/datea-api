@@ -15,7 +15,7 @@ class Flag(models.Model):
 	content_object = generic.GenericForeignKey('content_type', 'object_id')
 	object_id = models.PositiveIntegerField(null=True, blank=True)
 
-	comment = models.TextField(_("Comentario"))
+	comment = models.TextField(_("Comentario"), blank=True, null=True)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 

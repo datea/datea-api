@@ -40,10 +40,29 @@ otherwise you'll receive a 400 error:
 * duplicate user: there's an account with the same username
 
 
-If your domain is whitelisted (contact us), then you may define the redirect urls 
+If your domain is whitelisted in the api, then you may define the redirect urls 
 specific to your app, that are sent to the users in the confirmation email. 
 Otherwise, after clicking the activation link sent in the email, the user will be directed 
 to a page from this system.
+
+
+####Username exists
+Perform a quick test if a new username is valid
+
+Ajax GET to: */api/v2/account/username-exists*
+with:
+
+	{
+		username: <username>,
+	}
+
+receive a 200 with 
+
+	{
+		result: <boolean>,
+		message: "..."	
+	}
+
 
 
 ####Social Auth

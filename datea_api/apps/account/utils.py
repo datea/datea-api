@@ -10,6 +10,7 @@ from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
 from django.conf import settings
 from django.core.cache import cache
+from datea_api.apps.api.utils import get_reserved_usernames
 
 def getOrCreateKey(user):
     try:
@@ -37,18 +38,28 @@ def getUserByKey(key):
 def make_social_username(username):
     index = 0
     final_username = username
-    
+    reserved = get_reserved_usernames()
+    existing = [u.username.lower() for u in User.objects.filter(username__istartswith=username)]
+    test_field = reserved + existing
+
     while True:
-        try:
-            if index != 0:
-                final_username = username+str(index)
-            User.objects.get(username__iexact=final_username)
-        except User.DoesNotExist:
-            break
+
+        if index != 0:
+            final_username = username+str(index)
+
+        if final_username.lower() not in test_field:
+            break    
         index +=1
         
     return final_username
 
+
+def new_username_allowed(username):
+    reserved = get_reserved_usernames()
+    existing = User.objects.filter(username__iexact=username).count()
+    if username.lower() in reserved or existing > 0:
+        return False
+    return True
 
 def get_domain_from_url(url):
 

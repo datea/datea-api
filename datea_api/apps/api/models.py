@@ -1,3 +1,27 @@
+from django.db import models
+from solo.models import SingletonModel
+from django.utils.translation import ugettext_lazy as _
+
+class ApiConfig(SingletonModel):
+
+	maintainance_mode = models.BooleanField(_("Maintainance mode"), default=False)
+	reserved_usernames = models.TextField(_("Reserved usernames"), blank=True, null=True)
+	reserved_campaign_names = models.TextField(_("Reserved campaign names"), blank=True, null=True)
+
+	def save(self, *args, **kwargs):
+		self.reserved_usernames = ','.join([u.strip() for u in self.reserved_usernames.split(',')])
+		self.reserved_campaign_names = ','.join([c.strip() for c in self.reserved_campaign_names.split(',')])
+		super(ApiConfig, self).save(*args, **kwargs)
+
+	def __unicode__(self):
+		return "Api Configuration"
+
+	class Meta:
+		verbose_name = _("Api Configuration")
+		verbose_name_plural = verbose_name
+
+
+
 
 ######################
 #

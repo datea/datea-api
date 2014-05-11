@@ -7,6 +7,7 @@ from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.utils import get_reserved_usernames
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
@@ -26,7 +27,7 @@ import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
 from tastypie.utils import trailing_slash
-from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url
+from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url, new_username_allowed
 from datea_api.apps.api.status_codes import *
 
 from registration.models import RegistrationProfile
@@ -53,7 +54,7 @@ from ipware.ip import get_real_ip
 class AccountResource(JSONDefaultMixin, Resource):
 
     class Meta:
-        allowed_methods = ['post']
+        allowed_methods = ['post', 'get']
         resource_name = 'account'
         throttle = CacheThrottle(throttle_at=60)
 
@@ -88,7 +89,12 @@ class AccountResource(JSONDefaultMixin, Resource):
             #password reset
             url(r"^(?P<resource_name>%s)/reset-password-confirm%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('password_reset_confirm'), name="api_password_reset_confirm")
+            self.wrap_view('password_reset_confirm'), name="api_password_reset_confirm"),
+
+            #username exists
+            url(r"^(?P<resource_name>%s)/username-exists%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('username_exists'), name="api_username_exists")
         ]
 
 
@@ -114,7 +120,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
 
-        elif User.objects.filter(username__iexact=username).count() > 0:
+        elif User.objects.filter(username__iexact=username).count() > 0 or username.lower() in  get_reserved_usernames():
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Duplicate username'}, status= BAD_REQUEST)
@@ -319,6 +325,24 @@ class AccountResource(JSONDefaultMixin, Resource):
 
         self.log_throttled_access(request)
         return response
+
+
+    def username_exists(self, request, **kwargs):
+
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+
+        result = new_username_allowed(request.GET.get('username'))
+        
+        if result:
+            message = "new username is valid"
+        else:
+            message = "username exists or is reserved"
+
+        self.log_throttled_access(request)
+        return self.create_response(request, {'result': result,
+                'message': message}, status=OK)
+
 
 
 @strategy()

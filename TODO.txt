@@ -7,24 +7,17 @@
 - Investigar invite friends
 - asociar cuenta extra de oauth
 
-- Agregar campos extra a usuario: background image, con imaganes standard
-
-- Agregar campos extra a campaign: kml field
 - Pensar en reportes
 
 - image field con resize.
-- file field para kml
-
 
 ++++++++++++++++++++++++
 
-- hacer una prueba general de los dateos que devuelve la app. Sospechamos que cambia el orden y la cantidad de dateos que devuelve la api.
-
-- quitar el fuckin format=json
-
 - un array de colores
+- test usernames
 
--  
+
+
 
  
 

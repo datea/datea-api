@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    'solo',
     'django.contrib.gis',
     'south',
     'django_extensions',
@@ -237,6 +238,8 @@ CACHES = {
         'LOCATION': '127.0.0.1:11211',
     }
 }
+SOLO_CACHE = 'default'
+SOLO_CACHE_TIMEOUT = 60*60
 
 BROKER_URL = 'amqp://guest:guest@localhost//'
 #CELERY_ACCEPT_CONTENT = ['json']
@@ -244,6 +247,33 @@ BROKER_URL = 'amqp://guest:guest@localhost//'
 #CELERY_RESULT_SERIALIZER = 'json'
 
 SEND_NOTIFICATION_EMAILS = False
+
+
+RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd', 
+                    'todossomosdateros', 'user', 'users', 'usuario', 'usuarios',
+                    'comment', 'comments', 'comentario', 'comentarios',
+                    'campaign', 'campaigns', 'iniciativa', 'iniciativas', 
+                    'follow', 'follows', 'followers', 'seguir', 'siguiendo', 'seguidores',
+                    'vote', 'votes', 'voto', 'votos', 'votacion', 'votaciones', 
+                    'profile', 'profiles', 'perfil', 'perfiles', 
+                    'info', 'about', 'acerca', 'faq', 'help', 'ayuda', 'feedback',
+                    'contact', 'contacts', 'contacto', 'contactos', 
+                    'report', 'reports', 'reporte', 'reportes', 'reportar',
+                    'tag', 'tags', 'etiqueta', 'etiquetas', 
+                    'category', 'categories', 'categoria', 'categorias', 
+                    'flag', 'flags', 'denuncia', 'denuncias', 'denunciar', 
+                    'inicio', 'start', 'home', 'datea.pe', 
+                    'signin', 'login', 'signup', 'signout', 'logout', 'register', 'password', 'recover',
+                    'recoverpassword', 'forgot', 
+                    'pagina', 'paginas', 'page', 'pages',
+                    'content', 'contenido', 'site', 'sites', 'sitemap', 
+                    'map', 'maps', 'mapa', 'mapas', 
+                    'survey', 'surveys', 'encuesta', 'encuestas', 
+                    'election', 'elections', 'eleccion', 'elecciones',
+                    'answer', 'answers', 'respuesta', 'respuestas',
+                    ]
+
+
 
 
 try:

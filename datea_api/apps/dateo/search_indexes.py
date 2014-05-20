@@ -9,7 +9,7 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     user_id = indexes.IntegerField(model_attr='user__pk')
     published = indexes.BooleanField(model_attr='published')
     status = indexes.CharField(model_attr='status', null=True)
-    category = indexes.CharField(model_attr='category', null=True, faceted=True)
+    category = indexes.CharField(model_attr='category__name', null=True, faceted=True)
     category_id = indexes.IntegerField(null=True)
     tags = indexes.MultiValueField(boost=1.125, null=True, faceted=True)
     position = indexes.LocationField(model_attr='position', null=True)

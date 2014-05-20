@@ -5,6 +5,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.utils import remove_accents
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.utils import trailing_slash
@@ -162,7 +163,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
             q_args['content'] = AutoQuery(request.GET['q'])
 
         if 'tag' in request.GET:
-            q_args['tag_exact'] = request.GET.get('tag').lower()
+            q_args['tag_exact'] = remove_accents(request.GET.get('tag').lower())
 
         if 'id' in request.GET:
             q_args['object_id'] = int(request.GET.get('id'))

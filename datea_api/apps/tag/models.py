@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import re
+from datea_api.apps.api.utils import remove_accents
 
 
 class Tag(models.Model):
@@ -19,7 +20,7 @@ class Tag(models.Model):
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
 	def save(self, *args, **kwargs):
-		self.tag = re.sub("[\W_]", '', self.tag, flags=re.UNICODE)
+		self.tag = remove_accents(re.sub("[\W_]", '', self.tag, flags=re.UNICODE))
 		super(Tag, self).save(*args, **kwargs)
 
 	class Meta:

@@ -8,7 +8,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     name = indexes.CharField(model_attr='name', boost=1.25)
     user = indexes.CharField(model_attr='user__username', faceted=True)
     user_id = indexes.IntegerField(model_attr="user__pk")
-    category = indexes.CharField(model_attr='category', null=True, faceted=True)
+    category = indexes.CharField(model_attr='category__name', null=True, faceted=True)
     category_id = indexes.IntegerField(null=True)
     published = indexes.BooleanField(model_attr='published', null=True) 
     featured = indexes.BooleanField(model_attr='featured', null=True)

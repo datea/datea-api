@@ -27,6 +27,7 @@ from datea_api.apps.comment.models import Comment
 from datea_api.apps.follow.models import Follow
 from datea_api.apps.account.utils import get_domain_from_url
 from datea_api.apps.api.signals import resource_saved
+from datea_api.apps.campaign.models import Campaign
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -72,6 +73,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle(throttle_at=300)
         always_return_data = True
+
+
+    def prepend_urls(self):
+        return [
+            # dateo stats
+            url(r"^(?P<resource_name>%s)/stats%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('get_dateo_stats'), name="api_dateo_stats")
+        ]
 
 
     def dehydrate(self, bundle):
@@ -198,7 +208,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         # tests
         self.method_check(request, allowed=['get'])
-        self.is_authenticated(request)
+        #self.is_authenticated(request)
         self.throttle_check(request)
 
         # pagination
@@ -331,6 +341,118 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         self.log_throttled_access(request)
         return self.create_response(request, object_list)
+
+
+    def get_dateo_stats(self, request, **kwargs):
+        
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+
+        # Do the query 
+        q_args = {'published': request.GET.get('published', True)}
+        
+        # add search query
+        if 'q' in request.GET and request.GET['q'] != '':
+            q_args['content'] = AutoQuery(request.GET['q'])
+
+        # check for more params
+        params = ['category_id', 'category', 'user', 'user_id', 
+                  'published', 'status', 'id',
+                  'created__year', 'created__month', 'created__day',
+                  'country', 'admin_level1', 'admin_level2', 'admin_level3',
+                  'has_images']
+
+        for p in params:
+            if p in request.GET:
+                q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
+
+        # check for additional date filters (with datetime objects)      
+        date_params = ['created__gt', 'created__lt']
+        for p in date_params:
+            if p in request.GET:
+                q_args[p] = models.DateTimeField().to_python(request.get(p))
+
+        tags = []
+
+        if 'tags' in request.GET:
+            tags = request.GET.get('tags').split(',')
+            if len(tags) == 1 and tags[0].strip() != '':
+                q_args['tags_exact'] = tags[0]
+            else: 
+                q_args['tags_exact__in'] = tags
+
+        if 'campaign' in request.GET:
+            cam = Campaign.objects.get(pk=int(request.GET.get('campaign')))
+            tags = [cam.main_tag.tag] + [c.tag for c in cam.secondary_tags.all()]
+            if len(tags) == 1 and tags[0].strip() != '':
+                q_args['tags_exact'] = tags[0]
+            else: 
+                q_args['tags_exact__in'] = tags
+
+        # INIT THE QUERY
+        sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
+
+        # SPATIAL QUERY ADDONS
+        # WITHIN QUERY
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left_latitude', 
+            'bottom_left_longitude','top_right_latitude', 'top_right_longitude')):
+            bl_x = float(request.GET.get('bottom_left_longitude'))
+            bl_y = float(request.GET.get('bottom_left_latitude'))
+            tr_x = float(request.GET.get('top_right_longitude'))
+            tr_y = float(request.GET.get('top_right_latitude'))
+            bottom_left = Point(bl_x, bl_y)
+            top_right = Point(tr_x, tr_y)
+
+            sqs = sqs.within('position', bottom_left, top_right)
+
+        # DWITHIN QUERY
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'latitude', 'longitude')):
+            dist = Distance( m = request.GET.get('distance'))
+            x = float(request.GET.get('longitude'))
+            y = float(request.GET.get('latitude'))
+            position = Point(x, y)
+
+            sqs = sqs.dwithin('position', position, dist)
+
+        result = []
+
+        sqs = sqs.facet('tags')
+
+        if len(tags) > 0:
+            tag_objects = Tag.objects.filter(tag__in=tags)
+        else:
+            tag_objects = Tag.objects.all()
+            tags = [t.tag for t in tag_objects]
+
+        tag_data = {}
+        for t in tag_objects:
+            tag_data[t.tag] = t.title
+
+        print sqs.facet_counts()
+
+        for res in sqs.facet_counts()['fields']['tags']:
+            if res[0] in tags:
+                result.append({
+                    res[0]: {
+                        'count': res[1],
+                        'tag': res[0],
+                        'title': tag_data[res[0]]
+                    }
+                })
+
+        object_list = {
+            'total_count': sqs.count(),
+            'tags': result,
+        }
+
+        self.log_throttled_access(request)
+        return self.create_response(request, object_list)
+
+
+
+
+        
+
 
 
 

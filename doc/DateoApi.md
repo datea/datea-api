@@ -1,5 +1,8 @@
 ###Dateo Api
 
+
+###SEARCH
+
 allowed methods = GET, POST, PATCH, DELETE
 
 Endpoints:
@@ -9,8 +12,7 @@ Endpoints:
 * Schema: /api/v2/dateo/schema/
 
 
-####GET Params
-
+####GET
 
 Filters:
 * q: search for a phrase
@@ -106,3 +108,52 @@ options:
 
     				}]
 	}
+
+
+###STATS
+
+Endpoint:
+* */api/v2/dateo/stats/*
+
+Method: GET
+
+Statistics are number of dateos per tags or the tags of a specific campaign. 
+
+Params:
+* 'tags': comma separated string of tags ["tag1,tag2"]
+* 'campaign': a campaign id from which to extract statistics using its tags [int]
+
+Other filters:
+* q: search for a phrase
+* user: filter by username [string]
+* user_id: filter by user id [integer]
+* status: filter by status ['new', 'reviewed', 'solved']
+* has_images: [boolean 0 or 1]
+
+date related filters:
+* created__year: year dateo was created [four digits] (watch for double underscore -> django filters)
+* created__month: in combination with year, month dateo was created [two digits]
+* created__day: combined with month and year, day a dateo was created [two digits]
+* created__gt: created after date [date in ISO format]
+* created__lt: created before date [date in ISO format]. Together with created__gt, you can form a range.
+
+follow filters:
+* followed_by_tags: get all dateos by the tags a user follows. [user id: integer]
+* followed: get all dateos followed individually (because of comment system) [user id: integer]
+
+political filters:
+At the moment we have fields for 3 administrative levels besides 'Country'. In Perú this means: Regions, Provinces, Districts. We're looking forward to provide a service like mapit by mysociety, in order to fill this fields automatically, but you can use that service or other service at client level.
+
+* country: spelled mostly in their own language [string]
+* admin_level1: Region (Perú) [string]
+* admin_level2: Province (Perú) [string]
+* admin_level3: District (Perú) [string]
+
+spatial filters:
+
+* Within bounding box: 
+  'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right). 
+
+* Within distance to point: 'distance', 'latitude' and 'longitude' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as decimal latitude and longitude params, distance in meters as an integer.
+
+  

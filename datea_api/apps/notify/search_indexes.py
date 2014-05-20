@@ -7,8 +7,8 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
     obj_id = indexes.IntegerField(model_attr='pk')
 
     created = indexes.DateTimeField(model_attr='created')
-    actor = indexes.CharField(faceted=True)
-    actor_id = indexes.IntegerField()
+    actor = indexes.CharField(model_attr="actor__username", faceted=True)
+    actor_id = indexes.IntegerField(model_attr="actor__pk")
     action_key = indexes.CharField(model_attr="action_key", faceted=True)
     action_id = indexes.IntegerField()
     action_type = indexes.CharField()
@@ -28,12 +28,6 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
     
     def index_queryset(self, using=None):
         return self.get_model().objects.all()
-
-    def prepare_actor(self, obj):
-        return obj.actor.username
-
-    def prepare_actor_id(self, obj):
-        return obj.actor.pk
 
     def prepare_action_id(self, obj):
         return obj.action_object.pk

@@ -7,7 +7,7 @@ from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.utils import get_reserved_usernames
+from datea_api.apps.api.utils import get_reserved_usernames, remove_accents
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
@@ -120,6 +120,12 @@ class AccountResource(JSONDefaultMixin, Resource):
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
 
+        elif not re.match("^\w+$", username):
+            response = self.create_response(request, {
+                    'status': BAD_REQUEST,
+                    'error': 'Username not alphanumeric',
+                }, status=BAD_REQUEST)
+
         elif User.objects.filter(username__iexact=username).count() > 0 or username.lower() in  get_reserved_usernames():
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
@@ -161,7 +167,7 @@ class AccountResource(JSONDefaultMixin, Resource):
         self.throttle_check(request)
 
         postData = json.loads(request.body)
-        username = postData['username']
+        username = remove_accents(postData['username'])
         password = postData['password']
 
         user = authenticate(username= username,
@@ -474,6 +480,9 @@ class UserResource(JSONDefaultMixin, ModelResource):
 
                     if User.objects.filter(username=bundle.data['username']).count() > 0:
                         raise ValidationError('Duplicate username')
+
+                    elif not re.match("^\w+$", bundle.data['username']):
+                        raise ValidationError("Username not alphanumeric")
 
                     bundle.obj.username = bundle.data['username']
 

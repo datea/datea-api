@@ -9,8 +9,10 @@ class ApiConfig(SingletonModel):
 	reserved_campaign_names = models.TextField(_("Reserved campaign names"), blank=True, null=True)
 
 	def save(self, *args, **kwargs):
-		self.reserved_usernames = ','.join([u.strip() for u in self.reserved_usernames.split(',')])
-		self.reserved_campaign_names = ','.join([c.strip() for c in self.reserved_campaign_names.split(',')])
+		if self.reserved_usernames:
+			self.reserved_usernames = ','.join([u.strip() for u in self.reserved_usernames.split(',')])
+		if self.reserved_campaign_names:
+			self.reserved_campaign_names = ','.join([c.strip() for c in self.reserved_campaign_names.split(',')])
 		super(ApiConfig, self).save(*args, **kwargs)
 
 	def __unicode__(self):

@@ -120,7 +120,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
 
-        elif not re.match("^\w+$", username):
+        elif not re.match("^[A-Za-z0-9]{1,32}$", username):
             response = self.create_response(request, {
                     'status': BAD_REQUEST,
                     'error': 'Username not alphanumeric',
@@ -481,7 +481,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                     if User.objects.filter(username=bundle.data['username']).count() > 0:
                         raise ValidationError('Duplicate username')
 
-                    elif not re.match("^\w+$", bundle.data['username']):
+                    elif not re.match("^[A-Za-z0-9]{1,32}$", bundle.data['username']):
                         raise ValidationError("Username not alphanumeric")
 
                     bundle.obj.username = bundle.data['username']

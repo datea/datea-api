@@ -7,7 +7,8 @@ from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.utils import get_reserved_usernames, remove_accents
+from datea_api.apps.api.utils import get_reserved_usernames
+from datea_api.utils import remove_accents
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator

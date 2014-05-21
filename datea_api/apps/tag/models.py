@@ -2,7 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import re
-from datea_api.apps.api.utils import remove_accents
+from datea_api.utils import remove_accents
 
 
 class Tag(models.Model):

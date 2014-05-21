@@ -347,7 +347,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             message = "username exists or is reserved"
 
         self.log_throttled_access(request)
-        return self.create_response(request, {'result': result,
+        return self.create_response(request, {'result': not result,
                 'message': message}, status=OK)
 
 

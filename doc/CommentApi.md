@@ -16,7 +16,8 @@ Objects already come with related comments -> See Dateo.
 List filters:
 
 * user: user id [integer]
-* content_type__model:  model type ('dateo') [string]  
+* content_type__model:  'dateo' [string]
+* object_id: 123 [int]  
 
 ####POST
 

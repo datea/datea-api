@@ -14,7 +14,7 @@ import urllib2, json
 
 class Dateo(models.Model):
 
-	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
+	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="dateos")
 
 	# timestamps
 	created = models.DateTimeField(_('created'), auto_now_add=True)

@@ -35,6 +35,8 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
+from datea_api.apps.account.models import User
+
 
 class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     
@@ -389,8 +391,12 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             else: 
                 q_args['tags_exact__in'] = tags
 
+        filter_by_dateos = False
+
         # INIT THE QUERY
         sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
+        if len(q_args) > 1:
+            filter_by_dateos = True
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY
@@ -404,6 +410,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             top_right = Point(tr_x, tr_y)
 
             sqs = sqs.within('position', bottom_left, top_right)
+            filter_by_dateos = True
 
         # DWITHIN QUERY
         if all(k in request.GET and request.GET.get(k) != '' for k in ('distance', 'latitude', 'longitude')):
@@ -413,40 +420,45 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             position = Point(x, y)
 
             sqs = sqs.dwithin('position', position, dist)
+            filter_by_dateos = True
 
-        result = []
-
-        sqs = sqs.facet('tags')
-
-        if len(tags) > 0:
-            tag_objects = Tag.objects.filter(tag__in=tags)
-        else:
-            tag_objects = Tag.objects.all()
-            tags = [t.tag for t in tag_objects]
-
-        tag_data = {}
-        for t in tag_objects:
-            tag_data[t.tag] = t.title
-
-        print sqs.facet_counts()
-
-        for res in sqs.facet_counts()['fields']['tags']:
-            if res[0] in tags:
-                result.append({
-                    res[0]: {
-                        'count': res[1],
-                        'tag': res[0],
-                        'title': tag_data[res[0]]
-                    }
-                })
-
-        object_list = {
-            'total_count': sqs.count(),
-            'tags': result,
+        response = {
+            'dateo_count': sqs.count(),
         }
 
+        if filter_by_dateos:
+            dateo_pks = [d.obj_id for d in sqs]
+
+
+        # TAGS
+        if len(tags) > 0:
+            tag_objects = Tag.objects.filter(tag__in=tags)
+            if filter_by_dateos:
+                print filter_by_dateos, dateo_pks, q_args
+                tag_objects = tag_objects.filter(dateos__pk__in=dateo_pks).distinct()
+            
+            tags_result = []
+            for t in tag_objects:
+                tags_result.append({
+                    'count': t.dateo_count,
+                    'tag': t.tag,
+                    'title': t.title,
+                    'id': t.pk
+                })
+            response['tags'] = tags_result
+
+
+        # USERS
+        user_objects = User.objects.filter(is_active=True, status=1)
+        if filter_by_dateos:
+            #print "dateo_pks", dateo_pks
+            user_objects = user_objects.filter(dateos__pk__in=dateo_pks).distinct()
+        response['user_count'] = user_objects.count()
+
+
         self.log_throttled_access(request)
-        return self.create_response(request, object_list)
+        return self.create_response(request, response)
+
 
 
 

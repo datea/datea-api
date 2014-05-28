@@ -17,6 +17,12 @@
 - test usernames
 
 
+- estadisticas generales para landing con usuarios
+- que iniciativas aparecen en el landing
+- que dateos destacados aparecen ahi
+- endpoint para ver si correo ya existe.
+
+
 
 
  

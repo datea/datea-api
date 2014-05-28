@@ -130,7 +130,7 @@ class ActivityLogResource(ModelResource):
 
     # HAYSTACK SEARCH
     def get_search(self, request, **kwargs): 
-
+        
         # tests
         self.method_check(request, allowed=['get'])
         self.is_authenticated(request)
@@ -156,6 +156,7 @@ class ActivityLogResource(ModelResource):
 
             if mode == 'actor':
                 q_args['actor_id'] = uid
+                print q_args
                 sqs = sqs.filter(**q_args)
 
             elif mode == 'target_user':
@@ -168,10 +169,11 @@ class ActivityLogResource(ModelResource):
 
             elif mode == 'all':
                 follow_keys = [f.follow_key for f in Follow.objects.filter(user__id=uid)]
+                print q_args, follow_keys
                 if len(follow_keys) > 0:
-                    sqs = sqs.filter(**q_args).filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid)
+                    sqs = sqs.filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid).filter_and(**q_args)
                 else:
-                    sqs = sqs.filter(**q_args).filter_or(actor_id=uid).filter_or(target_user_id=uid)
+                    sqs = sqs.filter_or(actor_id=uid).filter_or(target_user_id=uid).filter_and(**q_args)
 
         sqs = sqs.order_by('-created')
         

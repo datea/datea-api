@@ -7,6 +7,8 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
     obj_id = indexes.IntegerField(model_attr='pk')
 
     created = indexes.DateTimeField(model_attr='created')
+    published = indexes.BooleanField(model_attr="published")
+
     actor = indexes.CharField(model_attr="actor__username", faceted=True)
     actor_id = indexes.IntegerField(model_attr="actor__pk")
     action_key = indexes.CharField(model_attr="action_key", faceted=True)

@@ -2,5 +2,5 @@
 
 ../../../manage.py build_solr_schema > schema.xml
 python fix_solr_schema.py
-cp schema.xml ../../../../solr-4.7.0/example/solr/collection1/conf/
+cp schema.xml ../../../../solr-4.7.1/example/solr/collection1/conf/
 echo "OK"

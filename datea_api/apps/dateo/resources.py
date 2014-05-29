@@ -73,7 +73,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
         limit = 200
         cache = SimpleCache(timeout=10)
-        throttle = CacheThrottle(throttle_at=300)
+        #throttle = CacheThrottle(throttle_at=1000)
         always_return_data = True
 
 

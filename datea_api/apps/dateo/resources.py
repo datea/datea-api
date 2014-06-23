@@ -126,6 +126,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
     # do our own saving of related m2m fields (since tatsypie does strange stuff)
     def hydrate_m2m(self, bundle):
+        
         #print bundle.data
         if 'images' in bundle.data and bundle.data['images']:
             imgs = []
@@ -230,7 +231,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                   'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3',
-                  'has_images']
+                  'has_images', 'has_position']
 
         for p in params:
             if p in request.GET:

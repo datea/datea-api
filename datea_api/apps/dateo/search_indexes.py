@@ -24,6 +24,7 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     vote_count = indexes.IntegerField(model_attr="vote_count")
     comment_count = indexes.IntegerField(model_attr="comment_count")
     has_images = indexes.BooleanField()
+    is_geolocated = indexes.BooleanField() 
 
     def get_model(self):
         return Dateo
@@ -42,3 +43,6 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_has_images(self, obj):
         return obj.images.count() > 0
+
+    def prepare_is_geolocated(self, obj):
+        return obj.position != None

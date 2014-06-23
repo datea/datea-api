@@ -159,15 +159,13 @@
 
     <field name="tags_exact" type="string" indexed="true" stored="true" multiValued="true" />
 
-    <field name="admin_level1" type="text_en" indexed="true" stored="true" multiValued="false" />
-
     <field name="user" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="category" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="category_exact" type="string" indexed="true" stored="true" multiValued="false" />
 
-    <field name="user_exact" type="string" indexed="true" stored="true" multiValued="false" />
+    <field name="admin_level1" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="user_id" type="long" indexed="true" stored="true" multiValued="false" />
 
@@ -175,11 +173,15 @@
 
     <field name="country" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="created" type="date" indexed="true" stored="true" multiValued="false" />
+    <field name="user_exact" type="string" indexed="true" stored="true" multiValued="false" />
 
     <field name="modified" type="date" indexed="true" stored="true" multiValued="false" />
 
+    <field name="created" type="date" indexed="true" stored="true" multiValued="false" />
+
     <field name="vote_count" type="long" indexed="true" stored="true" multiValued="false" />
+
+    <field name="is_geolocated" type="boolean" indexed="true" stored="true" multiValued="false" />
 
     <field name="published" type="boolean" indexed="true" stored="true" multiValued="false" />
 

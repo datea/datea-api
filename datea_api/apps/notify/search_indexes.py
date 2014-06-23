@@ -12,7 +12,7 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
     actor = indexes.CharField(model_attr="actor__username", faceted=True)
     actor_id = indexes.IntegerField(model_attr="actor__pk")
     action_key = indexes.CharField(model_attr="action_key", faceted=True)
-    action_id = indexes.IntegerField()
+    action_id = indexes.IntegerField(model_attr="action_id", null=True)
     action_type = indexes.CharField()
 
     target_user = indexes.CharField(null=True, faceted=True)
@@ -30,9 +30,6 @@ class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
     
     def index_queryset(self, using=None):
         return self.get_model().objects.all()
-
-    def prepare_action_id(self, obj):
-        return obj.action_object.pk
 
     def prepare_action_type(self, obj):
         return obj.action_type.model

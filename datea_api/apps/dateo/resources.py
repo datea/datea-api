@@ -231,7 +231,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                   'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3',
-                  'has_images', 'has_position']
+                  'has_images', 'is_geolocated']
 
         for p in params:
             if p in request.GET:

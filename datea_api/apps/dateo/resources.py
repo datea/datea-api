@@ -386,7 +386,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         if 'campaign' in request.GET:
             cam = Campaign.objects.get(pk=int(request.GET.get('campaign')))
-            tags = [cam.main_tag.tag] + [c.tag for c in cam.secondary_tags.all()]
+            tags = [c.tag for c in cam.secondary_tags.all()]
             if len(tags) == 1 and tags[0].strip() != '':
                 q_args['tags_exact'] = tags[0]
             else: 

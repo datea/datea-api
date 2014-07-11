@@ -1,4 +1,5 @@
 from django.db.models import signals
+from django.dispatch import Signal
 from haystack.signals import BaseSignalProcessor
 
 from datea_api.apps.dateo.models import Dateo

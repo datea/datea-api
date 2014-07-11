@@ -300,10 +300,10 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         order_by = request.GET.get('order_by', '-created').split(',')
 
         if 'q' in request.GET: 
-            if order_by == ['-created'] and '-created' not in request.GET:
+            if order_by == ['-created'] and 'order_by' not in request.GET:
                 #order_by = ['_score']
                 order_by = ['score']
-
+        print "ORDER BY", order_by
         # in elastic search 'score' is '_score'
         # order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
     
@@ -315,7 +315,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             sqs = sqs.distance('position', position).order_by(*order_by)
         elif len(order_by) > 0:
             sqs = sqs.order_by(*order_by)
-
 
         paginator = Paginator(sqs, limit)
 

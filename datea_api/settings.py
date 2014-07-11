@@ -183,7 +183,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-HAYSTACK_SIGNAL_PROCESSOR = 'apps.api.signals.ManyAwareRealTimeSearchIndex'
+HAYSTACK_SIGNAL_PROCESSOR = 'datea_api.apps.api.signals.ManyAwareRealTimeSearchIndex'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

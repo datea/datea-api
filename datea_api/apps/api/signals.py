@@ -1,8 +1,8 @@
 from django.dispatch import Signal
-from haystack.indexes import RealTimeSearchIndex
+#from haystack.indexes import RealTimeSearchIndex
 
 resource_saved = Signal(providing_args=['instance', 'created'])
-
+'''
 class ManyAwareRealTimeSearchIndex(RealTimeSearchIndex):
     """Many-to-many aware real-time search index base class
     """
@@ -32,3 +32,4 @@ class ManyAwareRealTimeSearchIndex(RealTimeSearchIndex):
         for m2m in model._meta.many_to_many:
             signals.m2m_changed.disconnect(self._on_m2m_changed,
                                            sender=m2m.rel.through)
+'''

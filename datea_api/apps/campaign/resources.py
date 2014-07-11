@@ -51,7 +51,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
     def save(self, bundle, skip_errors=False): 
         bundle = super(CampaignResource, self).save(bundle, skip_errors)
-        CampaignIndex.update_object(bundle.obj)
+        CampaignIndex().update_object(bundle.obj)
         return bundle
 
 

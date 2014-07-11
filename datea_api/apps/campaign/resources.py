@@ -26,6 +26,8 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import Http404
 from types import DictType
 
+from .search_indexes import CampaignIndex
+
 
 class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     
@@ -44,6 +46,12 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     def dehydrate(self, bundle):
         bundle.data['image_thumb'] = bundle.obj.get_image_thumb('image_thumb_medium')
         bundle.data['is_active'] = bundle.obj.is_active()
+        return bundle
+
+
+    def save(self, bundle, skip_errors=False): 
+        bundle = super(CampaignResource, self).save(bundle, skip_errors)
+        CampaignIndex.update_object(bundle.obj)
         return bundle
 
 

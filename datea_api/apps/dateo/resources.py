@@ -35,6 +35,8 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
+from .search_indexes import DateoIndex
+
 from datea_api.apps.account.models import User
 
 
@@ -189,9 +191,9 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
         bundle = super(DateoResource, self).save(bundle, skip_errors)
+        DateoIndex.update_object(bundle.obj)
         resource_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         return bundle
-
 
     # Replace GET dispatch_list with HAYSTACK SEARCH
     def dispatch_list(self, request, **kwargs):

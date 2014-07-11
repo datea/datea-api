@@ -286,3 +286,10 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         cache = SimpleCache(timeout=10)
         #throttle = CacheThrottle(throttle_at=200)
         always_return_data = True
+
+
+def after_signal_test(sender, instance, **kwargs):
+    print "AFTER TEST CARAJO"
+
+from django.db.models.signals import m2m_changed
+m2m_changed.connect(after_signal_test, sender=Campaign)

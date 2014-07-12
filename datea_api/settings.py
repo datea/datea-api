@@ -182,8 +182,7 @@ HAYSTACK_CONNECTIONS = {
         'TIMEOUT': 30  # large timeout because of celery 
     },
 }
-#HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-#HAYSTACK_SIGNAL_PROCESSOR = 'datea_api.apps.api.signals.DateaIndexSignalProcessor'
+#HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor' -> using custom code for this
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

@@ -1,7 +1,7 @@
 from haystack import indexes
 from models import ActivityLog
 
-class ActvityLogIndex(indexes.SearchIndex, indexes.Indexable):
+class ActivityLogIndex(indexes.SearchIndex, indexes.Indexable):
     
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/notify/activitylog_index.txt")
     obj_id = indexes.IntegerField(model_attr='pk')

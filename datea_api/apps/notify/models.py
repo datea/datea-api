@@ -14,10 +14,6 @@ from django.db.models.signals import post_save
 
 from datea_api.apps.tag.models import Tag
 
-from .search_indexes import ActivityLogIndex
-from datea_api.apps.api.signals import resource_saved
-from django.db.models.signals import pre_delete
-
 
 class NotifySettings(models.Model):
     
@@ -123,6 +119,10 @@ class ActivityLog(models.Model):
 
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
 # -> only happens with calls to the api (tastypie)
+from .search_indexes import ActivityLogIndex
+from datea_api.apps.api.signals import resource_saved
+from django.db.models.signals import pre_delete
+
 def update_search_index(sender, instance, created, **kwargs):
     ActivityLogIndex().update_object(instance)
 

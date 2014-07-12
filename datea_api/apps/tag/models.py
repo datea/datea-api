@@ -4,6 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 import re
 from datea_api.utils import remove_accents
 
+from .search_indexes import TagIndex
+from datea_api.apps.api.signals import resource_saved
+from django.db.models.signals import pre_delete
+
 
 class Tag(models.Model):
 
@@ -30,4 +34,15 @@ class Tag(models.Model):
 	def __unicode__(self):
 		return self.tag
 
+
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# -> only happens with calls to the api (tastypie)
+def update_search_index(sender, instance, created, **kwargs):
+	TagIndex().update_object(instance)
+
+def remove_search_index(sender, instance, **kwargs):
+	TagIndex().remove_object(instance)
+
+resource_saved.connect(update_search_index, sender=Tag)
+pre_delete.connect(remove_search_index, sender=Tag)
 

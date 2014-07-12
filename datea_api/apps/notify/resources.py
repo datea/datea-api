@@ -5,6 +5,7 @@ from .models import ActivityLog, Notification, NotifySettings
 from datea_api.apps.api.authorization import DateaBaseAuthorization, OwnerOnlyAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.signals import resource_saved
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -127,6 +128,12 @@ class ActivityLogResource(ModelResource):
             return self.get_search(request, **kwargs)
         else:
             return self.dispatch('list', request, **kwargs)
+
+    def save(self, bundle, skip_errors=False):
+        created = False if bundle.obj.pk else True
+        bundle = super(ActivityLogResource, self).save(bundle, skip_errors)
+        resource_saved.send(sender=ActivityLog, instance=bundle.obj, created=created)
+        return bundle
 
     # HAYSTACK SEARCH
     def get_search(self, request, **kwargs): 

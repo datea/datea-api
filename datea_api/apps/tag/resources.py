@@ -5,6 +5,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.signals import resource_saved
 from datea_api.utils import remove_accents
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -12,7 +13,6 @@ from tastypie.utils import trailing_slash
 from django.conf.urls import url
 import json
 from django.http import HttpResponse, Http404
-
 
 from .models import Tag
 from datea_api.apps.account.utils import get_domain_from_url
@@ -84,6 +84,13 @@ class TagResource(JSONDefaultMixin, ModelResource):
             self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
 
         ]
+
+
+    def save(self, bundle, skip_errors=False):
+        created = False if bundle.obj.pk else True
+        bundle = super(TagResource, self).save(bundle, skip_errors)
+        resource_saved.send(sender=Tag, instance=bundle.obj, created=created)
+        return bundle
 
 
     def autocomplete(self, request, **kwargs):

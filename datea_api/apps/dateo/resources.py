@@ -191,7 +191,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
         bundle = super(DateoResource, self).save(bundle, skip_errors)
-        DateoIndex().update_object(bundle.obj)
         resource_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         return bundle
 

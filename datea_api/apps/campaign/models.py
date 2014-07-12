@@ -10,6 +10,10 @@ from datea_api.apps.tag.models import Tag
 from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
 
+from .search_indexes import CampaignIndex
+from datea_api.apps.api.signals import resource_saved
+from django.db.models.signals import pre_delete
+
 
 class Campaign(models.Model):
 
@@ -126,5 +130,18 @@ class Campaign(models.Model):
 			self.slug = slugify(self.main_tag)
 	    
 	    super(Campaign, self).save(*args, **kwargs)
+
+
+
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# -> only happens with calls to the api (tastypie)
+def update_search_index(sender, instance, created, **kwargs):
+	CampaignIndex().update_object(instance)
+
+def remove_search_index(sender, instance, **kwargs):
+	CampaignIndex().remove_object(instance)
+
+resource_saved.connect(update_search_index, sender=Campaign)
+pre_delete.connect(remove_search_index, sender=Campaign)
 
 

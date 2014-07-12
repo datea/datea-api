@@ -11,6 +11,10 @@ from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
 import urllib2, json
 
+from .search_indexes import DateoIndex
+from datea_api.apps.api.signals import resource_saved
+from django.db.models.signals import pre_delete
+
 
 class Dateo(models.Model):
 
@@ -127,3 +131,15 @@ class Dateo(models.Model):
 		verbose_name = 'Dateo'
 		verbose_name_plural = 'Dateos'
 
+
+
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# -> only happens with calls to the api (tastypie)
+def update_search_index(sender, instance, created, **kwargs):
+	DateoIndex().update_object(instance)
+
+def remove_search_index(sender, instance, **kwargs):
+	DateoIndex().remove_object(instance)
+
+resource_saved.connect(update_search_index, sender=Dateo)
+pre_delete.connect(remove_search_index, sender=Dateo)

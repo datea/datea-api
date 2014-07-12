@@ -16,7 +16,7 @@ from datea_api.apps.file.models import File
 from datea_api.apps.file.resources import FileResource
 from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.account.utils import get_domain_from_url
-
+from datea_api.apps.api.signals import resource_saved
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -50,8 +50,9 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
 
     def save(self, bundle, skip_errors=False): 
+        created = False if bundle.obj.pk else True
         bundle = super(CampaignResource, self).save(bundle, skip_errors)
-        CampaignIndex().update_object(bundle.obj)
+        resource_saved.send(sender=Campaign, instance=bundle.obj, created=created)
         return bundle
 
 

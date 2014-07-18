@@ -70,7 +70,7 @@ class Campaign(models.Model):
 	def_modes =  status_choices = (
             ('map',_('Map')), 
             ('timeline', _('Timeline')), 
-            ('pictures', _('Pictures')),
+            ('images', _('Images')),
             ('files', _('Files'))
         )
 	default_vis = models.CharField(_("Default visualization mode"), max_length=10, choices=status_choices, default="map")

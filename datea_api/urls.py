@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     (r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^account/', include('datea_api.apps.account.urls')),
+    url(r'^csv-export/', include('datea_api.apps.dateo.urls')),
     url(r'^', top_level),
 )
 

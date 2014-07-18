@@ -115,7 +115,9 @@ options:
 				order: 0 				// optional integer for ordering
 			},
 			...
-		]
+		],
+		default_vis: 'map'				// optional -> options are: 'map' (default), 'timeline', 'pictures', 'files'
+		default_filter: 'owner'			// optional -> default is null
 	
 	}
 

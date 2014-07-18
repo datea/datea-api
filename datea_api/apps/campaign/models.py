@@ -66,6 +66,16 @@ class Campaign(models.Model):
 	kmlfiles = models.ManyToManyField(File, verbose_name=_('KML Files'), null=True, blank=True)
 	zoom = models.PositiveIntegerField(_("Default zoom"), default=12)
 
+	# Visualization options
+	def_modes =  status_choices = (
+            ('map',_('Map')), 
+            ('timeline', _('Timeline')), 
+            ('pictures', _('Pictures')),
+            ('files', _('Files'))
+        )
+	default_vis = models.CharField(_("Default visualization mode"), max_length=10, choices=status_choices, default="map")
+	default_filter = models.CharField(_("Default filter"), max_length=10, blank=True, null=True)
+
 	# statistics
 	dateo_count = models.PositiveIntegerField(_("Item count"), default=0)
 	#user_count = models.PositiveIntegerField(_("Participant count"), default=0)

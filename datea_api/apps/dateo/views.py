@@ -19,6 +19,11 @@ def csv_export_tag(request, tag_id):
 
 	writer = UnicodeWriter(response)
 
+	meta_row = ['username', 'created', 'tags', 'content', 'date', 'address', 'latitude', 
+				 'longitude', 'country', 'admin_level1', 'admin_level2', 'admin_level3', 
+				 'images', 'files', 'status', 'vote_count', 'comment_count']
+	writer.writerow(meta_row)
+
 	for dateo in Dateo.objects.filter(tags=tag_id, published=True):
 		row = make_dateo_csv_row(dateo)
 		writer.writerow(row)

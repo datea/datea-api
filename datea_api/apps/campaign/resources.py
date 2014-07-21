@@ -100,9 +100,9 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     def hydrate_m2m(self,bundle):
 
         # Implement our own m2m logic, since tastypie makes strage things (hard to understand why)
-        if 'tags' in bundle.data and bundle.data['tags']:
+        if 'secondary_tags' in bundle.data and bundle.data['secondary_tags']:
             tags = []
-            for tagdata in bundle.data['tags']:
+            for tagdata in bundle.data['secondary_tags']:
                 if 'id' in tagdata:
                     tags.append(tagdata['id'])
                 else:
@@ -116,7 +116,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                         tagbundle.obj.save()
                         tags.append(tagbundle.obj.pk)
 
-            bundle.obj.tags = Tag.objects.filter(pk__in=tags)
+            bundle.obj.secondary_tags = Tag.objects.filter(pk__in=tags)
 
         if 'kmlfiles' in bundle.data and bundle.data['kmlfiles']:
             files = []

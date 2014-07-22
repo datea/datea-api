@@ -140,7 +140,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                     fbundle = frsc.full_hydrate(fbundle)
                     fbundle.obj.save()
                     files.append(fbundle.obj.pk)
-            bundle.obj.kmlfiles = File.objects.filter(pk__in=files)
+            bundle.obj.layer_files = File.objects.filter(pk__in=files)
 
         return bundle
 

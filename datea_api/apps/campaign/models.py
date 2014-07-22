@@ -63,7 +63,7 @@ class Campaign(models.Model):
 	# GEO:
 	center = models.PointField(_("Center"), blank=True, null=True, spatial_index=False)
 	boundary = models.PolygonField(_("Boundary"), blank=True, null=True, spatial_index=False)
-	kmlfiles = models.ManyToManyField(File, verbose_name=_('KML Files'), null=True, blank=True)
+	layer_files = models.ManyToManyField(File, verbose_name=_('Layer Files'), null=True, blank=True)
 	zoom = models.PositiveIntegerField(_("Default zoom"), default=12)
 
 	# Visualization options

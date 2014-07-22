@@ -41,6 +41,8 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)
+    layer_files = fields.ToManyField('datea_api.apps.file.resources.FileResource', 
+            attribute = 'layer_files', full=True, null=True, readonly=True)
     
 
     def dehydrate(self, bundle):
@@ -118,16 +120,16 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
             bundle.obj.secondary_tags = Tag.objects.filter(pk__in=tags)
 
-        if 'kmlfiles' in bundle.data and bundle.data['kmlfiles']:
+        if 'layer_files' in bundle.data and bundle.data['layer_files']:
             files = []
-            for filedata in bundle.data['kmlfiles']:
+            for filedata in bundle.data['layer_files']:
 
                 # validate files (only by name, the custom model filefield validates by content) 
                 if hasattr(filedata['file'], 'name'):
                     # only pdf files for now
-                    if filedata['file']['name'].split('.')[-1].lower() not in ['kml']: 
+                    if filedata['file']['name'].split('.')[-1].lower() not in ['kml', 'json']: 
                         response = self.create_response(request,{'status': BAD_REQUEST,
-                                'error': 'allowed filetypes: kml'}, status=BAD_REQUEST)
+                                'error': 'allowed filetypes: kml, json (geoJSON)'}, status=BAD_REQUEST)
                         raise ImmediateHttpResponse(response=response)
 
                 if 'id' in filedata:

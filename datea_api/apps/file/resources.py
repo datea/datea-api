@@ -14,11 +14,6 @@ class FileResource(JSONDefaultMixin, ModelResource):
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     file = Base64FileField('file')
-
-    def dehydrate(self, bundle):
-        bundle.data['thumb'] = bundle.obj.get_thumb()
-        bundle.data['image'] = bundle.obj.get_thumb('image_thumb_large')
-        return bundle
     
     def hydrate(self, bundle):
         

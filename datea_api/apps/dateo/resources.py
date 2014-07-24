@@ -7,6 +7,7 @@ from tastypie.throttle import CacheThrottle
 from django.utils.html import strip_tags
 from django.conf.urls import url
 from django.http import Http404
+from django.db import models
 
 #from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin

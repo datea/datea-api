@@ -243,7 +243,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         date_params = ['created__gt', 'created__lt']
         for p in date_params:
             if p in request.GET:
-                q_args[p] = models.DateTimeField().to_python(request.get(p))
+                q_args[p] = models.DateTimeField().to_python(request.GET.get(p))
 
         if 'tags' in request.GET:
             tags = request.GET.get('tags').split(',')

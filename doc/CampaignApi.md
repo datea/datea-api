@@ -106,11 +106,11 @@ options:
 	           ]
 		},
 
-		kmlfiles: [						// optional new or existing File Resource objects (kml) 
+		layer_files: [						// optional new or existing File Resource objects (KML or geoJSON) 
 			{
 				file:	{
 						data_uri: <data uri base64>,
-						name: 'somefilename.png'
+						name: 'somefilename.json'
 					},
 				order: 0 				// optional integer for ordering
 			},

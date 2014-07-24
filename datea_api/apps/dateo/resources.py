@@ -221,8 +221,9 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         offset = int(request.GET.get('offset', 0))
         page = (offset / limit) + 1
 
-        # Do the query 
+        # Build query args 
         q_args = {'published': request.GET.get('published', True)}
+        narrow_args = []
         
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
@@ -246,12 +247,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 q_args[p] = models.DateTimeField().to_python(request.GET.get(p))
 
         if 'tags' in request.GET:
+            tag_op = request.GET.get('tag_operator', 'or')
             tags = request.GET.get('tags').split(',')
-            if len(tags) == 1 and tags[0].strip() != '':
-                q_args['tags_exact'] = tags[0]
-            else: 
-                q_args['tags_exact__in'] = tags
-
+            if tag_op == 'or':
+                if len(tags) == 1 and tags[0].strip() != '':
+                    q_args['tags_exact'] = tags[0]
+                else: 
+                    q_args['tags_exact__in'] = tags
+            elif tag_op == 'and':
+                narrow_args.append('tags:'+','.join(tags))
 
         # GET ONLY DATEOS I FOLLOW INDIVIDUALLY
         if 'followed' in request.GET:
@@ -273,7 +277,10 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             del q_args['published']
 
         # INIT THE QUERY
-        sqs = SearchQuerySet().models(Dateo).load_all().filter(**q_args)
+        sqs = SearchQuerySet().models(Dateo).load_all()
+        for narg in narrow_args:
+            sqs = sqs.narrow(narg)
+        sqs = sqs.filter(**q_args)
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY

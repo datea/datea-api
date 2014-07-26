@@ -17,7 +17,7 @@ class FollowResource(JSONDefaultMixin, ModelResource):
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     
-    def hydrate(self,bundle):
+    def hydrate(self, bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
             bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
@@ -26,6 +26,9 @@ class FollowResource(JSONDefaultMixin, ModelResource):
 
         return bundle
 
+    def dehydrate(self, bundle):
+        bundle.data['content_type'] = bundle.obj.content_type.model
+        return bundle
 
     def get_object_list(self, request):
         if 'content_type' in request.GET:

@@ -13,8 +13,8 @@ class Vote(models.Model):
     value = models.IntegerField(default=1)
     
     # generic content type relation to voted object
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     vote_key = models.CharField(max_length=255, blank=True, null=True)

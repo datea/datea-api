@@ -257,6 +257,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             elif tag_op == 'and':
                 narrow_args.append('tags:'+','.join(tags))
 
+
+
         # GET ONLY DATEOS I FOLLOW INDIVIDUALLY
         if 'followed' in request.GET:
             uid = int(request.GET['followed'])

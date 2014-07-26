@@ -19,7 +19,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
     def hydrate(self, bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
-            bundle.obj.client_domain = bundle.data['clint_domain'] = get_domain_from_url(bundle.request.META.get("HTTP_ORIGIN", ""))
+            bundle.obj.client_domain = bundle.data['client_domain'] = get_domain_from_url(bundle.request.META.get("HTTP_ORIGIN", ""))
             if 'content_type' in bundle.data:
                 bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
         return bundle

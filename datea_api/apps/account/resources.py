@@ -441,7 +441,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
             ip = get_real_ip(bundle.request)
             match = geolite2.lookup(ip)
             bundle.data['ip_location'] = {'latitude': match.location[0], 'longitude': match.location[1]}
-
+            bundle.data['ip_country']  = match.country
 
         return bundle
     

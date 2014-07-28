@@ -7,11 +7,12 @@ from django.conf import settings
 from django.db.models.deletion import Collector
 from django.db import router
 from django.conf import settings
+from django_resized import ResizedImageField
 
 
 class Image(models.Model):
  
-    image =  ImageField(upload_to="images")  
+    image =  ResizedImageField(upload_to="images")  
     user =   models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="images")
     order =  models.IntegerField(blank=True, null=True, default=0)
     width =  models.PositiveIntegerField(blank=True, null=True)

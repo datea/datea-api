@@ -17,6 +17,7 @@ from datea_api.apps.file.resources import FileResource
 from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.account.utils import get_domain_from_url
 from datea_api.apps.api.signals import resource_saved
+from datea_api.utils import remove_accents
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -182,7 +183,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         params = ['category_id', 'category', 'user', 'user_id', 
                   'published', 'is_active', 'id', 'featured',
                   'created__year', 'created__month', 'created__day', 
-                  'main_tag', 'main_tag_id']
+                  'main_tag_id']
         for p in params:
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = Exact(request.GET.get(p))
@@ -194,7 +195,14 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 q_args[p] = models.DateTimeField().to_python(request.get(p))
 
         if 'tags' in request.GET:
-            q_args['tags__in'] = request.GET.get('tags').split(',')
+            q_args['tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags').split(',')]
+
+        if 'main_tag' in request.GET:
+            mtags = request.GET.get('main_tag').split(',')
+            if len(mtags) == 1:
+                q_args['main_tag_exact'] = remove_accents(mtags[0].lower())
+            else: 
+                q_args['main_tag_exact__in'] = [remove_accents(t.lower()) for t in mtags]
 
         # GET DATEOS BY TAGS I FOLLOW
         if 'followed_by_tags' in request.GET:

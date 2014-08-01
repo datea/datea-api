@@ -24,6 +24,10 @@ Filters:
 * id: object id
 * tags: comma separated tags (without hash) [strings]
 * has_images: [boolean 0 or 1]
+* is_geolocated: [boolean 0 or 1]
+
+Tag filter operator:
+* tag_operator: ['or', 'and'], defaults to 'or'
 
 Number of results and pagingation:
 * 'limit': number of results, defaults to 100 [int]

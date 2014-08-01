@@ -14,7 +14,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     featured = indexes.BooleanField(model_attr='featured', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
-    main_tag = indexes.CharField(model_attr='main_tag__tag', boost=1.25, faceted=True)
+    main_tag = indexes.CharField(boost=1.25, faceted=True)
     main_tag_id = indexes.IntegerField()
     secondary_tags = indexes.MultiValueField(boost=1.125, null=True)
     is_active = indexes.CharField()
@@ -33,11 +33,14 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_main_tag_id(self, obj):
         return obj.main_tag.id
 
+    def prepare_main_tag(self, obj):
+        return obj.main_tag.tag.lower()
+
     def prepare_is_active(self, obj):
         return obj.is_active()
 
     def prepare_secondary_tags(self, obj):
-        return [obj.main_tag.tag] + [tag.tag for tag in obj.secondary_tags.all()]
+        return [obj.main_tag.tag.lower()] + [tag.tag.lower() for tag in obj.secondary_tags.all()]
 
     def prepare_category_id(self, obj):
         if obj.category:

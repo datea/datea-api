@@ -13,7 +13,7 @@ import requests, extraction, urlparse, os.path
 
 class LinkResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneFiield('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     
     def hydrate(self, bundle):

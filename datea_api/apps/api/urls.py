@@ -14,6 +14,7 @@ from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource, ActivityLogResource
 from datea_api.apps.flag.resources import FlagResource
+from datea_api.apps.link.resources import LinkResource, URLInfoResource
 
 v2_api = Api(api_name='v2')
 v2_api.register(AccountResource())
@@ -31,6 +32,8 @@ v2_api.register(NotifySettingsResource())
 v2_api.register(NotificationResource())
 v2_api.register(ActivityLogResource())
 v2_api.register(FlagResource())
+v2_api.register(LinkResource())
+v2_api.register(URLInfoResource())
 
 urlpatterns = patterns('',
     (r'^api/', include(v2_api.urls)),

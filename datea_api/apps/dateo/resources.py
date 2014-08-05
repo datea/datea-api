@@ -314,7 +314,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             if order_by == ['-created'] and 'order_by' not in request.GET:
                 #order_by = ['_score']
                 order_by = ['score']
-        print "ORDER BY", order_by
+        
         # in elastic search 'score' is '_score'
         # order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
     

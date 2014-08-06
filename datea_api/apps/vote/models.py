@@ -32,7 +32,6 @@ class Vote(models.Model):
         super(Vote, self).save(*args, **kwargs)
 
     def update_stats(self, value):
-        obj = vote.content_object
 
         if hasattr(self.content_object, 'vote_count'):
             self.content_object.vote_count += value

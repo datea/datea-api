@@ -129,17 +129,16 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                      bundle.data[f] = getattr(bundle.obj, f)
 
         if 'link' in bundle.data and type(bundle.data['link']) == DictType and 'url' in bundle.data['link']:
-            if 'id' in bundle.data['link'] and 'data_uri' not in bundle.data['image']['image']:
-                bundle.obj.image_id = bundle.data['image']['id']
+            if 'id' in bundle.data['link']:
+                bundle.obj.link_id = bundle.data['link']['id']
             else:
                 orig_method = bundle.request.method
-                if not 'id' in bundle.data['image']:
-                    bundle.request.method = "POST"
-                imgrsc = ImageResource()
-                imgbundle = imgrsc.build_bundle(data=bundle.data['image'], request=bundle.request)
-                imgbundle = imgrsc.full_hydrate(imgbundle)
-                imgbundle.obj.save()
-                bundle.obj.image_id = imgbundle.obj.pk
+                bundle.request.method = "POST"
+                lrsc = LinkResource()
+                lbundle = lrsc.build_bundle(data=bundle.data['link'], request=bundle.request)
+                lbundle = lrsc.full_hydrate(lbundle)
+                lbundle.obj.save()
+                bundle.obj.link_id = lbundle.obj.pk
                 bundle.request.method = orig_method
         
         return bundle

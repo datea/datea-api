@@ -9,6 +9,7 @@ from tastypie.throttle import CacheThrottle
 from datea_api.apps.account.utils import get_domain_from_url
 from django.conf.urls import url
 from tastypie.utils import trailing_slash
+from datea_api.apps.api.status_codes import *
 import requests, extraction, urlparse, os.path
 
 class LinkResource(JSONDefaultMixin, ModelResource):
@@ -70,7 +71,11 @@ class URLInfoResource(JSONDefaultMixin, Resource):
         self.throttle_check(request)
 
         url = request.GET.get('url')
-        html = requests.get(url).text
+        try:
+            html = requests.get(url).text
+        except:
+            return self.create_response(request, {'error': 'URL does not exist'}, status=BAD_REQUEST)
+            
         extracted = extraction.Extractor().extract(html, source_url=url)
 
         url_info = {

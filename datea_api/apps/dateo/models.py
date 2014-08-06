@@ -9,6 +9,7 @@ from datea_api.apps.category.models import Category
 from datea_api.apps.account.models import ClientDomain
 from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
+from datea_api.apps.link.models import Link
 import urllib2, json
 
 
@@ -33,6 +34,7 @@ class Dateo(models.Model):
 	content = models.TextField(_("Content"))
 	images = models.ManyToManyField(Image, verbose_name=_('Images'), null=True, blank=True, related_name="dateo")
 	files = models.ManyToManyField(File, verbose_name=_('Files'), null=True, blank=True, related_name="dateo")
+	link  = models.ForeignKey(Link, verbose_name=_('Link'), null=True, blank=True, related_name="dateos")
     
     # location
 	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)
@@ -71,7 +73,10 @@ class Dateo(models.Model):
 		super(Dateo, self).save(*args, **kwargs)
 
 	def has_images(self):
-		return self.images.all().count() > 0
+		return self.images.count() > 0
+
+	def has_files(self):
+		return self.files.count() > 0
 
 	def get_absolute_url(self):
 		return '/'+self.user.username+'/dateos/'+str(self.pk)
@@ -123,23 +128,47 @@ class Dateo(models.Model):
 			self.save()
 
 
+	def update_stats(self, value = 1):
+		if hasattr(dateo.user, 'dateo_count'):
+			dateo.user.dateo_count += value
+			dateo.user.save()
+
+		if dateo.tags.count() > 0:
+			for tag in dateo.tags.all():
+				tag.dateo_count += value
+				if dateo.has_images():
+					tag.image_count += value
+				if dateo.has_files():
+					tag.file_count += value
+				tag.save()
+
+			campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
+			for c in campaigns:
+				if hasattr(c, 'dateo_count'):
+					c.dateo_count += value
+					c.save()
+
 	class Meta:
 		verbose_name = 'Dateo'
 		verbose_name_plural = 'Dateos'
 
 
 
-# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
+# AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import DateoIndex
 from datea_api.apps.api.signals import resource_saved
 from django.db.models.signals import pre_delete
 
-def update_search_index(sender, instance, created, **kwargs):
+def after_dateo_saved(sender, instance, created, **kwargs):
+	if created:
+		instance.update_stats(1)
 	DateoIndex().update_object(instance)
 
-def remove_search_index(sender, instance, **kwargs):
+def before_dateo_delete(sender, instance, **kwargs):
 	DateoIndex().remove_object(instance)
+	instance.update_stats(-1)
 
-resource_saved.connect(update_search_index, sender=Dateo)
-pre_delete.connect(remove_search_index, sender=Dateo)
+resource_saved.connect(after_dateo_saved, sender=Dateo)
+pre_delete.connect(before_dateo_delete, sender=Dateo)

@@ -8,6 +8,7 @@ from django.utils.html import strip_tags
 from django.conf.urls import url
 from django.http import Http404
 from django.db import models
+from types import DictType
 
 #from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
@@ -22,6 +23,7 @@ from datea_api.apps.image.models import Image
 from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.file.models import File
 from datea_api.apps.file.resources import FileResource
+from datea_api.apps.link.resources import LinkResource
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.comment.models import Comment
@@ -56,6 +58,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
+    link = fields.ToOneField('datea_api.apps.link.resources.LinkResource',
+            attribute= 'link', null=True, full=True, readonly=True)
 
 
     class Meta:
@@ -123,6 +127,20 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             for f in forbidden_fields:
                 if f in bundle.data:
                      bundle.data[f] = getattr(bundle.obj, f)
+
+        if 'link' in bundle.data and type(bundle.data['link']) == DictType and 'url' in bundle.data['link']:
+            if 'id' in bundle.data['link'] and 'data_uri' not in bundle.data['image']['image']:
+                bundle.obj.image_id = bundle.data['image']['id']
+            else:
+                orig_method = bundle.request.method
+                if not 'id' in bundle.data['image']:
+                    bundle.request.method = "POST"
+                imgrsc = ImageResource()
+                imgbundle = imgrsc.build_bundle(data=bundle.data['image'], request=bundle.request)
+                imgbundle = imgrsc.full_hydrate(imgbundle)
+                imgbundle.obj.save()
+                bundle.obj.image_id = imgbundle.obj.pk
+                bundle.request.method = orig_method
         
         return bundle
 

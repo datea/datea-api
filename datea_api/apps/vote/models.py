@@ -30,12 +30,38 @@ class Vote(models.Model):
             self.content_type = ContentType.objects.get(model=model)
             self.object_id = int(pk)  
         super(Vote, self).save(*args, **kwargs)
+
+    def update_stats(self, value):
+        obj = vote.content_object
+
+        if hasattr(self.content_object, 'vote_count'):
+            self.content_object.vote_count += value
+            self.content_object.save()
+
+        if hasattr(self.content_object, 'user') and hasattr(self.content_object.user, 'voted_count'):
+            self.content_object.user.voted_count += value
+            self.content_object.user.save()
+
     
     def __unicode__(self):
         return "Vote "+self.user.username+" "+self.content_type.model+"."+str(self.object_id)
 
     class Meta:
         unique_together = ("user", "content_type", "object_id")
+
+
+# UPDATE COMMENT STATS
+from django.db.models.signals import pre_delete, post_save
+
+def after_vote_saved(sender, instance, created, **kwargs):
+    if created:
+        instance.update_stats(1)
+
+def before_vote_delete(sender, instance, **kwargs):
+    instance.update_stats(-1)
+
+post_save.connect(after_vote_saved, sender=Vote)
+pre_delete.connect(before_vote_delete, sender=Vote)
 
     
 

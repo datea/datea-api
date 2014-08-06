@@ -35,43 +35,9 @@ def do_dateo_async_tasks(dateo_obj, stat_value, notify=False):
 		with transaction.atomic():
 			dateo_obj = Dateo.objects.get(pk=dateo_obj)
 
-	update_dateo_stats(dateo_obj, stat_value)
-
 	if notify and stat_value > 0:
 		actlog = create_dateo_activity_log(dateo_obj)
 		create_dateo_notifications(actlog)
-
-@shared_task
-def update_dateo_stats(dateo, value):
-
-
-	if hasattr(dateo.user, 'dateo_count'):
-		try:
-			with transaction.atomic():
-				dateo.user.dateo_count += value
-				dateo.user.save()
-		except IntegrityError:
-			pass
-
-	# Update tag and campaign stats
-	try:
-		with transaction.atomic():
-			tags = dateo.tags.all()
-			if tags.count() > 0:
-
-				for tag in tags:
-					tag.dateo_count += value
-					if dateo.has_images():
-						tag.image_count += 1
-					tag.save()
-
-				campaigns = Campaign.objects.filter(main_tag__in=tags)
-				for c in campaigns:
-					if hasattr(c, 'dateo_count'):
-						c.dateo_count += value
-						c.save()
-	except IntegrityError:
-		pass
 
 
 @shared_task
@@ -167,34 +133,9 @@ def do_comment_async_tasks(comment_obj, stat_value, notify=False):
 		with transaction.atomic():
 			comment_obj = Comment.objects.get(pk=comment_obj)
 
-	update_comment_stats(comment_obj, stat_value)
 	if notify and stat_value > 0:
 		actlog = create_comment_activity_log(comment_obj)
 		create_comment_notifications(actlog)
-
-@shared_task
-def update_comment_stats(comment, value):
-
-	obj = comment.content_object
-	if hasattr(obj, 'comment_count'):
-		try:
-			with transaction.atomic():
-				obj.comment_count += value
-				obj.save()
-		except IntegrityError:
-			pass
-
-	# if commented object is part of campaign, update comment stats there
-	try:
-		with transaction.atomic():
-			if hasattr(obj, 'tags') and obj.tags.all().count() > 0:
-				campaigns = Campaign.objects.filter(main_tag__in=obj.tags.all())
-				for c in campaigns:
-					if hasattr(c, 'comment_count'):
-						c.comment_count += value
-						c.save()
-	except IntegrityError:
-		pass
 
 
 @shared_task
@@ -302,33 +243,9 @@ def do_vote_async_tasks(vote_obj, stat_value, notify=False):
 		with transaction.atomic():
 			vote_obj = Vote.objects.get(pk=vote_obj)
 
-	update_vote_stats(vote_obj, stat_value)
-
 	if notify and stat_value > 0:
 		actlog = create_vote_activity_log(vote_obj)
 		create_vote_notifications(actlog)
-
-
-@shared_task
-def update_vote_stats(vote, value):
-
-	obj = vote.content_object
-
-	if hasattr(obj, 'vote_count'):
-		try:
-			with transaction.atomic():
-				obj.vote_count += value
-				obj.save()
-		except IntegrityError:
-			pass
-
-	if hasattr(obj, 'user') and hasattr(obj.user, 'voted_count'):
-		try:
-			with transaction.atomic():
-				obj.user.voted_count += value
-				obj.user.save()
-		except IntegrityError:
-			pass
 
 
 @shared_task

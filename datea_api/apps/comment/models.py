@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.html import strip_tags
 from django.conf import settings
+from datea_api.apps.campaign.models import Campaign
 
 
 class Comment(models.Model):
@@ -26,6 +27,18 @@ class Comment(models.Model):
 
     def get_resource_class(self):
         return datea_api.apps.comment.resources.CommentResource
+
+    def update_stats(self, value):
+        if hasattr(self.content_object, 'comment_count'):
+            self.content_object.comment_count += value
+            self.content_object.save()
+
+        if hasattr(self.content_object, 'tags') and self.content_object.tags.count() > 0:
+            campaigns = Campaign.objects.filter(main_tag__in=self.content_object.tags.all())
+            for c in campaigns:
+                if hasattr(c, 'comment_count'):
+                    c.comment_count += value
+                    c.save()
     
     def __unicode__(self):
         return self.user.username+': '+strip_tags(self.comment)[:25]
@@ -34,5 +47,17 @@ class Comment(models.Model):
         verbose_name = _('Comment')
         verbose_name_plural = _('Comments')    
 
-    
+
+# UPDATE COMMENT STATS
+from django.db.models.signals import pre_delete, post_save
+
+def after_comment_saved(sender, instance, created, **kwargs):
+    if created:
+        instance.update_stats(1)
+
+def before_comment_delete(sender, instance, **kwargs):
+    instance.update_stats(-1)
+
+post_save.connect(after_comment_saved, sender=Comment)
+pre_delete.connect(before_comment_delete, sender=Comment)
 

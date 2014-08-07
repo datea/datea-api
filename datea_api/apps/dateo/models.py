@@ -142,7 +142,7 @@ class Dateo(models.Model):
 					tag.file_count += value
 				tag.save()
 
-			campaigns = Campaign.objects.filter(main_tag__in=dateo.tags.all())
+			campaigns = Campaign.objects.filter(main_tag__in=self.tags.all())
 			for c in campaigns:
 				if hasattr(c, 'dateo_count'):
 					c.dateo_count += value

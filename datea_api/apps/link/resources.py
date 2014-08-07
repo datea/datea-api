@@ -72,11 +72,12 @@ class URLInfoResource(JSONDefaultMixin, Resource):
 
         url = request.GET.get('url')
         try:
-            html = requests.get(url).text
+            req = requests.get(url)
         except:
             return self.create_response(request, {'error': 'URL does not exist'}, status=BAD_REQUEST)
-            
-        extracted = extraction.Extractor().extract(html, source_url=url)
+
+        req.encoding = 'utf-8'
+        extracted = extraction.Extractor().extract(req.text, source_url=url)
 
         url_info = {
             'title'       : extracted.title,

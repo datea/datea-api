@@ -129,16 +129,16 @@ class Dateo(models.Model):
 
 
 	def update_stats(self, value = 1):
-		if hasattr(dateo.user, 'dateo_count'):
-			dateo.user.dateo_count += value
-			dateo.user.save()
+		if hasattr(self.user, 'dateo_count'):
+			self.user.dateo_count += value
+			self.user.save()
 
-		if dateo.tags.count() > 0:
-			for tag in dateo.tags.all():
+		if self.tags.count() > 0:
+			for tag in self.tags.all():
 				tag.dateo_count += value
-				if dateo.has_images():
+				if self.has_images():
 					tag.image_count += value
-				if dateo.has_files():
+				if self.has_files():
 					tag.file_count += value
 				tag.save()
 

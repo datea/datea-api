@@ -240,6 +240,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         'id': 'obj_id',
         'category': 'category_exact',
         'user': 'user_exact',
+        'admin': 'admin_exact'
     }
 
     # HAYSTACK SEARCH
@@ -268,7 +269,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                   'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3',
-                  'has_images', 'is_geolocated']
+                  'has_images', 'is_geolocated', 'admin']
 
         for p in params:
             if p in request.GET:

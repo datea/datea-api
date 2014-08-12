@@ -11,6 +11,7 @@ from django.db import models
 from types import DictType
 
 #from tastypie.authentication import ApiKeyAuthentication
+from tastypie.resources import ModelResource
 from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
@@ -18,7 +19,7 @@ from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
 from datea_api.apps.api.status_codes import *
 
-from .models import Dateo
+from .models import Dateo, DateoStatus
 from datea_api.apps.image.models import Image
 from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.file.models import File
@@ -59,7 +60,9 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
             null=True, full=True, readonly=True)
     link = fields.ToOneField('datea_api.apps.link.resources.LinkResource',
-            attribute= 'link', null=True, full=True, readonly=True)
+            attribute='link', null=True, full=True, readonly=True)
+    admin = fields.ToManyField('datea_api.apps.dateo.resources.DateoStatusResource',
+            attribute='admin', null=True, full=True, readonly=True)
 
 
     class Meta:
@@ -105,6 +108,13 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
         bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
         bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
+
+        if 'admin' in bundle.data and len(bundle.data['admin'] > 0):
+            adm_data = {}
+            for adm in bundle.obj.admin.all():
+                adm_data[adm.campaign_id] = {'status': adm.status}
+            bundle.data['admin'] = adm_data
+
         return bundle
 
 
@@ -140,6 +150,11 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 lbundle.obj.save()
                 bundle.obj.link_id = lbundle.obj.pk
                 bundle.request.method = orig_method
+
+        if 'tags' not in bundle.data['tags'] and len(bundle.data['tags']) == 0:
+            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                        'error': 'dateo needs at least 1 tag'}, status=BAD_REQUEST)
+            raise ImmediateHttpResponse(response=response)
         
         return bundle
 
@@ -167,12 +182,12 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             for filedata in bundle.data['files']:
 
                 # validate files (only by name, the custom model filefield validates by content) 
-                if hasattr(filedata['file'], 'name'):
+                #if hasattr(filedata['file'], 'name'):
                     # only pdf files for now
-                    if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']: 
-                        response = self.create_response(request,{'status': BAD_REQUEST,
-                                'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
-                        raise ImmediateHttpResponse(response=response)
+                    #if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']: 
+                    #    response = self.create_response(request,{'status': BAD_REQUEST,
+                    #            'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
+                    #    raise ImmediateHttpResponse(response=response)
 
                 if 'id' in filedata:
                     files.append(filedata['id'])
@@ -486,6 +501,57 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         self.log_throttled_access(request)
         return self.create_response(request, response)
+
+
+
+class DateoStatusResource(JSONDefaultMixin, ModelResource):
+
+    dateo = fields.ToOneField('datea_api.apps.dateo.resources.DateoResource',
+            attribute="dateo", null=False, full=False, readonly=True)
+    campaign = fields.ToOneField('datea_api.apps.campaign.resources.CampaignResource',
+            attribute="campaign", null=False, full=False, readonly=True)
+
+    def dehydrate(self, bundle):
+        return bundle
+        
+    def hydrate(self, bundle):
+        bundle.obj.dateo_id = int(bundle.data['dateo'])
+        bundle.obj.user_id = bundle.request.user.id
+        cid = int(bundle.data['campaign'])
+        campaign = Campaign.objects.get(pk=cid)
+        # TODO: do permissions in the right place
+        #if bundle.request.user.id != campaign.user.id:
+        #    response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+        #                'error': 'only campaign owner can set status'}, status=BAD_REQUEST)
+        #    raise ImmediateHttpResponse(response=response)
+
+        bundle.obj.campaign_id = cid
+        return bundle
+
+
+    class Meta:
+        queryset = DateoStatus.objects.all()
+        resource_name = 'dateo_status'
+        list_allowed_methods = ['get', 'post']
+        detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        include_resource_uri = False
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
+        filtering = {
+            'id': ['exact'],
+            'campaign': ALL_WITH_RELATIONS,
+            'dateo': ALL_WITH_RELATIONS
+            #'user': ALL_WITH_RELATIONS
+        }
+        ordering = ['created']
+        limit = 200
+        cache = SimpleCache(timeout=10)
+        #throttle = CacheThrottle(throttle_at=1000)
+        always_return_data = True
+
+
+
+
 
 
 

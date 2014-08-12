@@ -154,6 +154,28 @@ class Dateo(models.Model):
 
 
 
+class DateoStatus(models.Model):
+
+	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
+	created = models.DateTimeField(_('created'), auto_now_add=True)
+	modified = models.DateTimeField(_('modified'), auto_now=True)
+	status_choices = (
+            ('new',_('new')), 
+            ('reviewed', _('reviewed')), 
+            ('solved', _('solved'))
+        )
+	status = models.CharField(_("status"), max_length=15, choices=status_choices, default="new")
+	dateo = models.ForeignKey('Dateo', verbose_name=_('Dateo'), related_name="admin")
+	campaign = models.ForeignKey(Campaign, verbose_name=_('Campaign'), related_name="admin")
+
+	class Meta:
+		verbose_name = 'Dateo status'
+		verbose_name_plural = 'Dateo statuses'
+		unique_together = ("campaign", "dateo")
+
+
+
+
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
 # AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
 # -> only happens with calls to the api (tastypie)

@@ -114,6 +114,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             for adm in bundle.obj.admin.all():
                 adm_data[adm.campaign_id] = {'status': adm.status}
             bundle.data['admin'] = adm_data
+        else:
+            bundle.data['admin'] = None
 
         return bundle
 

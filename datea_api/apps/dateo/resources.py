@@ -112,7 +112,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         if 'admin' in bundle.data and len(bundle.data['admin']) > 0:
             adm_data = {}
             for adm in bundle.obj.admin.all():
-                adm_data[adm.campaign_id] = {'status': adm.status}
+                adm_data[adm.campaign_id] = {'status': adm.status, 'id': adm.id}
             bundle.data['admin'] = adm_data
         else:
             bundle.data['admin'] = None
@@ -341,6 +341,11 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
             sqs = sqs.dwithin('position', position, dist)
 
+
+        # ADMIN CASE -> only new dateos
+        if 'new_in_campaign_id' in request.GET:
+            campaign_id = str(request.GET.get('new_in_campaign_id'))
+            sqs = sqs.exclude(admin__in=['reviewed:'+campaign_id, 'solved:'+campaign_id])
 
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')

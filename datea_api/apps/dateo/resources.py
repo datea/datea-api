@@ -19,7 +19,7 @@ from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
 from datea_api.apps.api.status_codes import *
 
-from .models import Dateo, DateoStatus
+from .models import Dateo, DateoStatus, Redateo
 from datea_api.apps.image.models import Image
 from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.file.models import File
@@ -263,7 +263,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             q_args['content'] = AutoQuery(request.GET['q'])
 
         # check for more params
-        params = ['category_id', 'category', 'user', 'user_id', 
+        params = ['category_id', 'category', 'user', 'user_id',
                   'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3',
@@ -290,8 +290,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             elif tag_op == 'and':
                 narrow_args.append('tags:'+','.join(tags))
 
-
-
         # GET ONLY DATEOS I FOLLOW INDIVIDUALLY
         if 'followed' in request.GET:
             uid = int(request.GET['followed'])
@@ -308,13 +306,21 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         # show also one's own unpublished actions
         user_id = int(request.GET.get('user_id', -1))
         show_unpublished = int(request.GET.get('show_unpublished', 0))
-        if request.user.is_authenticated() and user_id == request.user.id and show_unpublished ==1:
+        if request.user.is_authenticated() and user_id == request.user.id and show_unpublished == 1:
             del q_args['published']
 
         # INIT THE QUERY
         sqs = SearchQuerySet().models(Dateo).load_all()
         for narg in narrow_args:
             sqs = sqs.narrow(narg)
+
+        # FILTER REDATEOS
+        if 'user_id' in request.GET and 'with_redateos' in request.GET and request.GET.get('with_redateos'):
+            if 'user_id' in q_args:
+                del q_args['user_id']
+            uid = int(request.GET.get('user_id'))
+            sqs = sqs.filter_or(user_id=uid).filter_or(redateos=uid)
+
         sqs = sqs.filter(**q_args)
 
         # SPATIAL QUERY ADDONS
@@ -603,7 +609,7 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
         authorization = DateaBaseAuthorization()
         filtering = {
             'id': ['exact'],
-            'dateo': ALL_WITH_RELATIONS
+            'dateo': ALL_WITH_RELATIONS,
             'user': ALL_WITH_RELATIONS
         }
         ordering = ['created']

@@ -21,7 +21,8 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
     admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)
 
-    admin = indexes.MultiValueField(null=True, faceted=True)  
+    redateos = indexes.MultiValueField(null=True)
+    admin = indexes.MultiValueField(null=True, faceted=True)
 
     vote_count = indexes.IntegerField(model_attr="vote_count")
     comment_count = indexes.IntegerField(model_attr="comment_count")
@@ -52,3 +53,6 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_admin(self, obj):
         return [a.status+':'+str(a.campaign.id) for a in obj.admin.all()]
+
+    def prepare_redateos(self, obj):
+        return [redat.user.id for redat in obj.redateos.all()]

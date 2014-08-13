@@ -326,7 +326,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             tr_x = float(request.GET.get('top_right_longitude'))
             tr_y = float(request.GET.get('top_right_latitude'))
             bottom_left = Point(bl_x, bl_y)
-            top_right = Point(tr_x, tr_y)n
+            top_right = Point(tr_x, tr_y)
 
             sqs = sqs.within('position', bottom_left, top_right)
 

@@ -181,7 +181,7 @@ class DateoStatus(models.Model):
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import DateoIndex
 from datea_api.apps.api.signals import resource_saved
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_delete
 
 def after_dateo_saved(sender, instance, created, **kwargs):
 	if created:
@@ -194,3 +194,12 @@ def before_dateo_delete(sender, instance, **kwargs):
 
 resource_saved.connect(after_dateo_saved, sender=Dateo)
 pre_delete.connect(before_dateo_delete, sender=Dateo)
+
+def after_status_saved(sender, instance, created, **kwargs):
+	DateoIndex().update_object(instance.dateo)
+
+def after_status_delete(sender, instance, **kwargs):
+	DateoIndex().update_object(instance.dateo)
+
+resource_saved.connect(after_status_saved, sender=DateoStatus)
+post_delete.connect(after_status_delete, sender=DateoStatus)

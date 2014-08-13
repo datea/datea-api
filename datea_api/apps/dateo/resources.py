@@ -39,8 +39,6 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
-from .search_indexes import DateoIndex
-
 from datea_api.apps.account.models import User
 
 
@@ -328,7 +326,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             tr_x = float(request.GET.get('top_right_longitude'))
             tr_y = float(request.GET.get('top_right_latitude'))
             bottom_left = Point(bl_x, bl_y)
-            top_right = Point(tr_x, tr_y)
+            top_right = Point(tr_x, tr_y)n
 
             sqs = sqs.within('position', bottom_left, top_right)
 
@@ -518,6 +516,12 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
             attribute="dateo", null=False, full=False, readonly=True)
     campaign = fields.ToOneField('datea_api.apps.campaign.resources.CampaignResource',
             attribute="campaign", null=False, full=False, readonly=True)
+
+    def save(self, bundle, skip_errors=False):
+        created = False if bundle.obj.pk else True
+        bundle = super(DateoStatusResource, self).save(bundle, skip_errors)
+        resource_saved.send(sender=DateoStatus, instance=bundle.obj, created=created)
+        return bundle
 
     def dehydrate(self, bundle):
         return bundle

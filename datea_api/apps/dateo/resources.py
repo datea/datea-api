@@ -544,8 +544,7 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
     class Meta:
         queryset = DateoStatus.objects.all()
         resource_name = 'dateo_status'
-        list_allowed_methods = ['get', 'post']
-        detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         include_resource_uri = False
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()

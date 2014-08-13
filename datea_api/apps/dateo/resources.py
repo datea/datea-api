@@ -527,15 +527,21 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
         return bundle
         
     def hydrate(self, bundle):
-        bundle.obj.dateo_id = int(bundle.data['dateo'])
+        if 'dateo' in bundle.data:
+            bundle.obj.dateo_id = int(bundle.data['dateo'])
         bundle.obj.user_id = bundle.request.user.id
-        cid = int(bundle.data['campaign'])
+        
+        if 'campaign' in bundle.data:
+            cid = int(bundle.data['campaign'])
+        elif bundle.request.method == 'PATCH':
+            cid = bundle.obj.campaign_id
+        
         campaign = Campaign.objects.get(pk=cid)
         # TODO: do permissions in the right place
-        #if bundle.request.user.id != campaign.user.id:
-        #    response = self.create_response(bundle.request,{'status': BAD_REQUEST,
-        #                'error': 'only campaign owner can set status'}, status=BAD_REQUEST)
-        #    raise ImmediateHttpResponse(response=response)
+        if bundle.request.user.id != campaign.user.id:
+            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                        'error': 'only campaign owner can set status'}, status=BAD_REQUEST)
+            raise ImmediateHttpResponse(response=response)
 
         bundle.obj.campaign_id = cid
         return bundle

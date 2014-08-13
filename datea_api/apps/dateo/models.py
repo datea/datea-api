@@ -219,9 +219,11 @@ resource_saved.connect(after_status_saved, sender=DateoStatus)
 post_delete.connect(after_status_delete, sender=DateoStatus)
 
 def after_redateo_saved(sender, instance, created, **kwargs):
+	instance.update_stats(1)
 	DateoIndex().update_object(instance.dateo)
 
 def after_redateo_delete(sender, instance, **kwargs):
+	instance.update_stats(-1)
 	DateoIndex().update_object(instance.dateo)
 
 resource_saved.connect(after_redateo_saved, sender=Redateo)

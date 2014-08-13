@@ -25,6 +25,7 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
 
     vote_count = indexes.IntegerField(model_attr="vote_count")
     comment_count = indexes.IntegerField(model_attr="comment_count")
+    redateo_count = indexes.IntegerField(model_attr="redateo_count")
     has_images = indexes.BooleanField()
     is_geolocated = indexes.BooleanField() 
 

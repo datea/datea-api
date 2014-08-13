@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 
 from tastypie.api import Api
 from datea_api.apps.account.resources import UserResource , AccountResource
-from datea_api.apps.dateo.resources import DateoResource, DateoStatusResource
+from datea_api.apps.dateo.resources import DateoResource, DateoStatusResource, RedateoResource
 from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.category.resources import CategoryResource
 from datea_api.apps.comment.resources import CommentResource
@@ -21,6 +21,7 @@ v2_api.register(AccountResource())
 v2_api.register(UserResource())
 v2_api.register(DateoResource())
 v2_api.register(DateoStatusResource())
+v2_api.register(RedateoResource())
 v2_api.register(CampaignResource())
 v2_api.register(CategoryResource())
 v2_api.register(CommentResource())

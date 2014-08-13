@@ -379,7 +379,9 @@ class UserResource(JSONDefaultMixin, ModelResource):
             bundle.data['bg_image'] = None
 
         # send all user data user is one's own and is authenticated
-        if hasattr(bundle.request, 'user') and bundle.request.user.id == bundle.obj.id:
+        if ( hasattr(bundle.request, 'user') and 
+             bundle.request.user.id == bundle.obj.id and 
+             bundle.request.resolver_match.kwargs['resource_name'] == 'user'):
             
             bundle.data['email'] = bundle.obj.email
 

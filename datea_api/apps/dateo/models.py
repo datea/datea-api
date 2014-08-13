@@ -51,6 +51,7 @@ class Dateo(models.Model):
 	vote_count = models.IntegerField(default=0, blank=True, null=True)
 	comment_count = models.IntegerField(default=0,blank=True, null=True)
 	#follow_count = models.IntegerField(default=0, blank=True, null=True)
+	redateo_count = models.IntegerField(default=0, blank=True, null=True)
 
 	date = models.DateTimeField(_('Date'), blank=True, null=True)
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
@@ -174,6 +175,19 @@ class DateoStatus(models.Model):
 		unique_together = ("campaign", "dateo")
 
 
+class Redateo(models.Model):
+	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
+	dateo = models.ForeignKey('Dateo', verbose_name=_('Dateo'), related_name="redateos")
+	created = models.DateTimeField(_('created'), auto_now_add=True)
+
+	class Meta:
+		verbose_name = 'Redateo'
+		verbose_name_plural = 'Redateos'
+		unique_together = ("user", "dateo")
+
+	def update_stats(self, value):
+		self.dateo.redateo_count += value
+		self.dateo.save()
 
 
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
@@ -203,3 +217,12 @@ def after_status_delete(sender, instance, **kwargs):
 
 resource_saved.connect(after_status_saved, sender=DateoStatus)
 post_delete.connect(after_status_delete, sender=DateoStatus)
+
+def after_redateo_saved(sender, instance, created, **kwargs):
+	DateoIndex().update_object(instance.dateo)
+
+def after_redateo_delete(sender, instance, **kwargs):
+	DateoIndex().update_object(instance.dateo)
+
+resource_saved.connect(after_redateo_saved, sender=Redateo)
+post_delete.connect(after_redateo_delete, sender=Redateo)

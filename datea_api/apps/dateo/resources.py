@@ -534,7 +534,9 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
         if 'campaign' in bundle.data:
             cid = int(bundle.data['campaign'])
         elif bundle.request.method == 'PATCH':
-            cid = bundle.obj.campaign_id
+            orig_obj = DateoStatus.objects.get(pk=bundle.data['id'])
+            cid = orig_obj.campaign_id
+            bundle.obj = orig_obj
         
         campaign = Campaign.objects.get(pk=cid)
         # TODO: do permissions in the right place
@@ -559,6 +561,50 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
             'campaign': ALL_WITH_RELATIONS,
             'dateo': ALL_WITH_RELATIONS
             #'user': ALL_WITH_RELATIONS
+        }
+        ordering = ['created']
+        limit = 200
+        cache = SimpleCache(timeout=10)
+        #throttle = CacheThrottle(throttle_at=1000)
+        always_return_data = True
+
+
+
+class RedateoResource(JSONDefaultMixin, ModelResource):
+
+    user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
+            attribute="user", null=False, full=False, readonly=True)
+    dateo = fields.ToOneField('datea_api.apps.dateo.resources.DateoResource',
+            attribute="dateo", null=False, full=False, readonly=True)
+
+    def save(self, bundle, skip_errors=False):
+        created = False if bundle.obj.pk else True
+        bundle = super(RedateoResource, self).save(bundle, skip_errors)
+        resource_saved.send(sender=Redateo, instance=bundle.obj, created=created)
+        return bundle
+
+    def dehydrate(self, bundle):
+        return bundle
+        
+    def hydrate(self, bundle):
+        if 'dateo' in bundle.data:
+            bundle.obj.dateo_id = int(bundle.data['dateo'])
+        
+        bundle.obj.user_id = bundle.request.user.id
+        return bundle
+
+
+    class Meta:
+        queryset = Redateo.objects.all()
+        resource_name = 'redateo'
+        allowed_methods = ['get', 'post', 'delete']
+        include_resource_uri = False
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
+        filtering = {
+            'id': ['exact'],
+            'dateo': ALL_WITH_RELATIONS
+            'user': ALL_WITH_RELATIONS
         }
         ordering = ['created']
         limit = 200

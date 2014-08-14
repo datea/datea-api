@@ -381,7 +381,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
         # send all user data user is one's own and is authenticated
         if ( hasattr(bundle.request, 'user') and 
              bundle.request.user.id == bundle.obj.id and 
-             bundle.request.resolver_match.kwargs['resource_name'] == 'user'):
+             bundle.request.resolver_match.kwargs['resource_name'] in [u'user', u'account']):
             
             bundle.data['email'] = bundle.obj.email
 
@@ -441,9 +441,13 @@ class UserResource(JSONDefaultMixin, ModelResource):
 
             # GEO IP LOCATIONS
             ip = get_real_ip(bundle.request)
-            match = geolite2.lookup(ip)
-            bundle.data['ip_location'] = {'latitude': match.location[0], 'longitude': match.location[1]}
-            bundle.data['ip_country']  = match.country
+            if ip:
+                match = geolite2.lookup(ip)
+                bundle.data['ip_location'] = {'latitude': match.location[0], 'longitude': match.location[1]}
+                bundle.data['ip_country']  = match.country
+            else:
+                bundle.data['ip_location'] = None
+                bundle.data['ip_country']  = None
 
         return bundle
     

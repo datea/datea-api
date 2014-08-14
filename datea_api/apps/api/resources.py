@@ -2,6 +2,7 @@ from .base_resources import JSONDefaultMixin
 from tastypie.resources import Resource
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
+from tastypie.utils import trailing_slash
 from django.conf.urls import url
 
 from geoip import geolite2
@@ -35,14 +36,12 @@ class IPLocationResource(JSONDefaultMixin, Resource):
         self.throttle_check(request)
 
         found = False
-        ip = get_real_ip(bundle.request)
+        ip = get_real_ip(request)
         if ip:
         	match = geolite2.lookup(ip)
         	if match:
-            	response = {
-            				'ip_location' : {'latitude': match.location[0], 'longitude': match.location[1]},
-            				'ip_country'  : match.country
-            				}
+        		response = {'ip_location' : {'latitude': match.location[0], 'longitude': match.location[1]},
+            				'ip_country'  : match.country}
            		status = OK
            		found  = True
         

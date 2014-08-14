@@ -2,6 +2,9 @@ from .models import User, ClientDomain
 from tastypie.resources import Resource, ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
+from tastypie.cache import SimpleCache
+from tastypie.throttle import CacheThrottle
+from tastypie.utils import trailing_slash
 from django.conf.urls import url
 from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
@@ -9,8 +12,6 @@ from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.base_resources import JSONDefaultMixin
 from datea_api.apps.api.utils import get_reserved_usernames
 from datea_api.utils import remove_accents
-from tastypie.cache import SimpleCache
-from tastypie.throttle import CacheThrottle
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 import re
@@ -27,7 +28,6 @@ from datea_api.apps.tag.resources import TagResource
 import json
 from django.contrib.auth import authenticate
 from .forms import CustomPasswordResetForm
-from tastypie.utils import trailing_slash
 from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url, new_username_allowed
 from datea_api.apps.api.status_codes import *
 

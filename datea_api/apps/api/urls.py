@@ -2,6 +2,7 @@
 from django.conf.urls import patterns, include, url
 
 from tastypie.api import Api
+from .resources import IPLocationResource
 from datea_api.apps.account.resources import UserResource , AccountResource
 from datea_api.apps.dateo.resources import DateoResource, DateoStatusResource, RedateoResource
 from datea_api.apps.campaign.resources import CampaignResource
@@ -37,6 +38,7 @@ v2_api.register(ActivityLogResource())
 v2_api.register(FlagResource())
 v2_api.register(LinkResource())
 v2_api.register(URLInfoResource())
+v2_api.register(IPLocationResource())
 
 urlpatterns = patterns('',
     (r'^api/', include(v2_api.urls)),

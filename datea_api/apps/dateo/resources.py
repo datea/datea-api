@@ -593,9 +593,15 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
         return bundle
         
     def hydrate(self, bundle):
-        if 'dateo' in bundle.data:
-            bundle.obj.dateo_id = int(bundle.data['dateo'])
-        
+
+        dateo = Dateo.objects.get(pk=int(bundle.data['dateo']))
+        # not on own objects
+        if request.user.id == dateo.user.id:
+            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                    'error': 'not on own objects'}, status=BAD_REQUEST)
+            raise ImmediateHttpResponse(response=response)
+    
+        bundle.obj.dateo = dateo
         bundle.obj.user_id = bundle.request.user.id
         return bundle
 

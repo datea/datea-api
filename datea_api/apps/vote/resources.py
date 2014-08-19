@@ -8,6 +8,8 @@ from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from datea_api.apps.account.utils import get_domain_from_url
 from django.contrib.contenttypes.models import ContentType
+from tastypie.exceptions import ImmediateHttpResponse
+from datea_api.apps.api.status_codes import *
 
 from .models import Vote
 
@@ -20,8 +22,24 @@ class VoteResource(JSONDefaultMixin, ModelResource):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
             bundle.obj.client_domain = bundle.data['client_domain'] = get_domain_from_url(bundle.request.META.get("HTTP_ORIGIN", ""))
-            if 'content_type' in bundle.data:
-                bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
+
+            # cannot vote one's own object
+            if 'vote_key' in  bundle.data:
+                model, pk = bundle.data['vote_key']
+            elif 'content_type' in bundle.data and 'object_id' in bundle.data:
+                model = bundle.data['content_type']
+                pk = bundle.data['object_id']
+
+            ctype = ContentType.objects.get(model=model)
+            target_obj = ctype.get_object_for_this_type(pk=int(pk))
+
+            if request.user.id == target_obj.user.id:
+                response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                        'error': 'not on own objects'}, status=BAD_REQUEST)
+                raise ImmediateHttpResponse(response=response)
+
+            bundle.obj.content_type = ctype
+           
         return bundle
 
     def dehydrate(self, bundle):

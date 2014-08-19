@@ -125,7 +125,6 @@ class Campaign(models.Model):
 		return ugettext('/campaign/')+str(self.pk)
 
 
-
 	def save(self, *args, **kwargs):
 	    
 	    if self.center == None and self.boundary != None:
@@ -136,6 +135,9 @@ class Campaign(models.Model):
 			self.slug = slugify(self.main_tag)
 	    
 	    super(Campaign, self).save(*args, **kwargs)
+
+
+	
 
 
 

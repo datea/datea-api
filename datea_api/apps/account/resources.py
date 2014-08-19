@@ -121,7 +121,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                     'status': BAD_REQUEST,
                     'error': 'Duplicate email'}, status=BAD_REQUEST)
 
-        elif not re.match("^[A-Za-z0-9]{1,32}$", username):
+        elif not re.match("^[A-Za-z0-9-_]{1,32}$", username):
             response = self.create_response(request, {
                     'status': BAD_REQUEST,
                     'error': 'Username not alphanumeric',

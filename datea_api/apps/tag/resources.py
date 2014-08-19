@@ -296,7 +296,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
         filtering={
                 'tag' : ['exact']
                 }
-        excludes = ['client_domain']
+        excludes = ['client_domain', 'description', 'created']
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()

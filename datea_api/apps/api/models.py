@@ -46,7 +46,7 @@ class ApiConfig(SingletonModel):
 from django.db.models.signals import post_init, post_save, pre_delete
 from .signals import resource_saved
 from celery.execute import send_task
-from datea_api.apps.dateo.models import Dateo
+from datea_api.apps.dateo.models import Dateo, Redateo
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.flag.models import Flag
@@ -82,6 +82,17 @@ post_init.connect(dateo_pre_saved, sender=Dateo)
 resource_saved.connect(dateo_saved, sender=Dateo)
 pre_delete.connect(dateo_pre_delete, sender=Dateo)
 
+####
+#  REDATEO ASYNC ACTIONS WITH CELERY
+###
+
+def redateo_saved(sender, instance, created, **kwargs):
+	if created:
+		global do_redateo_async_tasks
+		from .tasks import do_redateo_async_tasks
+		do_redateo_async_tasks(instance, 1, True) 
+
+resource_saved.connect(redateo_saved, sender=Redateo)
 
 
 ####

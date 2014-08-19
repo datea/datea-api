@@ -13,7 +13,7 @@ from datea_api.apps.follow.models import Follow
 
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.comment.resources import CommentResource
-from datea_api.apps.dateo.models import Dateo
+from datea_api.apps.dateo.models import Dateo, Redateo
 from datea_api.apps.dateo.resources import DateoResource
 from datea_api.apps.vote.models import Vote
 import datea_api.apps.vote.resources
@@ -121,6 +121,115 @@ def create_dateo_notifications(actlog):
 			email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
 		
 		send_mails(email_users, "dateo", email_data)
+
+
+############################################## REDATEO ASYNC TASKS ##########################################
+
+@shared_task
+def do_redateo_async_tasks(redateo_obj, stat_value, notify=False):
+
+	if type(redateo_obj) == IntType:
+		with transaction.atomic():
+			redateo_obj = Redateo.objects.get(pk=redateo_obj)
+
+	if notify and stat_value > 0:
+		actlog = create_redateo_activity_log(redateo_obj)
+		create_redateo_notifications(actlog)
+
+
+@shared_task
+def create_redateo_activity_log(redateo):
+
+	actlog = ActivityLog()
+	actlog.actor = redateo.user
+	actlog.verb = 'redateo'
+	actlog.action_object = redateo
+	actlog.target_object = redateo.dateo
+
+	tr = Truncator(bleach.clean(redateo.dateo.content, strip=True))
+	extract = tr.chars(100) 
+	actlog.data = {'extract': extract}
+	actlog.target_user = redateo.dateo.user
+
+	actlog.save()
+
+	actlog.tags.add(*redateo.dateo.tags.all())
+
+	return actlog
+
+
+@shared_task
+def create_redateo_notifications(actlog):
+
+	# 1. Usuario afectado
+	notify_users = [actlog.target_user]
+	email_users = []
+
+	if actlog.target_user.notify_settings.interaction:
+		email_users.append(actlog.target_user)
+
+	# 3. Seguidores de hilo
+	follows = Follow.objects.filter(follow_key=actlog.target_key)
+	for f in follows:
+		notify_users.append(f.user)
+		if f.user.notify_settings.conversations:
+			email_users.append(f.user)
+
+	# 4. Duenhos de iniciativas
+	for tag in actlog.target_object.tags.all():
+		for c in tag.campaigns.all():
+			notify_users.append(c.user)
+			if c.user.notify_settings.interaction:
+				email_users.append(c.user)
+
+	dateo_rsc = DateoResource()
+	d_bundle = dateo_rsc.build_bundle(obj=actlog.target_object)
+	d_bundle = dateo_rsc.full_dehydrate(d_bundle)
+	dateo_json = dateo_rsc.serialize(None, d_bundle, 'application/json')
+
+	notify_data = {
+		"actor": actlog.actor.username,
+		"actor_id": actlog.actor.pk,
+		"actor_img": actlog.actor.get_small_image(),
+		"target_object": json.loads(dateo_json),
+		"target_user": actlog.target_user.username,
+		"target_user_id": actlog.target_user.pk,
+		"target_user_img": actlog.target_user.get_small_image(),
+		"target_object_name": 'dateo',
+		"target_object_id": actlog.target_object.pk,
+		"extract": actlog.data.get('extract', ''),
+		"verb": "redateo",
+	}
+
+	for user in notify_users:
+		n = Notification(type="redateo", recipient=user, activity=actlog)
+		n.data = notify_data
+		n.save()
+
+	if len(email_users) > 0:
+
+		# email using target_object client_domain (for now)
+		client_data = get_client_data(actlog.target_object.client_domain)
+		if not client_data['send_notification_mail']:
+			return
+		dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
+					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
+
+		email_data = {
+			"actor": actlog.actor.username,
+			"target_user": actlog.target_user.username,
+			"target_object_name": ugettext(actlog.target_type.model),
+			"dateo": actlog.target_object,
+			"extract": actlog.data['extract'],
+			"url": dateo_url,
+			"created": actlog.created,
+			"site": client_data,
+		}
+		if hasattr(actlog.target_object, 'tags'):
+			email_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
+
+		send_mails(email_users, "redateo", email_data)
+
 
 
 

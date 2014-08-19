@@ -1,0 +1,1019 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-19 19:08+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/account/admin.py:24
+msgid "Personal info"
+msgstr ""
+
+#: apps/account/admin.py:25
+msgid "Permissions"
+msgstr ""
+
+#: apps/account/admin.py:27
+msgid "Important dates"
+msgstr ""
+
+#: apps/account/models.py:49 apps/campaign/models.py:23
+#: apps/comment/models.py:13 apps/dateo/models.py:21 apps/dateo/models.py:161
+#: apps/dateo/models.py:181 apps/flag/models.py:11 apps/follow/models.py:12
+#: apps/tag/models.py:10
+msgid "created"
+msgstr ""
+
+#: apps/account/models.py:50
+msgid "date joined"
+msgstr ""
+
+#: apps/account/models.py:53
+msgid "staff status"
+msgstr ""
+
+#: apps/account/models.py:54
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: apps/account/models.py:57
+msgid "active"
+msgstr ""
+
+#: apps/account/models.py:58
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: apps/account/models.py:61
+msgid "username"
+msgstr ""
+
+#: apps/account/models.py:62
+msgid ""
+"Required. 30 characters or fewer. Letters, numbers and @/./+/-/_ characters"
+msgstr ""
+
+#: apps/account/models.py:65
+msgid "Enter a valid username."
+msgstr ""
+
+#: apps/account/models.py:68
+msgid "full name"
+msgstr ""
+
+#: apps/account/models.py:69
+msgid "email address"
+msgstr ""
+
+#: apps/account/models.py:70
+msgid "personal message"
+msgstr ""
+
+#: apps/account/models.py:72
+msgid "External URL"
+msgstr ""
+
+#: apps/account/models.py:73
+msgid "Facebook URL"
+msgstr ""
+
+#: apps/account/models.py:74
+msgid "Twitter URL"
+msgstr ""
+
+#: apps/account/models.py:75
+msgid "Youtube URL"
+msgstr ""
+
+#: apps/account/models.py:80 apps/tag/models.py:17
+msgid "Dateo count"
+msgstr ""
+
+#: apps/account/models.py:83
+msgid "Voted count"
+msgstr ""
+
+#: apps/account/models.py:86
+msgid "unconfirmed"
+msgstr ""
+
+#: apps/account/models.py:87
+msgid "confirmed"
+msgstr ""
+
+#: apps/account/models.py:88
+msgid "banned"
+msgstr ""
+
+#: apps/account/models.py:90
+msgid "Status"
+msgstr ""
+
+#: apps/account/models.py:92 apps/campaign/models.py:85
+#: apps/comment/models.py:26 apps/dateo/models.py:57 apps/file/models.py:21
+#: apps/flag/models.py:20 apps/follow/models.py:27 apps/image/models.py:21
+#: apps/link/models.py:15 apps/tag/models.py:21 apps/vote/models.py:22
+msgid "CLient Domain"
+msgstr ""
+
+#: apps/account/models.py:100 apps/campaign/models.py:16
+#: apps/comment/models.py:12 apps/dateo/models.py:18 apps/dateo/models.py:160
+#: apps/dateo/models.py:179 apps/file/models.py:17 apps/flag/models.py:10
+#: apps/image/models.py:16 apps/link/models.py:10 apps/notify/models.py:41
+msgid "User"
+msgstr ""
+
+#: apps/account/models.py:101
+msgid "Users"
+msgstr ""
+
+#: apps/account/models.py:180
+msgid "domain name"
+msgstr ""
+
+#: apps/account/models.py:181
+msgid "site name"
+msgstr ""
+
+#: apps/account/models.py:183
+msgid "Register success redirect URL"
+msgstr ""
+
+#: apps/account/models.py:184
+msgid "Register error redirect URL"
+msgstr ""
+
+#: apps/account/models.py:186
+msgid "Change email success redirect URL"
+msgstr ""
+
+#: apps/account/models.py:187
+msgid "Change email error redirect URL"
+msgstr ""
+
+#: apps/account/models.py:189
+msgid "Password reset base URL"
+msgstr ""
+
+#: apps/account/models.py:191
+msgid "Comment url template"
+msgstr ""
+
+#: apps/account/models.py:192
+msgid ""
+"Available vars: {user_id} of commented object's owner, \t\t\t\t\t\t"
+"{username} of commented object' owner, {obj_id} of commented \t\t\t\t\t"
+"\tobject, {comment_id} of comment"
+msgstr ""
+
+#: apps/account/models.py:196
+msgid "Dateo url template"
+msgstr ""
+
+#: apps/account/models.py:197
+msgid ""
+"Available vars: {user_id} of dateo owner, \t\t\t\t\t\t{username} of dateo "
+"owner, {obj_id} of dateo"
+msgstr ""
+
+#: apps/account/models.py:201
+msgid "Notify settings url template"
+msgstr ""
+
+#: apps/account/models.py:202
+msgid "Available vars: {user_id} and {username}"
+msgstr ""
+
+#: apps/account/models.py:205
+msgid "Send notification mail"
+msgstr ""
+
+#: apps/account/models.py:212
+msgid "Whitelisted client domain"
+msgstr ""
+
+#: apps/account/models.py:213
+msgid "Whitelisted client domains"
+msgstr ""
+
+#: apps/api/models.py:7
+msgid "Maintainance mode"
+msgstr ""
+
+#: apps/api/models.py:8
+msgid "Reserved usernames"
+msgstr ""
+
+#: apps/api/models.py:9
+msgid "Reserved campaign names"
+msgstr ""
+
+#: apps/api/models.py:22
+msgid "Api Configuration"
+msgstr ""
+
+#: apps/campaign/models.py:18 apps/category/models.py:8
+msgid "Name"
+msgstr ""
+
+#: apps/campaign/models.py:19 apps/category/models.py:9
+msgid "Slug"
+msgstr ""
+
+#: apps/campaign/models.py:19
+msgid ""
+"A string of text as a short id for use at the url of this map (alphanumeric "
+"and dashes only"
+msgstr ""
+
+#: apps/campaign/models.py:20 apps/notify/models.py:57
+msgid "Published"
+msgstr ""
+
+#: apps/campaign/models.py:20
+msgid "If checked, campaign becomes visible to others"
+msgstr ""
+
+#: apps/campaign/models.py:24 apps/dateo/models.py:22 apps/dateo/models.py:162
+msgid "modified"
+msgstr ""
+
+#: apps/campaign/models.py:27 apps/category/models.py:18
+#: apps/dateo/models.py:47
+msgid "Category"
+msgstr ""
+
+#: apps/campaign/models.py:27
+msgid "Choose a category for this campaign"
+msgstr ""
+
+#: apps/campaign/models.py:28
+msgid "Hashtag"
+msgstr ""
+
+#: apps/campaign/models.py:28
+msgid "Main tag for your campaign."
+msgstr ""
+
+#: apps/campaign/models.py:30
+msgid "Dateo Tags"
+msgstr ""
+
+#: apps/campaign/models.py:33
+msgid "Tag suggestions for Dateos"
+msgstr ""
+
+#: apps/campaign/models.py:37
+msgid "Featured"
+msgstr ""
+
+#: apps/campaign/models.py:39
+msgid "End Date"
+msgstr ""
+
+#: apps/campaign/models.py:39
+msgid "Set an end date for your campaign (optional)"
+msgstr ""
+
+#: apps/campaign/models.py:41 apps/image/forms.py:7 apps/image/models.py:67
+msgid "Image"
+msgstr ""
+
+#: apps/campaign/models.py:43
+msgid "Short description / Slogan"
+msgstr ""
+
+#: apps/campaign/models.py:43
+msgid "A short description or slogan (max. 140 characters)."
+msgstr ""
+
+#: apps/campaign/models.py:46
+msgid "Mission / Objectives"
+msgstr ""
+
+#: apps/campaign/models.py:50
+msgid "max. 500 characters"
+msgstr ""
+
+#: apps/campaign/models.py:52
+msgid "What happens with the data?"
+msgstr ""
+
+#: apps/campaign/models.py:54
+msgid ""
+"Who receives the information and what happens with it? (max 500 characters)"
+msgstr ""
+
+#: apps/campaign/models.py:57 apps/link/models.py:12
+msgid "Description"
+msgstr ""
+
+#: apps/campaign/models.py:60
+msgid "Long description (optional)"
+msgstr ""
+
+#: apps/campaign/models.py:64
+msgid "Center"
+msgstr ""
+
+#: apps/campaign/models.py:65
+msgid "Boundary"
+msgstr ""
+
+#: apps/campaign/models.py:66
+msgid "Layer Files"
+msgstr ""
+
+#: apps/campaign/models.py:67
+msgid "Default zoom"
+msgstr ""
+
+#: apps/campaign/models.py:71
+msgid "Map"
+msgstr ""
+
+#: apps/campaign/models.py:72
+msgid "Timeline"
+msgstr ""
+
+#: apps/campaign/models.py:73 apps/dateo/models.py:35 apps/image/models.py:68
+msgid "Images"
+msgstr ""
+
+#: apps/campaign/models.py:74 apps/dateo/models.py:36 apps/file/models.py:28
+msgid "Files"
+msgstr ""
+
+#: apps/campaign/models.py:76
+msgid "Default visualization mode"
+msgstr ""
+
+#: apps/campaign/models.py:77
+msgid "Default filter"
+msgstr ""
+
+#: apps/campaign/models.py:80
+msgid "Item count"
+msgstr ""
+
+#: apps/campaign/models.py:82
+msgid "Comment count"
+msgstr ""
+
+#: apps/campaign/models.py:83
+msgid "Follower count"
+msgstr ""
+
+#: apps/campaign/models.py:91 apps/dateo/models.py:170
+msgid "Campaign"
+msgstr ""
+
+#: apps/campaign/models.py:92
+msgid "Campaigns"
+msgstr ""
+
+#: apps/campaign/models.py:125
+msgid "/campaign/"
+msgstr ""
+
+#: apps/campaign/templates/notify/campaign/email_body.txt:2
+#: apps/comment/templates/notify/comment/email_body.txt:2
+#: apps/dateo/templates/notify/dateo/email_body.txt:2
+#: apps/dateo/templates/notify/redateo/email_body.txt:2
+#: apps/flag/templates/notify/flag/email_body.txt:2
+#: apps/vote/templates/notify/vote/email_body.txt:2
+#, python-format
+msgid "Hi %(user)s"
+msgstr "Hola %(user)s"
+
+#: apps/campaign/templates/notify/campaign/email_body.txt:4
+#: apps/dateo/templates/notify/dateo/email_body.txt:4
+#, python-format
+msgid ""
+"\n"
+"%(actor)s created a new dateo"
+msgstr ""
+"\n"
+"%(actor)s ha dateado"
+
+#: apps/campaign/templates/notify/campaign/email_body.txt:5
+#: apps/dateo/templates/notify/dateo/email_body.txt:5
+#: apps/dateo/templates/notify/dateo/email_subject.txt:1
+#: apps/dateo/templates/notify/redateo/email_body.txt:5
+#: apps/dateo/templates/notify/redateo/email_subject.txt:1
+msgid "on"
+msgstr "en"
+
+#: apps/campaign/templates/notify/campaign/email_body.txt:9
+#: apps/dateo/templates/notify/dateo/email_body.txt:9
+#: apps/dateo/templates/notify/redateo/email_body.txt:9
+#, python-format
+msgid ""
+"You can view the dateo on: \n"
+"\n"
+"%(url)s"
+msgstr ""
+"Puedes ver el dateo en: \n"
+"\n"
+"%(url)s"
+
+#: apps/campaign/templates/notify/campaign/email_body.txt:13
+#: apps/comment/templates/notify/comment/email_body.txt:17
+#: apps/dateo/templates/notify/dateo/email_body.txt:13
+#: apps/dateo/templates/notify/redateo/email_body.txt:13
+#: apps/vote/templates/notify/vote/email_body.txt:17
+#, python-format
+msgid ""
+"\n"
+"best,\n"
+"\n"
+"Team %(sitename)s\n"
+msgstr ""
+"\n"
+"Saludos,\n"
+"\n"
+"El equipo de %(sitename)s\n"
+
+#: apps/campaign/templates/notify/campaign/email_body.txt:20
+#: apps/comment/templates/notify/comment/email_body.txt:24
+#: apps/dateo/templates/notify/dateo/email_body.txt:20
+#: apps/dateo/templates/notify/redateo/email_body.txt:20
+#: apps/vote/templates/notify/vote/email_body.txt:24
+#, python-format
+msgid ""
+"Click the following link if you wish to configure your notification settings "
+"to stop receiving this emails: %(url)s"
+msgstr ""
+"Si no deseas recibir estos correos, haz click sobre este enlace para cambiar "
+"tus opciones de notificación: %(url)s"
+
+#: apps/campaign/templates/notify/campaign/email_subject.txt:1
+#, python-format
+msgid "Check out %(actor)s's new campaign "
+msgstr "Chequea la nueva iniciativa de %(actor)s "
+
+#: apps/category/models.py:10 apps/tag/models.py:14
+msgid "Description (optional)"
+msgstr ""
+
+#: apps/category/models.py:11
+msgid "is active"
+msgstr ""
+
+#: apps/category/models.py:12
+msgid "order"
+msgstr ""
+
+#: apps/category/models.py:19
+msgid "Categories"
+msgstr ""
+
+#: apps/comment/models.py:14 apps/comment/models.py:47
+msgid "Comment"
+msgstr ""
+
+#: apps/comment/models.py:24
+msgid "Object id"
+msgstr ""
+
+#: apps/comment/models.py:48
+msgid "Comments"
+msgstr ""
+
+#: apps/comment/templates/notify/comment/email_body.txt:5
+#, python-format
+msgid ""
+"\n"
+"%(actor)s commented your %(object_name)s on"
+msgstr ""
+"\n"
+"%(actor)s comentó tu %(object_name)s en"
+
+#: apps/comment/templates/notify/comment/email_body.txt:8
+#, python-format
+msgid ""
+"\n"
+"%(actor)s commented %(target_user)s's %(object_name)s on"
+msgstr ""
+"\n"
+"%(actor)s comentó el %(object_name)s de %(target_user)s en"
+
+#: apps/comment/templates/notify/comment/email_body.txt:13
+#, python-format
+msgid ""
+"You can access the comment at: \n"
+"\n"
+"%(url)s"
+msgstr ""
+"Puedes acceder al comentario bajo: \n"
+"\n"
+"%(url)s"
+
+#: apps/comment/templates/notify/comment/email_subject.txt:1
+#, python-format
+msgid "%(actor)s commented %(target_user)s's %(object_name)s"
+msgstr "%(actor)s comentó el %(object_name)s de %(target_user)s"
+
+#: apps/comment/templates/notify/comment/email_subject.txt:1
+#, python-format
+msgid "%(actor)s commented your %(obj_name)s"
+msgstr "%(actor)s comentó tu %(obj_name)s"
+
+#: apps/dateo/models.py:25
+msgid "published"
+msgstr "publicado"
+
+#: apps/dateo/models.py:27 apps/dateo/models.py:164
+msgid "new"
+msgstr "nuevo"
+
+#: apps/dateo/models.py:28 apps/dateo/models.py:165
+msgid "reviewed"
+msgstr "atendido"
+
+#: apps/dateo/models.py:29 apps/dateo/models.py:166
+msgid "solved"
+msgstr "solucionado"
+
+#: apps/dateo/models.py:31 apps/dateo/models.py:168
+msgid "status"
+msgstr "estado"
+
+#: apps/dateo/models.py:34
+msgid "Content"
+msgstr ""
+
+#: apps/dateo/models.py:37
+msgid "Link"
+msgstr ""
+
+#: apps/dateo/models.py:40
+msgid "Position"
+msgstr ""
+
+#: apps/dateo/models.py:41
+msgid "Address"
+msgstr ""
+
+#: apps/dateo/models.py:48 apps/tag/models.py:29
+msgid "Tags"
+msgstr ""
+
+#: apps/dateo/models.py:56
+msgid "Date"
+msgstr ""
+
+#: apps/dateo/models.py:60
+msgid "Country"
+msgstr ""
+
+#: apps/dateo/models.py:61
+msgid "Administrative level 1"
+msgstr ""
+
+#: apps/dateo/models.py:62
+msgid "Administrative level 2"
+msgstr ""
+
+#: apps/dateo/models.py:63
+msgid "Administrative level 3"
+msgstr ""
+
+#: apps/dateo/models.py:169 apps/dateo/models.py:180
+msgid "Dateo"
+msgstr ""
+
+#: apps/dateo/templates/notify/dateo/email_subject.txt:1
+#, python-format
+msgid "%(actor)s created a new dateo"
+msgstr "%(actor)s dateó"
+
+#: apps/dateo/templates/notify/redateo/email_body.txt:4
+#, python-format
+msgid ""
+"\n"
+"%(actor)s has redateado %(target_user)s"
+msgstr ""
+"\n"
+"%(actor)s redateó a %(target_user)s's en"
+
+#: apps/dateo/templates/notify/redateo/email_subject.txt:1
+#, python-format
+msgid "%(actor)s redateo a %(target_user)s"
+msgstr "%(actor)s redateó a %(target_user)s"
+
+#: apps/file/forms.py:7 apps/file/models.py:19 apps/file/models.py:27
+msgid "File"
+msgstr "Archivo"
+
+#: apps/file/models.py:18 apps/link/models.py:11 apps/tag/models.py:13
+msgid "Title"
+msgstr "Título"
+
+#: apps/flag/models.py:18
+msgid "Comentario"
+msgstr ""
+
+#: apps/flag/models.py:26
+msgid "Flag"
+msgstr ""
+
+#: apps/flag/models.py:27
+msgid "Flags"
+msgstr ""
+
+#: apps/flag/templates/notify/flag/email_body.txt:4
+#, python-format
+msgid ""
+"\n"
+"%(user)s has flagged a %(model)s"
+msgstr ""
+"\n"
+"%(user)s ha denunciado un %(model)s"
+
+#: apps/flag/templates/notify/flag/email_body.txt:11
+msgid "sincerely"
+msgstr "Saludos"
+
+#: apps/flag/templates/notify/flag/email_subject.txt:1
+#, python-format
+msgid "%(user)s flagged a %(model)s"
+msgstr "%(user)s denunció un %(model)s"
+
+#: apps/follow/models.py:44
+msgid "Follow"
+msgstr ""
+
+#: apps/follow/models.py:45
+msgid "Follows"
+msgstr ""
+
+#: apps/image/forms.py:8
+msgid "Thumb preset"
+msgstr ""
+
+#: apps/link/models.py:13
+msgid "Link URL"
+msgstr ""
+
+#: apps/link/models.py:14
+msgid "Image URL"
+msgstr ""
+
+#: apps/notify/models.py:21
+msgid "Interactions regarding my content."
+msgstr ""
+
+#: apps/notify/models.py:22
+msgid "Dateos in tags I follow"
+msgstr ""
+
+#: apps/notify/models.py:23
+msgid "Reports in tags I follow"
+msgstr ""
+
+#: apps/notify/models.py:24
+msgid "Conversations I follow/engage"
+msgstr ""
+
+#: apps/notify/models.py:25
+msgid "News by Datea"
+msgstr ""
+
+#: apps/notify/models.py:28
+msgid "notify settings for"
+msgstr ""
+
+#: apps/notify/models.py:40
+msgid "Type of Notifications"
+msgstr ""
+
+#: apps/notify/models.py:42
+msgid "Unread"
+msgstr ""
+
+#: apps/notify/models.py:44 apps/notify/models.py:77
+msgid "Data"
+msgstr ""
+
+#: apps/notify/models.py:45
+msgid "ActivityLog"
+msgstr ""
+
+#: apps/notify/models.py:59
+msgid "Acting user (actor)"
+msgstr ""
+
+#: apps/notify/models.py:60
+msgid "Verb"
+msgstr ""
+
+#: apps/notify/models.py:66
+msgid "Action Key"
+msgstr ""
+
+#: apps/notify/models.py:72
+msgid "Target Key"
+msgstr ""
+
+#: apps/notify/models.py:74
+msgid "Target user"
+msgstr ""
+
+#: apps/notify/models.py:75 apps/tag/models.py:12 apps/tag/models.py:28
+msgid "Tag"
+msgstr ""
+
+#: apps/tag/models.py:16
+msgid "Follow count"
+msgstr ""
+
+#: apps/tag/models.py:18
+msgid "Image count"
+msgstr ""
+
+#: apps/tag/models.py:19
+msgid "File count"
+msgstr ""
+
+#: apps/vote/templates/notify/vote/email_body.txt:5
+#, python-format
+msgid ""
+"\n"
+"%(actor)s gave a thumbs up to your %(object_name)s on"
+msgstr ""
+
+#: apps/vote/templates/notify/vote/email_body.txt:8
+#, python-format
+msgid ""
+"\n"
+"%(actor)s supported %(target_user)s's %(object_name)s on"
+msgstr ""
+"\n"
+"%(actor)s apoyó el %(object_name)s de %(target_user)s's en"
+
+#: apps/vote/templates/notify/vote/email_body.txt:13
+#, python-format
+msgid ""
+"You can access the %(object_name)s at: \n"
+"\n"
+"%(url)s"
+msgstr ""
+"Puedes ver el %(object_name)s en: \n"
+"\n"
+"%(url)s"
+
+#: apps/vote/templates/notify/vote/email_subject.txt:1
+#, python-format
+msgid "%(actor)s now supports %(target_user)s's %(object_name)s"
+msgstr "%(actor)s apoya el %(object_name)s de %(target_user)s"
+
+#: apps/vote/templates/notify/vote/email_subject.txt:1
+#, python-format
+msgid "%(actor)s now supports your %(obj_name)s"
+msgstr "%(actor)s apoya tu %(obj_name)s"
+
+#: templates/registration/activate.html:4
+#: templates/registration/activate.html:5
+msgid "Activate account"
+msgstr "Activación de cuenta"
+
+#: templates/registration/activate.html:11
+msgid "Account activated"
+msgstr "¡Tu cuenta ha sido activada!"
+
+#: templates/registration/activate.html:14
+msgid ""
+"\n"
+"\tThanks, activation complete! You may now login using the username and "
+"password you set at registration.\n"
+msgstr ""
+"\n"
+"¡Gracias! has activado tu cuenta con éxito. Ahora puedes ingresar con tu "
+"nombre de usuario y contraseña.\n"
+
+#: templates/registration/activate.html:21
+msgid "We're sorry"
+msgstr "Lo sentimos"
+
+#: templates/registration/activate.html:23
+msgid ""
+"We could't activate your account. Please try to register again, or contact "
+"us."
+msgstr ""
+"No hemos podido activar tu cuenta. Por favor intenta registrarte nuevamente "
+"o contáctanos para ver cómo podemos ayudarte."
+
+#: templates/registration/activation_complete.html:4
+#: templates/registration/activation_complete.html:5
+msgid "Activation complete"
+msgstr "Cuenta activada"
+
+#: templates/registration/activation_complete.html:10
+msgid "Congratulations!"
+msgstr "¡Bien ahí!"
+
+#: templates/registration/activation_complete.html:13
+msgid ""
+"Welcome datero! You're account has been activated. You may now login using "
+"the username and password you set at registration."
+msgstr ""
+"Bienvenido(a)! Has activado tu cuenta. Ahora puedes ingresar con tu nombre "
+"de usuario y contraseña."
+
+#: templates/registration/activation_email.txt:1
+#, python-format
+msgid ""
+"Hi!\n"
+"\n"
+"You have asked to register an account at %(sitename)s.  If this wasn't "
+"you, \n"
+"please ignore this email and your address will be removed from our records.\n"
+"\n"
+"To activate this account, please click the following link within the next \n"
+"%(days)s days:\n"
+msgstr ""
+"Amigo(a) datero(a),\n"
+"\n"
+"Bienvenido(a)! Acabas de registrar una cuenta en %(sitename)s.  Si no fuiste "
+"tu,\n"
+"por favor ignora este correo y tus datos serán borrados de nuestros "
+"registros.\n"
+"\n"
+"Para activar tu cuenta, utiliza el siguiente enlace durante los próximos \n"
+"%(days)s días:\n"
+
+#: templates/registration/activation_email.txt:8
+#, python-format
+msgid ""
+"Hi!\n"
+"\n"
+"You have asked to set or change your email at %(sitename)s.  If this wasn't "
+"you, \n"
+"please contact us at contacto@datea.pe.\n"
+"\n"
+"To activate your account with this new email address, please click the "
+"following link within the next \n"
+"%(days)s days:\n"
+msgstr ""
+"Amigo(a) datero(a),\n"
+"\n"
+"Has solicitado cambiar tu correo en %(sitename)s. Si no fuiste tu,\n"
+"por favor escríbenos a contacto@datea.pe.\n"
+"\n"
+"Para activar tu cuenta con esta nueva dirección, activa el siguiente enlace "
+"durante los próximos %(days)s días:\n"
+
+#: templates/registration/activation_email.txt:22
+#, python-format
+msgid ""
+"\n"
+"Sincerely,\n"
+"\n"
+"The %(sitename)s Team\n"
+msgstr ""
+"\n"
+"Saludos,\n"
+"\n"
+"El equipo de %(sitename)s\n"
+
+#: templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Account registration for %(sitename)s"
+msgstr "Tu cuenta en %(sitename)s"
+
+#: templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Confirm email for %(sitename)s"
+msgstr "Confirma tu correo en %(sitename)s"
+
+#: templates/registration/change_email_complete.html:4
+#: templates/registration/change_email_complete.html:5
+msgid "Email confirmed"
+msgstr "Correo confirmado"
+
+#: templates/registration/change_email_complete.html:10
+msgid "Thank you!"
+msgstr "¡Gracias!"
+
+#: templates/registration/change_email_complete.html:13
+msgid ""
+"You have successfully confirmed your email address. You're account is now "
+"fully activated."
+msgstr ""
+"Tu dirección de correo ha sido confirmada. Tu cuenta ahora estáactivada y "
+"estás listo(a) para datear."
+
+#: templates/registration/password_reset_complete.html:4
+#: templates/registration/password_reset_complete.html:5
+#: templates/registration/password_reset_complete.html:8
+#: templates/registration/password_reset_confirm.html:8
+#: templates/registration/password_reset_done.html:4
+#: templates/registration/password_reset_done.html:9
+msgid "Password reset"
+msgstr "Recuperar contraseña"
+
+#: templates/registration/password_reset_complete.html:10
+msgid "Your password has been reset!"
+msgstr "Tu contraseña ha sido cambiada!"
+
+#: templates/registration/password_reset_complete.html:12
+msgid "You may now log in with your new password."
+msgstr "Ahora puedes ingresar con tu nueva contraseña."
+
+#: templates/registration/password_reset_confirm.html:4
+#: templates/registration/password_reset_confirm.html:5
+msgid "Reset your password"
+msgstr "Recuperar contraseña"
+
+#: templates/registration/password_reset_confirm.html:10
+msgid "Enter your new password below to reset your password"
+msgstr "Ingresa tu nueva contraseña aquí abajo."
+
+#: templates/registration/password_reset_confirm.html:14
+msgid "Set password"
+msgstr "Ingresa tu contraseña"
+
+#: templates/registration/password_reset_done.html:12
+msgid ""
+"We have sent you an email with a link to reset your password. Please check "
+"your email and click the link to continue."
+msgstr ""
+"Te hemos enviado un correo con un enlace para recuperar tu contraseña. Por "
+"favor, revisatu correo y activa el enlace para continuar con el proceso."
+
+#: templates/registration/password_reset_email.html:2
+msgid "Greetings"
+msgstr "Hola"
+
+#: templates/registration/password_reset_email.html:4
+#, python-format
+msgid ""
+"You are receiving this email because you\n"
+"requested that your password be reset on the %(sitename)s site. \n"
+"If you do not wish to reset your password, please ignore this message.\n"
+"\n"
+"To reset your password, please click the following link, or copy and paste "
+"it\n"
+"into your web browser:"
+msgstr ""
+"has solicitado recuperar tu contraseña en %(sitename)s.\n"
+"Si no deseas resetear tu contraseña, por favor ignora este mensaje.\n"
+"\n"
+"Para recuperar tu contraseña, por favor haz click sobre el siguiente enlace "
+"o copia y pegalo en tu navegador:"
+
+#: templates/registration/password_reset_email.html:13
+#, python-format
+msgid ""
+"Your username, in case you've forgotten: %(username)s\n"
+"\n"
+"\n"
+"Best regards,\n"
+"\n"
+"The %(sitename)s Team\n"
+msgstr ""
+"Tu usuario, en caso lo hayas olvidado, es: %(username)s\n"
+"\n"
+"\n"
+"Saludos,\n"
+"\n"
+"EL equipo de %(sitename)s\n"
+
+#: templates/registration/password_reset_form.html:5
+#: templates/registration/password_reset_form.html:6
+#: templates/registration/password_reset_form.html:18
+msgid "Reset password"
+msgstr "Recuperar tu contraseña"
+
+#: templates/registration/password_reset_form.html:11
+msgid "Recover password"
+msgstr "Recuperar tu contraseña"
+
+#: templates/registration/password_reset_form.html:13
+msgid ""
+"Forgot your password? Enter your email in the form below and we'll send you "
+"instructions for creating a new one"
+msgstr ""
+"¿Olvidaste tu contraseña? Ingresa tu correo aquí abajo y te enviaremos "
+"instruccionesde como recuperarla."
+
+#: templates/registration/password_reset_subject.txt:2
+#, python-format
+msgid "Password reset on %(sitename)s"
+msgstr "Tu contraseña en %(sitename)s"

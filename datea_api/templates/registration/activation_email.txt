@@ -1,13 +1,11 @@
-{% load i18n %}{% if site.activation_mode == "registration" %}{% blocktrans with site.name as sitename and site.domain as domain and expiration_days as days and activation_key as key and site.api_domain as apidomain and site.redirect_url as redirect_url %}
-Hi!
+{% load i18n %}{% if site.activation_mode == "registration" %}{% blocktrans with site.name as sitename and site.domain as domain and expiration_days as days and activation_key as key and site.api_domain as apidomain and site.redirect_url as redirect_url %}Hi!
 
 You have asked to register an account at {{ sitename }}.  If this wasn't you, 
 please ignore this email and your address will be removed from our records.
 
 To activate this account, please click the following link within the next 
 {{ days }} days:
-{% endblocktrans %}{% else %}{% blocktrans with site.name as sitename and site.domain as domain and expiration_days as days and activation_key as key and site.api_domain as apidomain and site.redirect_url as redirect_url %}
-Hi!
+{% endblocktrans %}{% else %}{% blocktrans with site.name as sitename and site.domain as domain and expiration_days as days and activation_key as key and site.api_domain as apidomain and site.redirect_url as redirect_url %}Hi!
 
 You have asked to set or change your email at {{ sitename }}.  If this wasn't you, 
 please contact us at contacto@datea.pe.

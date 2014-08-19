@@ -188,7 +188,11 @@ HAYSTACK_CONNECTIONS = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
+
+LOCALE_PATHS = (
+    os.path.join(PROJECT_DIR), 'locale',
+)
 
 TIME_ZONE = 'UTC'
 USE_I18N = True

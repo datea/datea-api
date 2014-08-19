@@ -485,7 +485,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                     if bundle.data['username'].strip() == '':
                         raise ValidationError('Username cannot be empty')
 
-                    if User.objects.filter(username=bundle.data['username']).count() > 0:
+                    if User.objects.filter(username__iexact=bundle.data['username']).count() > 0:
                         raise ValidationError('Duplicate username')
 
                     elif not re.match("^[A-Za-z0-9-_]{1,32}$", bundle.data['username']):

@@ -10,6 +10,9 @@ from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
 from django.conf import settings
 from django.core.cache import cache
+from datea_api.utils import remove_accents
+import re
+
 from datea_api.apps.api.utils import get_reserved_usernames
 
 def getOrCreateKey(user):
@@ -37,9 +40,9 @@ def getUserByKey(key):
 
 def make_social_username(username):
     index = 0
-    final_username = username
+    final_username = re.sub("[^a-zA-Z0-9]", "", remove_accents(username))
     reserved = get_reserved_usernames()
-    existing = [u.username.lower() for u in User.objects.filter(username__istartswith=username)]
+    existing = [u.username.lower() for u in User.objects.filter(username__iexact=username)]
     test_field = reserved + existing
 
     while True:

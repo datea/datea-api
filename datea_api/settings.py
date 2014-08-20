@@ -190,6 +190,10 @@ HAYSTACK_CONNECTIONS = {
 
 LANGUAGE_CODE = 'es'
 
+LANGUAGES = (
+    ('es', 'Spanish'),
+)
+
 LOCALE_PATHS = (
     os.path.join(PROJECT_DIR), 'locale',
 )

@@ -293,8 +293,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     class Meta:
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
-        list_allowed_methods = ['get', 'post']
-        detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)

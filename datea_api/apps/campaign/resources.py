@@ -70,7 +70,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             
         elif bundle.request.method in ('PUT', 'PATCH'):
             
-            forbidden_fields ['user', 'client_domain', 'comment_count', 'dateo_count', 
+            forbidden_fields = ['user', 'client_domain', 'comment_count', 'dateo_count', 
                                 'follow_count', 'featured', 'created', 'user']
             for f in forbidden_fields:
                 bundle.data[f] = getattr(bundle.obj, f)

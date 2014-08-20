@@ -169,11 +169,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 if 'id' in imgdata:
                     imgs.append(imgdata['id'])
                 else:
+                    orig_method = bundle.request.method
+                    bundle.request.method = "POST"
                     imgrsc = ImageResource()
                     imgbundle = imgrsc.build_bundle(data=imgdata, request=bundle.request)
                     imgbundle = imgrsc.full_hydrate(imgbundle)
                     imgbundle.obj.save()
                     imgs.append(imgbundle.obj.pk)
+                    bundle.request.method = orig_method
+
             bundle.obj.images = Image.objects.filter(pk__in=imgs)
 
 
@@ -192,11 +196,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 if 'id' in filedata:
                     files.append(filedata['id'])
                 else:
+                    orig_method = bundle.request.method
+                    bundle.request.method = "POST"
                     frsc = FileResource()
                     fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
                     fbundle = frsc.full_hydrate(fbundle)
                     fbundle.obj.save()
                     files.append(fbundle.obj.pk)
+                    bundle.request.method = orig_method
+
             bundle.obj.files = File.objects.filter(pk__in=files)
 
 
@@ -210,12 +218,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     if found.count() > 0:
                         tags.append(found[0].pk)
                     else:
+                        orig_method = bundle.request.method
+                        bundle.request.method = "POST"
                         tagrsc = TagResource()
                         tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
                         tagbundle = tagrsc.full_hydrate(tagbundle)
                         tagbundle.obj.save()
                         tags.append(tagbundle.obj.pk)
-
+                        bundle.request.method = orig_method
+                        
             bundle.obj.tags = Tag.objects.filter(pk__in=tags)
 
         return bundle

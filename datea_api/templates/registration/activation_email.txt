@@ -19,4 +19,4 @@ Para activar tu cuenta con esta nueva dirección, activa el siguiente enlace dur
 
 Saludos,
 
-El equipo de {{sitename}}
+El equipo de {{site.name}}

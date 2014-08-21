@@ -370,7 +370,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             message = "email does not exist"
 
         self.log_throttled_access(request)
-        return self.create_response(request, {'result': not result,
+        return self.create_response(request, {'result': result,
                 'message': message}, status=OK)
 
 

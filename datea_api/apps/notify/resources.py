@@ -31,8 +31,11 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
 
     def hydrate(self, bundle):
         forbidden_fields = ['user']
-        for f in forbidden_fields:
-            bundle.data[f] = getattr(bundle.obj, f)
+
+        if bundle.request.method == 'PATCH':
+            for f in forbidden_fields:
+                if f in bundle.data:
+                    del bundle.data[f]
         return bundle
 
     class Meta:

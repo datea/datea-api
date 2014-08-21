@@ -5,6 +5,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.utils import trailing_slash
+from tastypie.exceptions import ImmediateHttpResponse
 from django.conf.urls import url
 from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
@@ -472,7 +473,10 @@ class UserResource(JSONDefaultMixin, ModelResource):
 
             if 'password' in bundle.data:
                 if bundle.data['password'].strip() == '':
-                    raise ValidationError('password cannot be empty')
+                    #raise ValidationError('password cannot be empty')
+                    response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                        'error': 'password empty'}, status=BAD_REQUEST)
+                    raise ImmediateHttpResponse(response=response)
                 else:
                     bundle.obj.set_password(bundle.data['password'])
                     del bundle.data['password']
@@ -483,13 +487,22 @@ class UserResource(JSONDefaultMixin, ModelResource):
                 if 'username' in postData and bundle.data['username'] != bundle.obj.username:
 
                     if bundle.data['username'].strip() == '':
-                        raise ValidationError('Username cannot be empty')
+                        #raise ValidationError('Username cannot be empty')
+                        response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                            'error': 'username empty'}, status=BAD_REQUEST)
+                        raise ImmediateHttpResponse(response=response)
 
                     if User.objects.filter(username__iexact=bundle.data['username']).count() > 0:
-                        raise ValidationError('Duplicate username')
+                        #raise ValidationError('Duplicate username')
+                        response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                            'error': 'Duplicate username'}, status=BAD_REQUEST)
+                        raise ImmediateHttpResponse(response=response)
 
                     elif not re.match("^[A-Za-z0-9-_]{1,32}$", bundle.data['username']):
-                        raise ValidationError("Username not alphanumeric")
+                        #raise ValidationError("Username not alphanumeric")
+                        response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                            'error': 'Username not alphanumeric'}, status=BAD_REQUEST)
+                        raise ImmediateHttpResponse(response=response)
 
                     bundle.obj.username = bundle.data['username']
 
@@ -503,10 +516,16 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         try:
                             validate_email(new_email)
                         except:
-                            raise ValidationError('Not a valid email address')
+                            #raise ValidationError('Not a valid email address')
+                            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                                'error': 'Email not valid'}, status=BAD_REQUEST)
+                            raise ImmediateHttpResponse(response=response)
 
                         if User.objects.filter(email=new_email).exclude(pk=bundle.obj.pk).count() > 0:
-                            raise ValidationError('Duplicate email')
+                            #raise ValidationError('Duplicate email')
+                            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                                'error': 'Duplicate email'}, status=BAD_REQUEST)
+                            raise ImmediateHttpResponse(response=response)
 
                         self.email_changed = True
 

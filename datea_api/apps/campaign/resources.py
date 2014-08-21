@@ -205,7 +205,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id', 
-                  'published', 'is_active', 'id', 'featured',
+                  'is_active', 'id', 'featured',
                   'created__year', 'created__month', 'created__day', 
                   'main_tag_id']
         for p in params:

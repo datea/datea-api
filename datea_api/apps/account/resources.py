@@ -576,6 +576,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                 ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], obj=obj, request=bundle.request)
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
+                bundle.obj.notify_settings = ns_bundle.obj
 
             for imgfield in ['image', 'bg_image']:
 

@@ -25,7 +25,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
 
             # cannot vote one's own object
             if 'vote_key' in  bundle.data:
-                model, pk = bundle.data['vote_key']
+                model, pk = bundle.data['vote_key'].split('.')
             elif 'content_type' in bundle.data and 'object_id' in bundle.data:
                 model = bundle.data['content_type']
                 pk = bundle.data['object_id']

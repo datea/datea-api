@@ -99,14 +99,18 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         if 'id' in bundle.data['main_tag']:
             bundle.obj.main_tag_id = int(bundle.data['main_tag']['id'])
         elif 'tag' in bundle.data['main_tag']:
-            orig_method = bundle.request.method
-            bundle.request.method = "POST"
-            tagrsc = TagResource()
-            tagbundle = tagrsc.build_bundle(data=bundle.data['main_tag'], request=bundle.request)
-            tagbundle = tagrsc.full_hydrate(tagbundle)
-            tagbundle.obj.save()
-            bundle.obj.main_tag_id = tagbundle.obj.pk
-            bundle.request.method = orig_method
+            found = Tag.objects.filter(tag__iexact=remove_accents(bundle.data['main_tag']['tag']))
+            if found.count() > 0:
+                bundle.obj.main_tag_id = found[0].pk
+            else:
+                orig_method = bundle.request.method
+                bundle.request.method = "POST"
+                tagrsc = TagResource()
+                tagbundle = tagrsc.build_bundle(data=bundle.data['main_tag'], request=bundle.request)
+                tagbundle = tagrsc.full_hydrate(tagbundle)
+                tagbundle.obj.save()
+                bundle.obj.main_tag_id = tagbundle.obj.pk
+                bundle.request.method = orig_method
     
         return bundle
 
@@ -121,7 +125,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 if 'id' in tagdata:
                     tags.append(tagdata['id'])
                 else:
-                    found = Tag.objects.filter(tag__iexact=tagdata['tag'])
+                    found = Tag.objects.filter(tag__iexact=remove_accents(tagdata['tag']))
                     if found.count() > 0:
                         tags.append(found[0].pk)
                     else:

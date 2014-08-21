@@ -18,6 +18,7 @@ from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
 from datea_api.apps.api.status_codes import *
+from datea_api.utils import remove_accents
 
 from .models import Dateo, DateoStatus, Redateo
 from datea_api.apps.image.models import Image
@@ -217,7 +218,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 if 'id' in tagdata:
                     tags.append(tagdata['id'])
                 else:
-                    found = Tag.objects.filter(tag__iexact=tagdata['tag'])
+                    found = Tag.objects.filter(tag__iexact=remove_accents(tagdata['tag']))
                     if found.count() > 0:
                         tags.append(found[0].pk)
                     else:

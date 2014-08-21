@@ -19,8 +19,7 @@ Filters:
 * user: filter by username [string]
 * user_id: filter by user id [integer]
 * status: filter by status ['new', 'reviewed', 'solved']
-* published: [boolean: 0 or 1]
-* show_unpublished: also show unpublished dateos. Only for one's own dateos, used in combination with user_id [boolean: 0 or 1]
+* published: [0, 1 or 'all'] (default is 1)
 * id: object id
 * tags: comma separated tags (without hash) [strings]
 * has_images: [boolean 0 or 1]

@@ -279,7 +279,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id',
-                  'published', 'status', 'id',
+                  'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3',
                   'has_images', 'is_geolocated', 'admin']
@@ -318,10 +318,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             tag_ids = [f.object_id for f in Follow.objects.filter(content_type__model='tag', user__id=uid)]
             q_args['tag__in'] = tag_ids
 
-        # show also one's own unpublished actions
-        user_id = int(request.GET.get('user_id', -1))
-        show_unpublished = int(request.GET.get('show_unpublished', 0))
-        if request.user.is_authenticated() and user_id == request.user.id and show_unpublished == 1:
+        # show published and unpublished actions
+        if q_args['published'] == 'all':
             del q_args['published']
 
         # INIT THE QUERY

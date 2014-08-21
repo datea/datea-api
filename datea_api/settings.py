@@ -98,6 +98,8 @@ INSTALLED_APPS = (
     # USER STUFF
     'registration',
     'social.apps.django_app.default',
+
+    'rosetta'
 )
 
 MIDDLEWARE_CLASSES = (

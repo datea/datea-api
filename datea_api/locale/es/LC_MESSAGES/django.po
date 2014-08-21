@@ -2,21 +2,22 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-21 12:55+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2014-08-21 13:47+0000\n"
+"PO-Revision-Date: 2014-08-21 14:02+0000\n"
+"Last-Translator: Anonymous User <rodrigo@lafactura.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.7.4\n"
 
 #: apps/account/admin.py:24
 msgid "Personal info"
@@ -176,9 +177,9 @@ msgstr ""
 
 #: apps/account/models.py:192
 msgid ""
-"Available vars: {user_id} of commented object's owner, \t\t\t\t\t\t"
-"{username} of commented object' owner, {obj_id} of commented \t\t\t\t\t"
-"\tobject, {comment_id} of comment"
+"Available vars: {user_id} of commented object's owner, "
+"\t\t\t\t\t\t{username} of commented object' owner, {obj_id} of commented "
+"\t\t\t\t\t\tobject, {comment_id} of comment"
 msgstr ""
 
 #: apps/account/models.py:196
@@ -456,11 +457,11 @@ msgstr ""
 #: apps/vote/templates/notify/vote/email_body.txt:24
 #, python-format
 msgid ""
-"Click the following link if you wish to configure your notification settings "
-"to stop receiving this emails: %(url)s"
+"Click the following link if you wish to configure your notification settings"
+" to stop receiving this emails: %(url)s"
 msgstr ""
-"Si no deseas recibir estos correos, haz click sobre este enlace para cambiar "
-"tus opciones de notificación: %(url)s"
+"Si no deseas recibir estos correos, haz click sobre este enlace para cambiar"
+" tus opciones de notificación: %(url)s"
 
 #: apps/campaign/templates/notify/campaign/email_subject.txt:1
 #, python-format
@@ -800,12 +801,10 @@ msgstr "¡Tu cuenta ha sido activada!"
 #: templates/registration/activate.html:14
 msgid ""
 "\n"
-"\tThanks, activation complete! You may now login using the username and "
-"password you set at registration.\n"
+"\tThanks, activation complete! You may now login using the username and password you set at registration.\n"
 msgstr ""
 "\n"
-"¡Gracias! has activado tu cuenta con éxito. Ahora puedes ingresar con tu "
-"nombre de usuario y contraseña.\n"
+"¡Gracias! has activado tu cuenta con éxito. Ahora puedes ingresar con tu nombre de usuario y contraseña.\n"
 
 #: templates/registration/activate.html:21
 msgid "We're sorry"
@@ -841,8 +840,7 @@ msgstr ""
 msgid ""
 "Hi!\n"
 "\n"
-"You have asked to register an account at %(sitename)s.  If this wasn't "
-"you, \n"
+"You have asked to register an account at %(sitename)s.  If this wasn't you, \n"
 "please ignore this email and your address will be removed from our records.\n"
 "\n"
 "To activate this account, please click the following link within the next \n"
@@ -850,10 +848,8 @@ msgid ""
 msgstr ""
 "Amigo(a) datero(a),\n"
 "\n"
-"Bienvenido(a)! Acabas de registrar una cuenta en %(sitename)s.  Si no fuiste "
-"tu,\n"
-"por favor ignora este correo y tus datos serán borrados de nuestros "
-"registros.\n"
+"Bienvenido(a)! Acabas de registrar una cuenta en %(sitename)s.  Si no fuiste tu,\n"
+"por favor ignora este correo y tus datos serán borrados de nuestros registros.\n"
 "\n"
 "Para activar tu cuenta, utiliza el siguiente enlace durante los próximos \n"
 "%(days)s días:\n"
@@ -863,12 +859,10 @@ msgstr ""
 msgid ""
 "Hi!\n"
 "\n"
-"You have asked to set or change your email at %(sitename)s.  If this wasn't "
-"you, \n"
+"You have asked to set or change your email at %(sitename)s.  If this wasn't you, \n"
 "please contact us at contacto@datea.pe.\n"
 "\n"
-"To activate your account with this new email address, please click the "
-"following link within the next \n"
+"To activate your account with this new email address, please click the following link within the next \n"
 "%(days)s days:\n"
 msgstr ""
 "Amigo(a) datero(a),\n"
@@ -876,8 +870,7 @@ msgstr ""
 "Has solicitado cambiar tu correo en %(sitename)s. Si no fuiste tu,\n"
 "por favor escríbenos a contacto@datea.pe.\n"
 "\n"
-"Para activar tu cuenta con esta nueva dirección, activa el siguiente enlace "
-"durante los próximos %(days)s días:\n"
+"Para activar tu cuenta con esta nueva dirección, activa el siguiente enlace durante los próximos %(days)s días:\n"
 
 #: templates/registration/activation_email.txt:22
 #, python-format
@@ -968,15 +961,13 @@ msgid ""
 "requested that your password be reset on the %(sitename)s site. \n"
 "If you do not wish to reset your password, please ignore this message.\n"
 "\n"
-"To reset your password, please click the following link, or copy and paste "
-"it\n"
+"To reset your password, please click the following link, or copy and paste it\n"
 "into your web browser:"
 msgstr ""
 "has solicitado recuperar tu contraseña en %(sitename)s.\n"
 "Si no deseas resetear tu contraseña, por favor ignora este mensaje.\n"
 "\n"
-"Para recuperar tu contraseña, por favor haz click sobre el siguiente enlace "
-"o copia y pegalo en tu navegador:"
+"Para recuperar tu contraseña, por favor haz click sobre el siguiente enlace o copia y pegalo en tu navegador:"
 
 #: templates/registration/password_reset_email.html:13
 #, python-format

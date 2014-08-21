@@ -152,7 +152,8 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                     files.append(filedata['id'])
                 else:
                     orig_method = bundle.request.method
-                    bundle.request.method = "POST"
+                    if not 'id' in filedata:
+                        bundle.request.method = "POST"
                     frsc = FileResource()
                     fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
                     fbundle = frsc.full_hydrate(fbundle)

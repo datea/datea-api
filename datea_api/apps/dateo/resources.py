@@ -143,7 +143,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 bundle.obj.link_id = bundle.data['link']['id']
             else:
                 orig_method = bundle.request.method
-                bundle.request.method = "POST"
+                if not 'id' in bundle.data['link']:
+                    bundle.request.method = "POST"
                 lrsc = LinkResource()
                 lbundle = lrsc.build_bundle(data=bundle.data['link'], request=bundle.request)
                 lbundle = lrsc.full_hydrate(lbundle)
@@ -170,7 +171,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     imgs.append(imgdata['id'])
                 else:
                     orig_method = bundle.request.method
-                    bundle.request.method = "POST"
+                    if not 'id' in imgdata:
+                        bundle.request.method = "POST"
                     imgrsc = ImageResource()
                     imgbundle = imgrsc.build_bundle(data=imgdata, request=bundle.request)
                     imgbundle = imgrsc.full_hydrate(imgbundle)
@@ -197,7 +199,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     files.append(filedata['id'])
                 else:
                     orig_method = bundle.request.method
-                    bundle.request.method = "POST"
+                    if not 'id' in filedata:
+                        bundle.request.method = "POST"
                     frsc = FileResource()
                     fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
                     fbundle = frsc.full_hydrate(fbundle)
@@ -226,7 +229,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                         tagbundle.obj.save()
                         tags.append(tagbundle.obj.pk)
                         bundle.request.method = orig_method
-                        
+
             bundle.obj.tags = Tag.objects.filter(pk__in=tags)
 
         return bundle

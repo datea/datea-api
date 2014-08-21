@@ -18,6 +18,7 @@ from django.utils.http import urlsafe_base64_decode
 import re
 
 from datea_api.apps.tag.models import Tag
+from datea_api.apps.notify.models import NotifySettings
 
 from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.follow.resources import FollowResource
@@ -570,9 +571,9 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         new_profile.send_activation_email(client_data)
 
             if 'notify_settings' in postData:
-
+                obj = NotifySettings.objects.get(user=bundle.request.user)
                 ns_rsc = NotifySettingsResource()
-                ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], request=bundle.request)
+                ns_bundle = ns_rsc.build_bundle(data=bundle.data['notify_settings'], obj=obj, request=bundle.request)
                 ns_bundle = ns_rsc.full_hydrate(ns_bundle)
                 ns_bundle.obj.save()
 

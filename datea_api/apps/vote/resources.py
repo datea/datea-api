@@ -33,7 +33,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
             ctype = ContentType.objects.get(model=model)
             target_obj = ctype.get_object_for_this_type(pk=int(pk))
 
-            if request.user.id == target_obj.user.id:
+            if bundle.request.user.id == target_obj.user.id:
                 response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                         'error': 'not on own objects'}, status=BAD_REQUEST)
                 raise ImmediateHttpResponse(response=response)

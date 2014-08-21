@@ -609,7 +609,7 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
 
         dateo = Dateo.objects.get(pk=int(bundle.data['dateo']))
         # not on own objects
-        if request.user.id == dateo.user.id:
+        if bundle.request.user.id == dateo.user.id:
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                     'error': 'not on own objects'}, status=BAD_REQUEST)
             raise ImmediateHttpResponse(response=response)

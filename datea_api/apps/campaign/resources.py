@@ -37,7 +37,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
             attribute="category", full=True, null=True, readonly=True)
     main_tag = fields.ToOneField('datea_api.apps.tag.resources.TagResource',
-                attribute="main_tag", full=True, null=True)
+                attribute="main_tag", full=True, null=True, readonly=True)
     secondary_tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource', 
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
@@ -95,6 +95,18 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 imgbundle.obj.save()
                 bundle.obj.image_id = imgbundle.obj.pk
                 bundle.request.method = orig_method
+
+        if 'id' in bundle.data['main_tag']:
+            bundle.obj.main_tag_id = int(bundle.data['main_tag']['id'])
+        elif 'tag' in bundle.data['main_tag']:
+            orig_method = bundle.request.method
+            bundle.request.method = "POST"
+            tagrsc = TagResource()
+            tagbundle = tagrsc.build_bundle(data=bundle.data['main_tag'], request=bundle.request)
+            tagbundle = tagrsc.full_hydrate(tagbundle)
+            tagbundle.obj.save()
+            bundle.obj.main_tag_id = tagbundle.obj.pk
+            bundle.request.method = orig_method
     
         return bundle
 
@@ -147,7 +159,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                     fbundle.obj.save()
                     files.append(fbundle.obj.pk)
                     bundle.request.method = orig_method
-                    
+
             bundle.obj.layer_files = File.objects.filter(pk__in=files)
 
         return bundle

@@ -37,7 +37,6 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site
 from django.core.validators import validate_email
-from django.utils import translation
 
 from social.apps.django_app.utils import strategy
 from pprint import pprint as pp
@@ -145,8 +144,6 @@ class AccountResource(JSONDefaultMixin, Resource):
             new_user.client_domain = client_domain
             new_user.save()
 
-            # HARD CODING LANGUAGE: TODO -> Figure out why I can't set global language for django
-            translation.activate('es')
             registration_profile = RegistrationProfile.objects.create_profile(new_user)
             registration_profile.send_activation_email(client_data)
 
@@ -216,9 +213,6 @@ class AccountResource(JSONDefaultMixin, Resource):
         if user is not None and user.is_active:
             
             data = { 'email': email }
-
-            # HARD CODING LANGUAGE: TODO -> Figure out why I can't set global language for django
-            translation.activate('es')
 
             # Function for sending token and so forth
             resetForm = CustomPasswordResetForm(data)
@@ -525,9 +519,6 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         except:
                             pass
                     
-                        # HARD CODING LANGUAGE: TODO -> Figure out why I can't set global language for django
-                        translation.activate('es')    
-
                         # create registration profile
                         bundle.obj.date_joined = bundle.data['date_joined'] = datetime.datetime.utcnow().replace(tzinfo=utc)
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)

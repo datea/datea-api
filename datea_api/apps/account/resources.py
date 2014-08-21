@@ -96,7 +96,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             #username exists
             url(r"^(?P<resource_name>%s)/username-exists%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('username_exists'), name="api_username_exists")
+            self.wrap_view('username_exists'), name="api_username_exists"),
 
             #email exists
             url(r"^(?P<resource_name>%s)/email-exists%s$" %

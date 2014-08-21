@@ -97,6 +97,11 @@ class AccountResource(JSONDefaultMixin, Resource):
             url(r"^(?P<resource_name>%s)/username-exists%s$" %
             (self._meta.resource_name, trailing_slash()),
             self.wrap_view('username_exists'), name="api_username_exists")
+
+            #email exists
+            url(r"^(?P<resource_name>%s)/email-exists%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('email_exists'), name="api_email_exists")
         ]
 
 
@@ -346,6 +351,23 @@ class AccountResource(JSONDefaultMixin, Resource):
             message = "new username is valid"
         else:
             message = "username exists or is reserved"
+
+        self.log_throttled_access(request)
+        return self.create_response(request, {'result': not result,
+                'message': message}, status=OK)
+
+
+    def email_exists(self, request, **kwargs):
+
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+
+        result = User.objects.filter(email=request.GET.get('email', '')).count() > 0
+        
+        if result:
+            message = "email already exists"
+        else:
+            message = "email does not exist"
 
         self.log_throttled_access(request)
         return self.create_response(request, {'result': not result,

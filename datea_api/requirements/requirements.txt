@@ -17,6 +17,7 @@ django-ipware==0.0.6
 django-jsonfield==0.9.12
 django-registration==1.0
 django-resized==0.2.4
+django-rosetta==0.7.4
 django-solo==1.0.5
 django-tastypie==0.11.1
 elasticsearch==1.0.0
@@ -28,6 +29,7 @@ jsonfield==0.9.20
 kombu==3.0.21
 lxml==3.3.3
 oauthlib==0.6.3
+polib==1.0.4
 psycopg2==2.5.1
 pyelasticsearch==0.6.1
 pykml==0.1.0

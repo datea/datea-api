@@ -121,8 +121,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
     def hydrate(self, bundle):
 
+
         # Some security measures in regards to an object's owner
+
         if bundle.request.method == 'POST':
+
+            if 'id' in bundle.data:
+                response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                        'error': 'POST with id field not permitted. Use PATCH or PUT instead.'}, status=BAD_REQUEST)
+                raise ImmediateHttpResponse(response=response)
 
             forbidden_fields = ['created', 'modified', 'vote_count', 'follow_count', 'comment_count']
             for f in forbidden_fields:

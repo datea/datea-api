@@ -130,7 +130,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     del bundle.data[f]
 
             bundle.data['user'] = bundle.obj.user = bundle.request.user
-            bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
+            bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
                 
         elif bundle.request.method in 'PATCH':
             # don't touch some fields

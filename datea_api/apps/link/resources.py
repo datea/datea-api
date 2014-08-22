@@ -22,7 +22,7 @@ class LinkResource(JSONDefaultMixin, ModelResource):
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
-            bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIM', ''))
+            bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
 
         # preserve original user
         elif bundle.request.method  == 'PATCH':

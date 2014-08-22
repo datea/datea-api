@@ -209,7 +209,7 @@ def create_redateo_notifications(actlog):
 
 	if len(email_users) > 0:
 
-		# email using target_object client_domain (for now)
+		# email using target_object client_domain
 		client_data = get_client_data(actlog.target_object.client_domain)
 		if not client_data['send_notification_mail']:
 			return

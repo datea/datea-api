@@ -106,9 +106,10 @@ def get_client_domain(request):
 
 def get_client_data(domain):
 
-    data = cache.get('client-'+domain)
-    if data is not None:
-        return data
+    if domain:
+        data = cache.get('client-'+domain)
+        if data is not None:
+            return data
 
     site = Site.objects.get_current()
 
@@ -131,15 +132,16 @@ def get_client_data(domain):
         'send_notification_mail': True
     }
     
-    try:
-        client = ClientDomain.objects.get(domain=domain)
-        for field in data.keys():
-            if hasattr(client, field) and getattr(client, field):
-                data[field] = getattr(client, field)        
-    except:
-        pass
+    if domain:
+        try:
+            client = ClientDomain.objects.get(domain=domain)
+            for field in data.keys():
+                if hasattr(client, field) and getattr(client, field):
+                    data[field] = getattr(client, field)        
+        except:
+            pass
 
-    cache.set('client-'+domain, data, 3600)
+        cache.set('client-'+domain, data, 3600)
 
     return data
 

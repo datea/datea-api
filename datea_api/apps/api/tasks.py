@@ -145,6 +145,7 @@ def create_redateo_activity_log(redateo):
 	actlog.verb = 'redateo'
 	actlog.action_object = redateo
 	actlog.target_object = redateo.dateo
+	print "TARGET OBJECT", redateo.dateo.client_domain
 
 	tr = Truncator(bleach.clean(redateo.dateo.content, strip=True))
 	extract = tr.chars(100) 

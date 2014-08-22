@@ -144,6 +144,9 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
             if bundle.request.method == 'PUT' and 'id' in bundle.data:
                 orig_obj = Dateo.objects.get(pk=int(bundle.data['id']))
+                response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                        'error': 'Encontrado'}, status=BAD_REQUEST)
+                raise ImmediateHttpResponse(response=response)
                 for f in forbidden_fields:
                     setattr(bundle.obj, f, getattr(orig_obj, f))
                     bundle.data[f] = getattr(orig_obj, f)

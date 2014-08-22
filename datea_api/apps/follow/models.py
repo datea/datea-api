@@ -29,7 +29,7 @@ class Follow(models.Model):
     def save(self, *args, **kwargs): 
         if not self.follow_key:
             self.follow_key = self.content_type.model+'.'+str(self.object_id)
-        elif not self.content_type and self.follow_key:
+        elif (not self.content_type or not self.object_id) and self.follow_key:
             model, pk = self.follow_key.split('.')
             self.content_type = ContentType.objects.get(model=model)
             self.object_id = int(pk)

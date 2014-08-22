@@ -25,7 +25,7 @@ class Vote(models.Model):
         # something here
         if not self.vote_key:
             self.vote_key = self.content_type.model+'.'+str(self.object_id)
-        elif not self.content_type and self.vote_key:
+        elif (not self.object_id or not self.content_type) and self.vote_key:
             model, pk = self.vote_key.split('.')
             self.content_type = ContentType.objects.get(model=model)
             self.object_id = int(pk)  
@@ -49,7 +49,7 @@ class Vote(models.Model):
         unique_together = ("user", "content_type", "object_id")
 
 
-# UPDATE COMMENT STATS
+# UPDATE STATS
 from django.db.models.signals import pre_delete, post_save
 
 def after_vote_saved(sender, instance, created, **kwargs):

@@ -67,7 +67,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     class Meta:
         queryset = Dateo.objects.all()
         resource_name = 'dateo'
-        allowed_methods = ['get', 'post', 'patch', 'delete']
+        allowed_methods = ['get', 'post', 'patch', 'put', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         filtering = {

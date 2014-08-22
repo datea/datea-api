@@ -142,7 +142,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     setattr(bundle.obj, f, getattr(orig_obj, f))
                     bundle.data[f] = getattr(orig_obj, f)
 
-            elif bundle.request.method == 'PATCH'
+            elif bundle.request.method == 'PATCH':
                 for f in forbidden_fields:
                     if f in bundle.data:
                         del bundle.data[f]

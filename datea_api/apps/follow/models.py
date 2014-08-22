@@ -16,8 +16,6 @@ class Follow(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     object_id = models.PositiveIntegerField(null=True, blank=True)
 
-    #object_type = models.CharField(max_length=255)
-    
     # a sort of natural key by which easily and rapidly 
     # identify the followed object and it's related historyNotices
     # for example: 'dateo.15'
@@ -36,9 +34,9 @@ class Follow(models.Model):
 
         super(Follow, self).save(*args, **kwargs)
     
-    def __unicode__(self):
-        return self.follow_key
 
+    def __unicode__(self):
+        return self.user.username+": "+self.follow_key
 
     class Meta:
         verbose_name = _('Follow')

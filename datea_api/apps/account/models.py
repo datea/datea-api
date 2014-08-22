@@ -74,8 +74,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	url_twitter = models.URLField(_('Twitter URL'), max_length=200, blank=True, null=True)
 	url_youtube = models.URLField(_('Youtube URL'), max_length=200, blank=True, null=True)
 
-	image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar")
-	bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background")
+	image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar", on_delete=models.SET_NULL)
+	bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background", on_delete=models.SET_NULL)
 
 	dateo_count = models.PositiveIntegerField(_("Dateo count"), default=0)
 	#comment_count = models.PositiveIntegerField(_('Comment count'), default=0)

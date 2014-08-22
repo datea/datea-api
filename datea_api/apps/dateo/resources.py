@@ -138,20 +138,12 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             bundle.data['user'] = bundle.obj.user = bundle.request.user
             bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
                 
-        elif bundle.request.method in ['PATCH', 'PUT']:
+        elif bundle.request.method == 'PATCH':
             # don't touch some fields
-            forbidden_fields = ['created', 'modified', 'user', 'vote_count', 'follow_count', 'comment_count', 'client_domain']
-
-            if bundle.request.method == 'PUT' and 'id' in bundle.data:
-                orig_obj = Dateo.objects.get(pk=int(bundle.data['id']))
-                for f in forbidden_fields:
-                    setattr(bundle.obj, f, getattr(orig_obj, f))
-                    bundle.data[f] = getattr(orig_obj, f)
-
-            elif bundle.request.method == 'PATCH':
-                for f in forbidden_fields:
-                    if f in bundle.data:
-                        del bundle.data[f]
+            forbidden_fields = ['created', 'modified', 'user', 'vote_count', 'follow_count', 'redateo_count', 'comment_count', 'client_domain']
+            for f in forbidden_fields:
+                if f in bundle.data:
+                    del bundle.data[f]
 
         if 'link' in bundle.data and type(bundle.data['link']) == DictType and 'url' in bundle.data['link']:
             if 'id' in bundle.data['link']:

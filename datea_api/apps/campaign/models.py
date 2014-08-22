@@ -24,8 +24,8 @@ class Campaign(models.Model):
 	modified = models.DateTimeField(_('modified'), auto_now=True)
 
 	# Tags / Categories
-	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, related_name="campaigns_primary", help_text=_("Choose a category for this campaign")) 
-	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."), related_name="campaigns")
+	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, related_name="campaigns_primary", help_text=_("Choose a category for this campaign"), on_delete=models.SET_NULL) 
+	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."), related_name="campaigns", on_delete=models.PROTECT)
 	secondary_tags = models.ManyToManyField(Tag, 
 	                        verbose_name=_("Dateo Tags"), 
 	                        blank=True, null=True, 
@@ -38,7 +38,7 @@ class Campaign(models.Model):
 
 	end_date = models.DateTimeField(_('End Date'), null=True, blank=True, help_text=_('Set an end date for your campaign (optional)'))
 
-	image = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="actions")
+	image = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="actions", on_delete=models.SET_NULL)
 
 	short_description = models.CharField(_("Short description / Slogan"), blank=True, null=True, max_length=140, help_text=_("A short description or slogan (max. 140 characters)."))
 

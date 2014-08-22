@@ -34,7 +34,7 @@ class Dateo(models.Model):
 	content = models.TextField(_("Content"))
 	images = models.ManyToManyField(Image, verbose_name=_('Images'), null=True, blank=True, related_name="dateo")
 	files = models.ManyToManyField(File, verbose_name=_('Files'), null=True, blank=True, related_name="dateo")
-	link  = models.ForeignKey(Link, verbose_name=_('Link'), null=True, blank=True, related_name="dateos")
+	link  = models.ForeignKey(Link, verbose_name=_('Link'), null=True, blank=True, related_name="dateos", on_delete=models.SET_NULL)
     
     # location
 	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)

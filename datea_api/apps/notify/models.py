@@ -50,7 +50,7 @@ class Notification(models.Model):
 
 
 
-# loosely inspired in https://github.com/justquick/django-activity-stream
+# loosely inspired by https://github.com/justquick/django-activity-stream
 class ActivityLog(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)

@@ -157,6 +157,15 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                         'error': 'dateo needs at least 1 tag'}, status=BAD_REQUEST)
             raise ImmediateHttpResponse(response=response)
+
+        if 'campaign' in bundle['data']:
+            if type(bundle.data['campaign']) == DictType and 'id' in bundle.data['campaign']:
+                bundle.obj.campaign_id = bundle.data['campaign']['id']
+            else:
+                try:
+                    bundle.obj.campaign_id = int(bundle.data['campaign'])
+                except: 
+                    pass
         
         return bundle
 

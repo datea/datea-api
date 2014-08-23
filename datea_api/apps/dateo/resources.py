@@ -25,6 +25,7 @@ from datea_api.apps.image.models import Image
 from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.file.models import File
 from datea_api.apps.file.resources import FileResource
+from datea_api.apps.link.models import Link
 from datea_api.apps.link.resources import LinkResource
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
@@ -146,18 +147,25 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     del bundle.data[f]
 
         if 'link' in bundle.data and type(bundle.data['link']) == DictType and 'url' in bundle.data['link']:
-            #if 'id' in bundle.data['link']:
-            #    bundle.obj.link_id = bundle.data['link']['id']
-            #else:
+   
             orig_method = bundle.request.method
+            lrsc = LinkResource()
             if not 'id' in bundle.data['link']:
                 bundle.request.method = "POST"
-            lrsc = LinkResource()
-            lbundle = lrsc.build_bundle(data=bundle.data['link'], request=bundle.request)
+                lbundle = lrsc.build_bundle(data=bundle.data['link'], request=bundle.request)
+            else:
+                orig_obj = Link.objects.get(pk=bundle.data['link']['id'])
+                lbundle = lrsc.build_bundle(data=bundle.data['link'], obj=orig_obj, request=bundle.request)
             lbundle = lrsc.full_hydrate(lbundle)
             lbundle.obj.save()
-            bundle.obj.link_id = lbundle.obj.pk
             bundle.request.method = orig_method
+
+            bundle.obj.link_id = lbundle.obj.pk
+            bundle.data['link'] = lbundle.data
+            bundle.obj.link = lbundle.obj
+            
+        elif bundle.request.method in ['PUT', 'PATCH'] and ('link' not in bundle.data or not bundle.data['link']):
+            bundle.obj.link = None
 
         if 'tags' not in bundle.data['tags'] and len(bundle.data['tags']) == 0:
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
@@ -180,73 +188,85 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     def hydrate_m2m(self, bundle):
         
         #print bundle.data
-        if 'images' in bundle.data and bundle.data['images']:
-            imgs = []
-            for imgdata in bundle.data['images']:
-                if 'id' in imgdata:
-                    imgs.append(imgdata['id'])
-                else:
-                    orig_method = bundle.request.method
-                    if not 'id' in imgdata:
-                        bundle.request.method = "POST"
-                    imgrsc = ImageResource()
-                    imgbundle = imgrsc.build_bundle(data=imgdata, request=bundle.request)
-                    imgbundle = imgrsc.full_hydrate(imgbundle)
-                    imgbundle.obj.save()
-                    imgs.append(imgbundle.obj.pk)
-                    bundle.request.method = orig_method
-
-            bundle.obj.images = Image.objects.filter(pk__in=imgs)
-
-
-        if 'files' in bundle.data and bundle.data['files']:
-            files = []
-            for filedata in bundle.data['files']:
-
-                # validate files (only by name, the custom model filefield validates by content) 
-                #if hasattr(filedata['file'], 'name'):
-                    # only pdf files for now
-                    #if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']: 
-                    #    response = self.create_response(request,{'status': BAD_REQUEST,
-                    #            'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
-                    #    raise ImmediateHttpResponse(response=response)
-
-                #if 'id' in filedata:
-                #    files.append(filedata['id'])
-                #else:
-                orig_method = bundle.request.method
-                if not 'id' in filedata:
-                    bundle.request.method = "POST"
-                frsc = FileResource()
-                fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
-                fbundle = frsc.full_hydrate(fbundle)
-                fbundle.obj.save()
-                files.append(fbundle.obj.pk)
-                bundle.request.method = orig_method
-
-            bundle.obj.files = File.objects.filter(pk__in=files)
-
-
-        if 'tags' in bundle.data and bundle.data['tags']:
-            tags = []
-            for tagdata in bundle.data['tags']:
-                if 'id' in tagdata:
-                    tags.append(tagdata['id'])
-                else:
-                    found = Tag.objects.filter(tag__iexact=remove_accents(tagdata['tag']))
-                    if found.count() > 0:
-                        tags.append(found[0].pk)
+        if 'images' in bundle.data:
+            if len(bundle.data['images']) > 0:
+                imgs = []
+                for imgdata in bundle.data['images']:
+                    if 'id' in imgdata:
+                        imgs.append(imgdata['id'])
                     else:
                         orig_method = bundle.request.method
-                        bundle.request.method = "POST"
-                        tagrsc = TagResource()
-                        tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
-                        tagbundle = tagrsc.full_hydrate(tagbundle)
-                        tagbundle.obj.save()
-                        tags.append(tagbundle.obj.pk)
+                        if not 'id' in imgdata:
+                            bundle.request.method = "POST"
+                        imgrsc = ImageResource()
+                        imgbundle = imgrsc.build_bundle(data=imgdata, request=bundle.request)
+                        imgbundle = imgrsc.full_hydrate(imgbundle)
+                        imgbundle.obj.save()
+                        imgs.append(imgbundle.obj.pk)
                         bundle.request.method = orig_method
 
-            bundle.obj.tags = Tag.objects.filter(pk__in=tags)
+                bundle.obj.images = Image.objects.filter(pk__in=imgs)
+
+            elif bundle.request.method in ['PUT', 'PATCH']:
+                bundle.obj.images.clear()
+
+        if 'files' in bundle.data:
+            if len(bundle.data['files']) > 0:
+                files = []
+                for filedata in bundle.data['files']:
+
+                    # validate files (only by name, the custom model filefield validates by content) 
+                    #if hasattr(filedata['file'], 'name'):
+                        # only pdf files for now
+                        #if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']: 
+                        #    response = self.create_response(request,{'status': BAD_REQUEST,
+                        #            'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
+                        #    raise ImmediateHttpResponse(response=response)
+
+                    orig_method = bundle.request.method
+                    frsc = FileResource()
+                    if not 'id' in filedata:
+                        bundle.request.method = "POST"
+                        fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
+                    else:
+                        orig_obj = File.objects.get(pk=filedata['id'])
+                        fbundle = frsc.build_bundle(data=filedata, obj=orig_obj, request=bundle.request)
+                    
+                    fbundle = frsc.full_hydrate(fbundle)
+                    fbundle.obj.save()
+                    files.append(fbundle.obj.pk)
+                    bundle.request.method = orig_method
+
+                bundle.obj.files = File.objects.filter(pk__in=files)
+            
+            elif bundle.request.method in ['PUT', 'PATCH']:
+                bundle.obj.files.clear()
+
+
+        if 'tags' in bundle.data:
+            if len(bundle.data['tags']) > 0:
+                tags = []
+                for tagdata in bundle.data['tags']:
+                    if 'id' in tagdata:
+                        tags.append(tagdata['id'])
+                    else:
+                        found = Tag.objects.filter(tag__iexact=remove_accents(tagdata['tag']))
+                        if found.count() > 0:
+                            tags.append(found[0].pk)
+                        else:
+                            orig_method = bundle.request.method
+                            bundle.request.method = "POST"
+                            tagrsc = TagResource()
+                            tagbundle = tagrsc.build_bundle(data=tagdata, request=bundle.request)
+                            tagbundle = tagrsc.full_hydrate(tagbundle)
+                            tagbundle.obj.save()
+                            tags.append(tagbundle.obj.pk)
+                            bundle.request.method = orig_method
+
+                bundle.obj.tags = Tag.objects.filter(pk__in=tags)
+
+            elif bundle.request.method in ['PUT', 'PATCH']:
+                bundle.obj.tags.clear()
 
         return bundle
 

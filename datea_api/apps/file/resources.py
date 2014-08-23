@@ -16,7 +16,7 @@ class FileResource(JSONDefaultMixin, ModelResource):
     file = Base64FileField('file')
     
     def hydrate(self, bundle):
-        
+
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -24,10 +24,10 @@ class FileResource(JSONDefaultMixin, ModelResource):
 
         # preserve original user
         elif bundle.request.method  == 'PATCH':
-            del bundle.data['user']
-            #bundle.data['user'] = bundle.obj.user
-            del bundle.data['client_domain']
-            #bundle.data['client_domain'] = bundle.obj.client_domain
+            protect_fields = ['user', 'client_domain']
+            for f in protect_fields:
+                if f in bundle.data:
+                    del bundle.data[f] 
 
         return bundle
         

@@ -67,7 +67,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     class Meta:
         queryset = Dateo.objects.all()
         resource_name = 'dateo'
-        allowed_methods = ['get', 'post', 'patch', 'delete']
+        allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         filtering = {
@@ -146,18 +146,18 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     del bundle.data[f]
 
         if 'link' in bundle.data and type(bundle.data['link']) == DictType and 'url' in bundle.data['link']:
-            if 'id' in bundle.data['link']:
-                bundle.obj.link_id = bundle.data['link']['id']
-            else:
-                orig_method = bundle.request.method
-                if not 'id' in bundle.data['link']:
-                    bundle.request.method = "POST"
-                lrsc = LinkResource()
-                lbundle = lrsc.build_bundle(data=bundle.data['link'], request=bundle.request)
-                lbundle = lrsc.full_hydrate(lbundle)
-                lbundle.obj.save()
-                bundle.obj.link_id = lbundle.obj.pk
-                bundle.request.method = orig_method
+            #if 'id' in bundle.data['link']:
+            #    bundle.obj.link_id = bundle.data['link']['id']
+            #else:
+            orig_method = bundle.request.method
+            if not 'id' in bundle.data['link']:
+                bundle.request.method = "POST"
+            lrsc = LinkResource()
+            lbundle = lrsc.build_bundle(data=bundle.data['link'], request=bundle.request)
+            lbundle = lrsc.full_hydrate(lbundle)
+            lbundle.obj.save()
+            bundle.obj.link_id = lbundle.obj.pk
+            bundle.request.method = orig_method
 
         if 'tags' not in bundle.data['tags'] and len(bundle.data['tags']) == 0:
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
@@ -211,18 +211,18 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                     #            'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
                     #    raise ImmediateHttpResponse(response=response)
 
-                if 'id' in filedata:
-                    files.append(filedata['id'])
-                else:
-                    orig_method = bundle.request.method
-                    if not 'id' in filedata:
-                        bundle.request.method = "POST"
-                    frsc = FileResource()
-                    fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
-                    fbundle = frsc.full_hydrate(fbundle)
-                    fbundle.obj.save()
-                    files.append(fbundle.obj.pk)
-                    bundle.request.method = orig_method
+                #if 'id' in filedata:
+                #    files.append(filedata['id'])
+                #else:
+                orig_method = bundle.request.method
+                if not 'id' in filedata:
+                    bundle.request.method = "POST"
+                frsc = FileResource()
+                fbundle = frsc.build_bundle(data=filedata, request=bundle.request)
+                fbundle = frsc.full_hydrate(fbundle)
+                fbundle.obj.save()
+                files.append(fbundle.obj.pk)
+                bundle.request.method = orig_method
 
             bundle.obj.files = File.objects.filter(pk__in=files)
 

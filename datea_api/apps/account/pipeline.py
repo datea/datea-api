@@ -74,7 +74,7 @@ def get_username(strategy, details, user=None, *args, **kwargs):
     return {'username': final_username}
 
 
-# embed is new information into user object for later use (DIRTY HACKS, I KNOW)
+# embed new information into user object for later use (DIRTY HACKS, I KNOW)
 def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
     if user:
         user.is_new = False

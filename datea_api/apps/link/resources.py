@@ -35,7 +35,7 @@ class LinkResource(JSONDefaultMixin, ModelResource):
     class Meta:
         queryset = Link.objects.all()
         resource_name = 'link'
-        allowed_methods = ['get', 'post', 'patch', 'delete']
+        allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)

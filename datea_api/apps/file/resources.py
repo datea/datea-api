@@ -24,8 +24,10 @@ class FileResource(JSONDefaultMixin, ModelResource):
 
         # preserve original user
         elif bundle.request.method  == 'PATCH':
-            bundle.data['user'] = bundle.obj.user
-            bundle.data['client_domain'] = bundle.obj.client_domain
+            del bundle.data['user']
+            #bundle.data['user'] = bundle.obj.user
+            del bundle.data['client_domain']
+            #bundle.data['client_domain'] = bundle.obj.client_domain
 
         return bundle
         

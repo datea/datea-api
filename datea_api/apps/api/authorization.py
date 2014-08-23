@@ -31,6 +31,7 @@ class DateaBaseAuthorization(Authorization):
     def update_list(self, object_list, bundle):
         allowed = []
         # Since they may not all be saved, iterate over them.
+        print "OBJECT LIST", object_list
         for obj in object_list:
             if hasattr(obj, 'user') and obj.user == bundle.request.user:
                 allowed.append(obj)

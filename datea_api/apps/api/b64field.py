@@ -45,7 +45,7 @@ class Base64FileField(FileField):
 
     def hydrate(self, obj):
         value = super(FileField, self).hydrate(obj)
-        if value:
+        if value and 'data_uri' in value:
             metadata, b64_string = value['data_uri'].rsplit(u",", 1)
             mime_type = metadata.split(u';')[0].split(u':')[1]
             field = {

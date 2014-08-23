@@ -13,8 +13,8 @@ from tastypie.contrib.contenttypes.fields import GenericForeignKeyField
 
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.comment.resources import CommentResource
-from datea_api.apps.dateo.models import Dateo
-from datea_api.apps.dateo.resources import DateoResource
+from datea_api.apps.dateo.models import Dateo, Redateo
+from datea_api.apps.dateo.resources import DateoResource, RedateoResource
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.follow.models import Follow
@@ -98,6 +98,7 @@ class ActivityLogResource(ModelResource):
         Comment: CommentResource,
         Vote: VoteResource,
         Dateo: DateoResource,
+        Redateo: RedateoResource
     }, 'action_object', full=True, readonly=True)
 
 

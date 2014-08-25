@@ -50,7 +50,7 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
 
 
 
-class NotificationResource(ModelResource):
+class NotificationResource(JSONDefaultMixin, ModelResource):
         
     recipient = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
         attribute='recipient', full=False, readonly=True)
@@ -86,7 +86,7 @@ class NotificationResource(ModelResource):
 
 
 
-class ActivityLogResource(ModelResource):
+class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
     actor = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
         attribute='actor', full=True, readonly=True)

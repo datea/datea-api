@@ -34,7 +34,13 @@ class Campaign(models.Model):
 	                        related_name="campaigns_secondary")
 
 
-	featured = models.BooleanField(_('Featured'), default=False)
+	featured_choices = (
+            (3, 'importante!'),
+            (2, 'bien interesante'), 
+            (1, 'interesante'), 
+            (0, 'normal')
+        )
+	featured = models.PositiveIntegerField(_('Featured'), default=0, choices=featured_choices)
 
 	end_date = models.DateTimeField(_('End Date'), null=True, blank=True, help_text=_('Set an end date for your campaign (optional)'))
 

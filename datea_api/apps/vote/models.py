@@ -50,24 +50,25 @@ class Vote(models.Model):
 
 
 # UPDATE STATS
-import datea_api.apps.dateo.search_indexes as dateo_indexes
 from django.db.models.signals import pre_delete, post_save
 
 def after_vote_saved(sender, instance, created, **kwargs):
     if created:
         instance.update_stats(1)
         if (instance.content_type.model == 'dateo'):
-            #global DateoIndex
-            #from datea_api.apps.dateo.search_indexes import DateoIndex
-            dateo_indexes.DateoIndex().update_object(instance.content_object)
+            # this nonesense is because celery doesn't like circular imports?
+            global DateoIndex
+            from datea_api.apps.dateo.search_indexes import DateoIndex
+            DateoIndex().update_object(instance.content_object)
 
 
 def before_vote_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
     if (instance.content_type.model == 'dateo'):
-        #global DateoIndex
-        #from datea_api.apps.dateo.search_indexes import DateoIndex
-        dateo_indexes.DateoIndex().update_object(instance.content_object)
+        # this nonesense is because celery doesn't like circular imports?
+        global DateoIndex
+        from datea_api.apps.dateo.search_indexes import DateoIndex
+        DateoIndex().update_object(instance.content_object)
 
 post_save.connect(after_vote_saved, sender=Vote)
 pre_delete.connect(before_vote_delete, sender=Vote)

@@ -22,6 +22,8 @@ from datea_api.apps.flag.models import Flag
 from datea_api.apps.notify.utils import send_mails
 from datea_api.apps.account.utils import get_client_data
 
+from datea_api.apps.api.signals import resource_saved
+
 from django.db import IntegrityError, transaction
 from django.conf import settings
 
@@ -54,6 +56,8 @@ def create_dateo_activity_log(dateo):
 	actlog.save()
 
 	actlog.tags.add(*dateo.tags.all())
+
+	resource_saved.send(sender=ActivityLog, instance=actlog, created=True)
 
 	return actlog
 
@@ -145,7 +149,6 @@ def create_redateo_activity_log(redateo):
 	actlog.verb = 'redateo'
 	actlog.action_object = redateo
 	actlog.target_object = redateo.dateo
-	print "TARGET OBJECT", redateo.dateo.client_domain
 
 	tr = Truncator(bleach.clean(redateo.dateo.content, strip=True))
 	extract = tr.chars(100) 
@@ -155,6 +158,8 @@ def create_redateo_activity_log(redateo):
 	actlog.save()
 
 	actlog.tags.add(*redateo.dateo.tags.all())
+
+	resource_saved.send(sender=ActivityLog, instance=actlog, created=True)
 
 	return actlog
 
@@ -269,6 +274,8 @@ def create_comment_activity_log(comment):
 	if hasattr(comment.content_object, "tags"):
 		actlog.tags.add(*comment.content_object.tags.all())
 
+	resource_saved.send(sender=ActivityLog, instance=actlog, created=True)
+
 	return actlog
 
 @shared_task
@@ -379,6 +386,8 @@ def create_vote_activity_log(vote):
 
 	if hasattr(vote.content_object, "tags"):
 		actlog.tags.add(*vote.content_object.tags.all())
+
+	resource_saved.send(sender=ActivityLog, instance=actlog, created=True)
 
 	return actlog
 

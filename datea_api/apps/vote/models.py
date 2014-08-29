@@ -50,14 +50,20 @@ class Vote(models.Model):
 
 
 # UPDATE STATS
+from datea_api.apps.dateo.search_indexes import DateoIndex
 from django.db.models.signals import pre_delete, post_save
 
 def after_vote_saved(sender, instance, created, **kwargs):
     if created:
         instance.update_stats(1)
+        if (instance.content_type.model == 'dateo'):
+            DateoIndex().update_object(instance.content_object)
+
 
 def before_vote_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
+    if (instance.content_type.model == 'dateo'):
+            DateoIndex().update_object(instance.content_object)
 
 post_save.connect(after_vote_saved, sender=Vote)
 pre_delete.connect(before_vote_delete, sender=Vote)

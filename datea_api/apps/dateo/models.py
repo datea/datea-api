@@ -44,7 +44,7 @@ class Dateo(models.Model):
 	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True)
     
     # category
-	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, default=None, related_name="dateos")
+	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, default=None, related_name="dateos", on_delete=models.SET_NULL)
 	tags = models.ManyToManyField(Tag, verbose_name=_("Tags"), related_name="dateos");
     
     # stats

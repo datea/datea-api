@@ -36,8 +36,7 @@ class Tag(models.Model):
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import TagIndex
-from datea_api.apps.api.signals import resource_saved
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 
 def update_search_index(sender, instance, created, **kwargs):
 	TagIndex().update_object(instance)
@@ -45,6 +44,6 @@ def update_search_index(sender, instance, created, **kwargs):
 def remove_search_index(sender, instance, **kwargs):
 	TagIndex().remove_object(instance)
 
-resource_saved.connect(update_search_index, sender=Tag)
+post_save.connect(update_search_index, sender=Tag)
 pre_delete.connect(remove_search_index, sender=Tag)
 

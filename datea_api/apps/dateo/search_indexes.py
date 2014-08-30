@@ -37,7 +37,7 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
     
     def prepare_tags(self, obj):
-        return [tag.tag for tag in obj.tags.all()]
+        return [tag.tag.lower() for tag in obj.tags.all()]
 
     def prepare_category_id(self, obj):
         if obj.category:
@@ -56,3 +56,4 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_redateos(self, obj):
         return [redat.user.id for redat in obj.redateos.all()]
+        

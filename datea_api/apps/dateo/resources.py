@@ -19,6 +19,7 @@ from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
 from datea_api.apps.api.status_codes import *
 from datea_api.utils import remove_accents
+from datea_api.apps.tag.utils import normalize_tag
 
 from .models import Dateo, DateoStatus, Redateo
 from datea_api.apps.image.models import Image
@@ -331,7 +332,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         if 'tags' in request.GET:
             tag_op = request.GET.get('tag_operator', 'or')
-            tags = request.GET.get('tags').split(',')
+            tags = map(normalize_tag, request.GET.get('tags').split(','))
             if tag_op == 'or':
                 if len(tags) == 1 and tags[0].strip() != '':
                     q_args['tags_exact'] = tags[0]

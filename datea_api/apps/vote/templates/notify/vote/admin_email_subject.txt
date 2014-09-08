@@ -1,0 +1,1 @@
+[Datea Admin] {{actor}} apoyó {{target_object_name}} de {{target_user}}{% if tags %} en{% for tag in tags %} #{{tag}}{% endfor %}{% endif %}

@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-21 13:47+0000\n"
+"POT-Creation-Date: 2014-09-07 20:03-0400\n"
 "PO-Revision-Date: 2014-08-21 14:02+0000\n"
 "Last-Translator: Anonymous User <rodrigo@lafactura.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.7.4\n"
 
@@ -33,7 +33,7 @@ msgstr ""
 
 #: apps/account/models.py:49 apps/campaign/models.py:23
 #: apps/comment/models.py:13 apps/dateo/models.py:21 apps/dateo/models.py:161
-#: apps/dateo/models.py:181 apps/flag/models.py:11 apps/follow/models.py:12
+#: apps/dateo/models.py:181 apps/flag/models.py:11 apps/follow/models.py:14
 #: apps/tag/models.py:10
 msgid "created"
 msgstr ""
@@ -125,7 +125,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: apps/account/models.py:92 apps/campaign/models.py:85
+#: apps/account/models.py:92 apps/campaign/models.py:91
 #: apps/comment/models.py:26 apps/dateo/models.py:57 apps/file/models.py:21
 #: apps/flag/models.py:20 apps/follow/models.py:27 apps/image/models.py:21
 #: apps/link/models.py:15 apps/tag/models.py:21 apps/vote/models.py:22
@@ -177,9 +177,10 @@ msgstr ""
 
 #: apps/account/models.py:192
 msgid ""
-"Available vars: {user_id} of commented object's owner, "
-"\t\t\t\t\t\t{username} of commented object' owner, {obj_id} of commented "
-"\t\t\t\t\t\tobject, {comment_id} of comment"
+"Available vars: {user_id} of commented object's owner, \t\t\t\t\t\t"
+"{username} of commented object' owner, {obj_id} of commented \t\t\t\t\t"
+"\tobject, {comment_id} of comment, {obj_type} type of commented object "
+"(dateo mostly)"
 msgstr ""
 
 #: apps/account/models.py:196
@@ -193,22 +194,32 @@ msgid ""
 msgstr ""
 
 #: apps/account/models.py:201
-msgid "Notify settings url template"
+msgid "Campaign url template"
 msgstr ""
 
 #: apps/account/models.py:202
+msgid ""
+"Available vars: {user_id} of campaign owner, \t\t\t\t\t\t{username} of "
+"campaign owner, {obj_id} of campaign, {slug} of campaign"
+msgstr ""
+
+#: apps/account/models.py:206
+msgid "Notify settings url template"
+msgstr ""
+
+#: apps/account/models.py:207
 msgid "Available vars: {user_id} and {username}"
 msgstr ""
 
-#: apps/account/models.py:205
+#: apps/account/models.py:210
 msgid "Send notification mail"
 msgstr ""
 
-#: apps/account/models.py:212
+#: apps/account/models.py:217
 msgid "Whitelisted client domain"
 msgstr ""
 
-#: apps/account/models.py:213
+#: apps/account/models.py:218
 msgid "Whitelisted client domains"
 msgstr ""
 
@@ -279,116 +290,116 @@ msgstr ""
 msgid "Tag suggestions for Dateos"
 msgstr ""
 
-#: apps/campaign/models.py:37
+#: apps/campaign/models.py:43
 msgid "Featured"
 msgstr ""
 
-#: apps/campaign/models.py:39
+#: apps/campaign/models.py:45
 msgid "End Date"
 msgstr ""
 
-#: apps/campaign/models.py:39
+#: apps/campaign/models.py:45
 msgid "Set an end date for your campaign (optional)"
 msgstr ""
 
-#: apps/campaign/models.py:41 apps/image/forms.py:7 apps/image/models.py:67
+#: apps/campaign/models.py:47 apps/image/forms.py:7 apps/image/models.py:47
 msgid "Image"
 msgstr ""
 
-#: apps/campaign/models.py:43
+#: apps/campaign/models.py:49
 msgid "Short description / Slogan"
 msgstr ""
 
-#: apps/campaign/models.py:43
+#: apps/campaign/models.py:49
 msgid "A short description or slogan (max. 140 characters)."
 msgstr ""
 
-#: apps/campaign/models.py:46
+#: apps/campaign/models.py:52
 msgid "Mission / Objectives"
 msgstr ""
 
-#: apps/campaign/models.py:50
+#: apps/campaign/models.py:56
 msgid "max. 500 characters"
 msgstr ""
 
-#: apps/campaign/models.py:52
+#: apps/campaign/models.py:58
 msgid "What happens with the data?"
 msgstr ""
 
-#: apps/campaign/models.py:54
+#: apps/campaign/models.py:60
 msgid ""
 "Who receives the information and what happens with it? (max 500 characters)"
 msgstr ""
 
-#: apps/campaign/models.py:57 apps/link/models.py:12
+#: apps/campaign/models.py:63 apps/link/models.py:12
 msgid "Description"
 msgstr ""
 
-#: apps/campaign/models.py:60
+#: apps/campaign/models.py:66
 msgid "Long description (optional)"
 msgstr ""
 
-#: apps/campaign/models.py:64
+#: apps/campaign/models.py:70
 msgid "Center"
 msgstr ""
 
-#: apps/campaign/models.py:65
+#: apps/campaign/models.py:71
 msgid "Boundary"
 msgstr ""
 
-#: apps/campaign/models.py:66
+#: apps/campaign/models.py:72
 msgid "Layer Files"
 msgstr ""
 
-#: apps/campaign/models.py:67
+#: apps/campaign/models.py:73
 msgid "Default zoom"
 msgstr ""
 
-#: apps/campaign/models.py:71
+#: apps/campaign/models.py:77
 msgid "Map"
 msgstr ""
 
-#: apps/campaign/models.py:72
+#: apps/campaign/models.py:78
 msgid "Timeline"
 msgstr ""
 
-#: apps/campaign/models.py:73 apps/dateo/models.py:35 apps/image/models.py:68
+#: apps/campaign/models.py:79 apps/dateo/models.py:35 apps/image/models.py:48
 msgid "Images"
 msgstr ""
 
-#: apps/campaign/models.py:74 apps/dateo/models.py:36 apps/file/models.py:28
+#: apps/campaign/models.py:80 apps/dateo/models.py:36 apps/file/models.py:28
 msgid "Files"
 msgstr ""
 
-#: apps/campaign/models.py:76
+#: apps/campaign/models.py:82
 msgid "Default visualization mode"
 msgstr ""
 
-#: apps/campaign/models.py:77
+#: apps/campaign/models.py:83
 msgid "Default filter"
 msgstr ""
 
-#: apps/campaign/models.py:80
+#: apps/campaign/models.py:86
 msgid "Item count"
 msgstr ""
 
-#: apps/campaign/models.py:82
+#: apps/campaign/models.py:88
 msgid "Comment count"
 msgstr ""
 
-#: apps/campaign/models.py:83
+#: apps/campaign/models.py:89
 msgid "Follower count"
 msgstr ""
 
-#: apps/campaign/models.py:91 apps/dateo/models.py:170
+#: apps/campaign/models.py:97 apps/dateo/models.py:170
 msgid "Campaign"
 msgstr ""
 
-#: apps/campaign/models.py:92
+#: apps/campaign/models.py:98
 msgid "Campaigns"
 msgstr ""
 
-#: apps/campaign/models.py:125
+#: apps/campaign/models.py:132
 msgid "/campaign/"
 msgstr ""
 
@@ -396,47 +407,35 @@ msgstr ""
 #: apps/comment/templates/notify/comment/email_body.txt:2
 #: apps/dateo/templates/notify/dateo/email_body.txt:2
 #: apps/dateo/templates/notify/redateo/email_body.txt:2
-#: apps/flag/templates/notify/flag/email_body.txt:2
 #: apps/vote/templates/notify/vote/email_body.txt:2
 #, python-format
 msgid "Hi %(user)s"
-msgstr "Hola %(user)s"
+msgstr "Amigo(a) %(user)s"
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:4
-#: apps/dateo/templates/notify/dateo/email_body.txt:4
 #, python-format
 msgid ""
 "\n"
-"%(actor)s created a new dateo"
+"%(actor)s created a new campaign on"
 msgstr ""
 "\n"
-"%(actor)s ha dateado"
+"%(actor)s creo una nueva iniciativa en"
 
-#: apps/campaign/templates/notify/campaign/email_body.txt:5
-#: apps/dateo/templates/notify/dateo/email_body.txt:5
-#: apps/dateo/templates/notify/dateo/email_subject.txt:1
-#: apps/dateo/templates/notify/redateo/email_body.txt:5
-#: apps/dateo/templates/notify/redateo/email_subject.txt:1
-msgid "on"
-msgstr "en"
-
-#: apps/campaign/templates/notify/campaign/email_body.txt:9
-#: apps/dateo/templates/notify/dateo/email_body.txt:9
-#: apps/dateo/templates/notify/redateo/email_body.txt:9
+#: apps/campaign/templates/notify/campaign/email_body.txt:11
 #, python-format
 msgid ""
-"You can view the dateo on: \n"
+"You can view the campaign on: \n"
 "\n"
 "%(url)s"
 msgstr ""
-"Puedes ver el dateo en: \n"
+"Chequea la iniciativa bajo: \n"
 "\n"
 "%(url)s"
 
-#: apps/campaign/templates/notify/campaign/email_body.txt:13
-#: apps/comment/templates/notify/comment/email_body.txt:17
+#: apps/campaign/templates/notify/campaign/email_body.txt:15
+#: apps/comment/templates/notify/comment/email_body.txt:13
 #: apps/dateo/templates/notify/dateo/email_body.txt:13
-#: apps/dateo/templates/notify/redateo/email_body.txt:13
+#: apps/dateo/templates/notify/redateo/email_body.txt:12
 #: apps/vote/templates/notify/vote/email_body.txt:17
 #, python-format
 msgid ""
@@ -450,23 +449,23 @@ msgstr ""
 "\n"
 "El equipo de %(sitename)s\n"
 
-#: apps/campaign/templates/notify/campaign/email_body.txt:20
-#: apps/comment/templates/notify/comment/email_body.txt:24
+#: apps/campaign/templates/notify/campaign/email_body.txt:22
+#: apps/comment/templates/notify/comment/email_body.txt:20
 #: apps/dateo/templates/notify/dateo/email_body.txt:20
-#: apps/dateo/templates/notify/redateo/email_body.txt:20
+#: apps/dateo/templates/notify/redateo/email_body.txt:19
 #: apps/vote/templates/notify/vote/email_body.txt:24
 #, python-format
 msgid ""
-"Click the following link if you wish to configure your notification settings"
-" to stop receiving this emails: %(url)s"
+"Click the following link if you wish to configure your notification settings "
+"to stop receiving this emails: %(url)s"
 msgstr ""
-"Si no deseas recibir estos correos, haz click sobre este enlace para cambiar"
-" tus opciones de notificación: %(url)s"
+"Si no deseas recibir estos correos, haz click sobre este enlace para cambiar "
+"tus opciones de notificación: %(url)s"
 
 #: apps/campaign/templates/notify/campaign/email_subject.txt:1
 #, python-format
-msgid "Check out %(actor)s's new campaign "
-msgstr "Chequea la nueva iniciativa de %(actor)s "
+msgid "%(actor)s's new campaign"
+msgstr "nueva iniciativa de %(actor)s"
 
 #: apps/category/models.py:10 apps/tag/models.py:14
 msgid "Description (optional)"
@@ -496,39 +495,43 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: apps/comment/templates/notify/comment/email_body.txt:5
+#: apps/comment/templates/notify/comment/email_body.txt:3
 #, python-format
 msgid ""
 "\n"
-"%(actor)s commented your %(object_name)s on"
+"%(actor)s commented your %(object_name)s"
 msgstr ""
 "\n"
-"%(actor)s comentó tu %(object_name)s en"
+"%(actor)s comentó tu %(object_name)s"
 
-#: apps/comment/templates/notify/comment/email_body.txt:8
-#, python-format
-msgid ""
-"\n"
-"%(actor)s commented %(target_user)s's %(object_name)s on"
-msgstr ""
-"\n"
-"%(actor)s comentó el %(object_name)s de %(target_user)s en"
+#: apps/comment/templates/notify/comment/email_body.txt:4
+#: apps/comment/templates/notify/comment/email_subject.txt:1
+#: apps/dateo/templates/notify/dateo/email_body.txt:4
+#: apps/dateo/templates/notify/dateo/email_subject.txt:1
+#: apps/dateo/templates/notify/redateo/email_body.txt:4
+#: apps/dateo/templates/notify/redateo/email_subject.txt:1
+#: apps/vote/templates/notify/vote/email_body.txt:6
+#: apps/vote/templates/notify/vote/email_body.txt:9
+#: apps/vote/templates/notify/vote/email_subject.txt:1
+msgid "on"
+msgstr "en"
 
-#: apps/comment/templates/notify/comment/email_body.txt:13
-#, python-format
-msgid ""
-"You can access the comment at: \n"
-"\n"
-"%(url)s"
-msgstr ""
-"Puedes acceder al comentario bajo: \n"
-"\n"
-"%(url)s"
-
+#: apps/comment/templates/notify/comment/email_body.txt:4
 #: apps/comment/templates/notify/comment/email_subject.txt:1
 #, python-format
 msgid "%(actor)s commented %(target_user)s's %(object_name)s"
 msgstr "%(actor)s comentó el %(object_name)s de %(target_user)s"
+
+#: apps/comment/templates/notify/comment/email_body.txt:9
+#, python-format
+msgid ""
+"You can access the comment at:\n"
+"\n"
+"%(url)s"
+msgstr ""
+"Chequea el comentario en: \n"
+"\n"
+"%(url)s"
 
 #: apps/comment/templates/notify/comment/email_subject.txt:1
 #, python-format
@@ -599,24 +602,43 @@ msgstr ""
 msgid "Dateo"
 msgstr ""
 
+#: apps/dateo/templates/notify/dateo/email_body.txt:3
+#, python-format
+msgid ""
+"\n"
+"%(actor)s created a new dateo"
+msgstr ""
+"\n"
+"%(actor)s ha dateado"
+
+#: apps/dateo/templates/notify/dateo/email_body.txt:9
+#: apps/dateo/templates/notify/redateo/email_body.txt:8
+#, python-format
+msgid ""
+"You can view the dateo on: \n"
+"\n"
+"%(url)s"
+msgstr ""
+"Chequea el dateo en: \n"
+"\n"
+"%(url)s"
+
 #: apps/dateo/templates/notify/dateo/email_subject.txt:1
 #, python-format
 msgid "%(actor)s created a new dateo"
 msgstr "%(actor)s dateó"
 
 #: apps/dateo/templates/notify/redateo/email_body.txt:4
-#, python-format
-msgid ""
-"\n"
-"%(actor)s has redateado %(target_user)s"
-msgstr ""
-"\n"
-"%(actor)s redateó a %(target_user)s's en"
-
 #: apps/dateo/templates/notify/redateo/email_subject.txt:1
 #, python-format
-msgid "%(actor)s redateo a %(target_user)s"
+msgid "%(actor)s has redateado %(target_user)s's dateo"
 msgstr "%(actor)s redateó a %(target_user)s"
+
+#: apps/dateo/templates/notify/redateo/email_body.txt:4
+#: apps/dateo/templates/notify/redateo/email_subject.txt:1
+#, python-format
+msgid "%(actor)s has redateado your dateo"
+msgstr "%(actor)s te redateó"
 
 #: apps/file/forms.py:7 apps/file/models.py:19 apps/file/models.py:27
 msgid "File"
@@ -638,29 +660,11 @@ msgstr ""
 msgid "Flags"
 msgstr ""
 
-#: apps/flag/templates/notify/flag/email_body.txt:4
-#, python-format
-msgid ""
-"\n"
-"%(user)s has flagged a %(model)s"
-msgstr ""
-"\n"
-"%(user)s ha denunciado un %(model)s"
-
-#: apps/flag/templates/notify/flag/email_body.txt:11
-msgid "sincerely"
-msgstr "Saludos"
-
-#: apps/flag/templates/notify/flag/email_subject.txt:1
-#, python-format
-msgid "%(user)s flagged a %(model)s"
-msgstr "%(user)s denunció un %(model)s"
-
-#: apps/follow/models.py:44
+#: apps/follow/models.py:59
 msgid "Follow"
 msgstr ""
 
-#: apps/follow/models.py:45
+#: apps/follow/models.py:60
 msgid "Follows"
 msgstr ""
 
@@ -685,7 +689,7 @@ msgid "Dateos in tags I follow"
 msgstr ""
 
 #: apps/notify/models.py:23
-msgid "Reports in tags I follow"
+msgid "Reports and new Campaigns in tags I follow"
 msgstr ""
 
 #: apps/notify/models.py:24
@@ -756,17 +760,19 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"%(actor)s gave a thumbs up to your %(object_name)s on"
+"%(actor)s gave a thumbs up to your %(object_name)s"
 msgstr ""
+"\n"
+"%(actor)s apoyó tu %(object_name)s"
 
 #: apps/vote/templates/notify/vote/email_body.txt:8
 #, python-format
 msgid ""
 "\n"
-"%(actor)s supported %(target_user)s's %(object_name)s on"
+"%(actor)s supported %(target_user)s's %(object_name)s"
 msgstr ""
 "\n"
-"%(actor)s apoyó el %(object_name)s de %(target_user)s's en"
+"%(actor)s apoyó el %(object_name)s de %(target_user)s"
 
 #: apps/vote/templates/notify/vote/email_body.txt:13
 #, python-format
@@ -775,7 +781,7 @@ msgid ""
 "\n"
 "%(url)s"
 msgstr ""
-"Puedes ver el %(object_name)s en: \n"
+"Chequea el %(object_name)s en: \n"
 "\n"
 "%(url)s"
 
@@ -801,10 +807,12 @@ msgstr "¡Tu cuenta ha sido activada!"
 #: templates/registration/activate.html:14
 msgid ""
 "\n"
-"\tThanks, activation complete! You may now login using the username and password you set at registration.\n"
+"\tThanks, activation complete! You may now login using the username and "
+"password you set at registration.\n"
 msgstr ""
 "\n"
-"¡Gracias! has activado tu cuenta con éxito. Ahora puedes ingresar con tu nombre de usuario y contraseña.\n"
+"¡Gracias! has activado tu cuenta con éxito. Ahora puedes ingresar con tu "
+"nombre de usuario y contraseña.\n"
 
 #: templates/registration/activate.html:21
 msgid "We're sorry"
@@ -834,66 +842,6 @@ msgid ""
 msgstr ""
 "Bienvenido(a)! Has activado tu cuenta. Ahora puedes ingresar con tu nombre "
 "de usuario y contraseña."
-
-#: templates/registration/activation_email.txt:1
-#, python-format
-msgid ""
-"Hi!\n"
-"\n"
-"You have asked to register an account at %(sitename)s.  If this wasn't you, \n"
-"please ignore this email and your address will be removed from our records.\n"
-"\n"
-"To activate this account, please click the following link within the next \n"
-"%(days)s days:\n"
-msgstr ""
-"Amigo(a) datero(a),\n"
-"\n"
-"Bienvenido(a)! Acabas de registrar una cuenta en %(sitename)s.  Si no fuiste tu,\n"
-"por favor ignora este correo y tus datos serán borrados de nuestros registros.\n"
-"\n"
-"Para activar tu cuenta, utiliza el siguiente enlace durante los próximos \n"
-"%(days)s días:\n"
-
-#: templates/registration/activation_email.txt:8
-#, python-format
-msgid ""
-"Hi!\n"
-"\n"
-"You have asked to set or change your email at %(sitename)s.  If this wasn't you, \n"
-"please contact us at contacto@datea.pe.\n"
-"\n"
-"To activate your account with this new email address, please click the following link within the next \n"
-"%(days)s days:\n"
-msgstr ""
-"Amigo(a) datero(a),\n"
-"\n"
-"Has solicitado cambiar tu correo en %(sitename)s. Si no fuiste tu,\n"
-"por favor escríbenos a contacto@datea.pe.\n"
-"\n"
-"Para activar tu cuenta con esta nueva dirección, activa el siguiente enlace durante los próximos %(days)s días:\n"
-
-#: templates/registration/activation_email.txt:22
-#, python-format
-msgid ""
-"\n"
-"Sincerely,\n"
-"\n"
-"The %(sitename)s Team\n"
-msgstr ""
-"\n"
-"Saludos,\n"
-"\n"
-"El equipo de %(sitename)s\n"
-
-#: templates/registration/activation_email_subject.txt:1
-#, python-format
-msgid "Account registration for %(sitename)s"
-msgstr "Tu cuenta en %(sitename)s"
-
-#: templates/registration/activation_email_subject.txt:1
-#, python-format
-msgid "Confirm email for %(sitename)s"
-msgstr "Confirma tu correo en %(sitename)s"
 
 #: templates/registration/change_email_complete.html:4
 #: templates/registration/change_email_complete.html:5
@@ -950,42 +898,6 @@ msgstr ""
 "Te hemos enviado un correo con un enlace para recuperar tu contraseña. Por "
 "favor, revisatu correo y activa el enlace para continuar con el proceso."
 
-#: templates/registration/password_reset_email.html:2
-msgid "Greetings"
-msgstr "Hola"
-
-#: templates/registration/password_reset_email.html:4
-#, python-format
-msgid ""
-"You are receiving this email because you\n"
-"requested that your password be reset on the %(sitename)s site. \n"
-"If you do not wish to reset your password, please ignore this message.\n"
-"\n"
-"To reset your password, please click the following link, or copy and paste it\n"
-"into your web browser:"
-msgstr ""
-"has solicitado recuperar tu contraseña en %(sitename)s.\n"
-"Si no deseas resetear tu contraseña, por favor ignora este mensaje.\n"
-"\n"
-"Para recuperar tu contraseña, por favor haz click sobre el siguiente enlace o copia y pegalo en tu navegador:"
-
-#: templates/registration/password_reset_email.html:13
-#, python-format
-msgid ""
-"Your username, in case you've forgotten: %(username)s\n"
-"\n"
-"\n"
-"Best regards,\n"
-"\n"
-"The %(sitename)s Team\n"
-msgstr ""
-"Tu usuario, en caso lo hayas olvidado, es: %(username)s\n"
-"\n"
-"\n"
-"Saludos,\n"
-"\n"
-"EL equipo de %(sitename)s\n"
-
 #: templates/registration/password_reset_form.html:5
 #: templates/registration/password_reset_form.html:6
 #: templates/registration/password_reset_form.html:18
@@ -1004,7 +916,129 @@ msgstr ""
 "¿Olvidaste tu contraseña? Ingresa tu correo aquí abajo y te enviaremos "
 "instruccionesde como recuperarla."
 
-#: templates/registration/password_reset_subject.txt:2
-#, python-format
-msgid "Password reset on %(sitename)s"
-msgstr "Tu contraseña en %(sitename)s"
+#~ msgid "%(actor)s has redateado %(target_user)s"
+#~ msgstr ""
+#~ "\n"
+#~ "%(actor)s redateó a %(target_user)s's en"
+
+#~ msgid ""
+#~ "\n"
+#~ "%(actor)s commented %(target_user)s's %(object_name)s"
+#~ msgstr ""
+#~ "\n"
+#~ "%(actor)s comentó el %(object_name)s de %(target_user)s"
+
+#~ msgid ""
+#~ "\n"
+#~ "%(user)s has flagged a %(model)s"
+#~ msgstr ""
+#~ "\n"
+#~ "%(user)s ha denunciado un %(model)s"
+
+#~ msgid "sincerely"
+#~ msgstr "Saludos"
+
+#~ msgid "%(user)s flagged a %(model)s"
+#~ msgstr "%(user)s denunció un %(model)s"
+
+#~ msgid ""
+#~ "\n"
+#~ "%(actor)s commented %(target_user)s's %(object_name)s on"
+#~ msgstr ""
+#~ "\n"
+#~ "%(actor)s comentó el %(object_name)s de %(target_user)s en"
+
+#~ msgid ""
+#~ "Hi!\n"
+#~ "\n"
+#~ "You have asked to register an account at %(sitename)s.  If this wasn't "
+#~ "you, \n"
+#~ "please ignore this email and your address will be removed from our "
+#~ "records.\n"
+#~ "\n"
+#~ "To activate this account, please click the following link within the "
+#~ "next \n"
+#~ "%(days)s days:\n"
+#~ msgstr ""
+#~ "Amigo(a) datero(a),\n"
+#~ "\n"
+#~ "Bienvenido(a)! Acabas de registrar una cuenta en %(sitename)s.  Si no "
+#~ "fuiste tu,\n"
+#~ "por favor ignora este correo y tus datos serán borrados de nuestros "
+#~ "registros.\n"
+#~ "\n"
+#~ "Para activar tu cuenta, utiliza el siguiente enlace durante los "
+#~ "próximos \n"
+#~ "%(days)s días:\n"
+
+#~ msgid ""
+#~ "Hi!\n"
+#~ "\n"
+#~ "You have asked to set or change your email at %(sitename)s.  If this "
+#~ "wasn't you, \n"
+#~ "please contact us at contacto@datea.pe.\n"
+#~ "\n"
+#~ "To activate your account with this new email address, please click the "
+#~ "following link within the next \n"
+#~ "%(days)s days:\n"
+#~ msgstr ""
+#~ "Amigo(a) datero(a),\n"
+#~ "\n"
+#~ "Has solicitado cambiar tu correo en %(sitename)s. Si no fuiste tu,\n"
+#~ "por favor escríbenos a contacto@datea.pe.\n"
+#~ "\n"
+#~ "Para activar tu cuenta con esta nueva dirección, activa el siguiente "
+#~ "enlace durante los próximos %(days)s días:\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Sincerely,\n"
+#~ "\n"
+#~ "The %(sitename)s Team\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Saludos,\n"
+#~ "\n"
+#~ "El equipo de %(sitename)s\n"
+
+#~ msgid "Account registration for %(sitename)s"
+#~ msgstr "Tu cuenta en %(sitename)s"
+
+#~ msgid "Confirm email for %(sitename)s"
+#~ msgstr "Confirma tu correo en %(sitename)s"
+
+#~ msgid "Greetings"
+#~ msgstr "Hola"
+
+#~ msgid ""
+#~ "You are receiving this email because you\n"
+#~ "requested that your password be reset on the %(sitename)s site. \n"
+#~ "If you do not wish to reset your password, please ignore this message.\n"
+#~ "\n"
+#~ "To reset your password, please click the following link, or copy and "
+#~ "paste it\n"
+#~ "into your web browser:"
+#~ msgstr ""
+#~ "has solicitado recuperar tu contraseña en %(sitename)s.\n"
+#~ "Si no deseas resetear tu contraseña, por favor ignora este mensaje.\n"
+#~ "\n"
+#~ "Para recuperar tu contraseña, por favor haz click sobre el siguiente "
+#~ "enlace o copia y pegalo en tu navegador:"
+
+#~ msgid ""
+#~ "Your username, in case you've forgotten: %(username)s\n"
+#~ "\n"
+#~ "\n"
+#~ "Best regards,\n"
+#~ "\n"
+#~ "The %(sitename)s Team\n"
+#~ msgstr ""
+#~ "Tu usuario, en caso lo hayas olvidado, es: %(username)s\n"
+#~ "\n"
+#~ "\n"
+#~ "Saludos,\n"
+#~ "\n"
+#~ "EL equipo de %(sitename)s\n"
+
+#~ msgid "Password reset on %(sitename)s"
+#~ msgstr "Tu contraseña en %(sitename)s"

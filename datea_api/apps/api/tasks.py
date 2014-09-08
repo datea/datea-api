@@ -7,10 +7,11 @@ from django.utils.text import Truncator
 from django.utils.translation import ugettext
 import json
 
+from datea_api.apps.account.models import User
 from datea_api.apps.campaign.models import Campaign
+from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.notify.models import ActivityLog, Notification
 from datea_api.apps.follow.models import Follow
-
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.comment.resources import CommentResource
 from datea_api.apps.dateo.models import Dateo, Redateo
@@ -19,7 +20,7 @@ from datea_api.apps.vote.models import Vote
 import datea_api.apps.vote.resources
 from datea_api.apps.flag.models import Flag
 
-from datea_api.apps.notify.utils import send_mails
+from datea_api.apps.notify.utils import send_mails, send_admin_mail
 from datea_api.apps.account.utils import get_client_data
 
 from datea_api.apps.api.signals import resource_saved
@@ -27,6 +28,19 @@ from datea_api.apps.api.signals import resource_saved
 from django.db import IntegrityError, transaction
 from django.conf import settings
 
+################################### USER ASYNC TASKS  #######################################
+@shared_task
+def do_user_async_tasks(user_obj, notify=False):
+
+	if type(user_obj) == IntType:
+		with transaction.atomic():
+			user_obj = User.objects.get(pk=user_obj)
+
+	if notify:
+		email_data = {
+			'user': user_obj
+		}
+		send_admin_mail('user', email_data)
 
 ################################### DATEO ASYNC TASKS #######################################
 
@@ -64,24 +78,27 @@ def create_dateo_activity_log(dateo):
 @shared_task
 def create_dateo_notifications(actlog):
 
-	email_users = []
-	notify_users = []
+	email_users = set()
+	notify_users = set()
 
 	# 1. Seguidores de tags
 	follow_keys = ['tag.'+str(tag.pk) for tag in actlog.action_object.tags.all()]
 	follows = Follow.objects.filter(follow_key__in=follow_keys)
 	for f in follows:
-		notify_users.append(f.user)
+		notify_users.add(f.user)
 		if f.user.notify_settings.tags_dateos:
-			email_users.append(f.user)
+			email_users.add(f.user)
 
 	# 2. Duenhos de iniciativas
-	if hasattr(actlog.target_object, 'tags'):
+	if hasattr(actlog.action_object, 'tags'):
 		for tag in actlog.action_object.tags.all():
+			print "TAG", tag
 			for c in tag.campaigns.all():
-				notify_users.append(c.user)
+				print "CAMPAIGN", c
+				notify_users.add(c.user)
 				if c.user.notify_settings.interaction:
-					email_users.append(c.user) 
+					print "MAILERME", c.user
+					email_users.add(c.user) 
 
 	dateo_rsc = DateoResource()
 	d_bundle = dateo_rsc.build_bundle(obj=actlog.action_object)
@@ -103,28 +120,29 @@ def create_dateo_notifications(actlog):
 		n.data = notify_data
 		n.save()
 
-	if len(email_users) > 0:
+	# email using target_object client_domain (for now)
+	client_data = get_client_data(actlog.action_object.client_domain)
+	if not client_data['send_notification_mail']:
+		return
+	dateo_url = client_data['dateo_url'].format(username=actlog.action_object.user.username,
+				user_id=actlog.action_object.user.pk, obj_id=actlog.action_object.pk) 
 
-		# email using target_object client_domain (for now)
-		client_data = get_client_data(actlog.action_object.client_domain)
-		if not client_data['send_notification_mail']:
-			return
-		dateo_url = client_data['dateo_url'].format(username=actlog.action_object.user.username,
-					user_id=actlog.action_object.user.pk, obj_id=actlog.action_object.pk) 
+	email_data = {
+		"actor": actlog.actor.username,
+		"extract": actlog.data.get('extract', ''),
+		"content": actlog.action_object.content,
+		"url": dateo_url,
+		"created": actlog.created,
+		"site": client_data
+	}
 
-		email_data = {
-			"actor": actlog.actor.username,
-			"extract": actlog.data.get('extract', ''),
-			"content": actlog.action_object.content,
-			"url": dateo_url,
-			"created": actlog.created,
-			"site": client_data
-		}
-
-		if hasattr(actlog.action_object, 'tags'):
-			email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
-		
+	if hasattr(actlog.action_object, 'tags'):
+		email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
+	
+	if len(email_users) > 0 :
 		send_mails(email_users, "dateo", email_data)
+
+	send_admin_mail("dateo", email_data)
 
 
 ############################################## REDATEO ASYNC TASKS ##########################################
@@ -168,25 +186,25 @@ def create_redateo_activity_log(redateo):
 def create_redateo_notifications(actlog):
 
 	# 1. Usuario afectado
-	notify_users = [actlog.target_user]
-	email_users = []
+	notify_users = set([actlog.target_user])
+	email_users = set()
 
 	if actlog.target_user.notify_settings.interaction:
-		email_users.append(actlog.target_user)
+		email_users.add(actlog.target_user)
 
 	# 3. Seguidores de hilo
 	follows = Follow.objects.filter(follow_key=actlog.target_key)
 	for f in follows:
-		notify_users.append(f.user)
+		notify_users.add(f.user)
 		if f.user.notify_settings.conversations:
-			email_users.append(f.user)
+			email_users.add(f.user)
 
 	# 4. Duenhos de iniciativas
 	for tag in actlog.target_object.tags.all():
 		for c in tag.campaigns.all():
-			notify_users.append(c.user)
+			notify_users.add(c.user)
 			if c.user.notify_settings.interaction:
-				email_users.append(c.user)
+				email_users.add(c.user)
 
 	dateo_rsc = DateoResource()
 	d_bundle = dateo_rsc.build_bundle(obj=actlog.target_object)
@@ -212,29 +230,30 @@ def create_redateo_notifications(actlog):
 		n.data = notify_data
 		n.save()
 
+	# email using target_object client_domain
+	client_data = get_client_data(actlog.target_object.client_domain)
+	if not client_data['send_notification_mail']:
+		return
+	dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
+				user_id=actlog.target_object.user.pk, obj_id=actlog.target_id) 
+
+	email_data = {
+		"actor": actlog.actor.username,
+		"target_user": actlog.target_user.username,
+		"target_object_name": ugettext(actlog.target_type.model),
+		"dateo": actlog.target_object,
+		"extract": actlog.data['extract'],
+		"url": dateo_url,
+		"created": actlog.created,
+		"site": client_data,
+	}
+	if hasattr(actlog.target_object, 'tags'):
+		email_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
+
 	if len(email_users) > 0:
-
-		# email using target_object client_domain
-		client_data = get_client_data(actlog.target_object.client_domain)
-		if not client_data['send_notification_mail']:
-			return
-		dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
-					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
-
-		email_data = {
-			"actor": actlog.actor.username,
-			"target_user": actlog.target_user.username,
-			"target_object_name": ugettext(actlog.target_type.model),
-			"dateo": actlog.target_object,
-			"extract": actlog.data['extract'],
-			"url": dateo_url,
-			"created": actlog.created,
-			"site": client_data,
-		}
-		if hasattr(actlog.target_object, 'tags'):
-			email_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
-
 		send_mails(email_users, "redateo", email_data)
+
+	send_admin_mail("redateo", email_data)
 
 
 
@@ -282,26 +301,28 @@ def create_comment_activity_log(comment):
 def create_comment_notifications(actlog):
 
 	# 1. Usuario afectado
-	notify_users = [actlog.target_user]
-	email_users = []
+	notify_users = set()
+	email_users = set()
 
-	if actlog.target_user.notify_settings.interaction:
-		email_users.append(actlog.target_user)
+	if actlog.target_user.notify_settings.interaction and actlog.actor != actlog.target_user:
+		email_users.add(actlog.target_user)
 
 	# 3. Seguidores de hilo
 	follows = Follow.objects.filter(follow_key=actlog.target_key)
 	for f in follows:
-		notify_users.append(f.user)
-		if f.user.notify_settings.conversations:
-			email_users.append(f.user)
+		if f.user != actlog.actor:
+			notify_users.add(f.user)
+			if f.user.notify_settings.conversations:
+				email_users.add(f.user)
 
 	# 4. Duenhos de iniciativas
 	if hasattr(actlog.target_object, 'tags'):
 		for tag in actlog.target_object.tags.all():
 			for c in tag.campaigns.all():
-				notify_users.append(c.user)
-				if c.user.notify_settings.interaction:
-					email_users.append(c.user)
+				if c.user != actlog.actor:
+					notify_users.add(c.user)
+					if c.user.notify_settings.interaction:
+						email_users.add(c.user)
 
 	comment_rsc = CommentResource()
 	c_bundle = comment_rsc.build_bundle(obj=actlog.action_object)
@@ -327,27 +348,125 @@ def create_comment_notifications(actlog):
 		n.data = notify_data
 		n.save()
 
+	# email using target_object client_domain (for now)
+	client_data = get_client_data(actlog.target_object.client_domain)
+	if not client_data['send_notification_mail']:
+		return
+
+	comment_url = client_data['comment_url'].format(username=actlog.target_object.user.username,
+				user_id=actlog.target_object.user.pk, obj_id=actlog.target_id, 
+				obj_type= actlog.target_type.model, comment_id=actlog.action_id) 
+
+	email_data = {
+		"actor": actlog.actor.username,
+		"target_user": actlog.target_user.username,
+		"target_object_name": ugettext(actlog.target_type.model),
+		"comment": actlog.action_object.comment,
+		"extract": actlog.data['extract'],
+		"url": comment_url,
+		"created": actlog.created,
+		"site": client_data,
+	}
+	if hasattr(actlog.target_object, 'main_tag'):
+		email_data['tags'] = [actlog.target_object.main_tag.tag]
+	if hasattr(actlog.target_object, 'tags'):
+		email_data['tags'] = map(lambda t: t.tag, actlog.target_object.tags.all())
+
 	if len(email_users) > 0:
-
-		# email using target_object client_domain (for now)
-		client_data = get_client_data(actlog.target_object.client_domain)
-		if not client_data['send_notification_mail']:
-			return
-		comment_url = client_data['comment_url'].format(username=actlog.target_object.user.username,
-					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk, 
-					comment_id=actlog.action_object.pk) 
-
-		email_data = {
-			"actor": actlog.actor.username,
-			"target_user": actlog.target_user.username,
-			"target_object_name": ugettext(actlog.target_type.model),
-			"comment": actlog.action_object.comment,
-			"extract": actlog.data['extract'],
-			"url": comment_url,
-			"created": actlog.created,
-			"site": client_data,
-		}
 		send_mails(email_users, "comment", email_data)
+
+	send_admin_mail("comment", email_data)
+
+
+############################################## CAMPAIGN ASYNC TASKS ######################################
+@shared_task
+def do_campaign_async_tasks(campaign_obj, notify=False):
+
+	if type(campaign_obj) == IntType:
+		# doing strange stuff because of circular imports and celery
+		with transaction.atomic():
+			campaign_obj = Campaign.objects.get(pk=campaign_obj)
+
+	if notify:
+		actlog = create_campaign_activity_log(campaign_obj)
+		create_campaign_notifications(actlog)
+
+
+@shared_task
+def create_campaign_activity_log(campaign):
+
+	actlog = ActivityLog()
+	actlog.actor = campaign.user
+	actlog.verb = 'campaign'
+	actlog.action_object = campaign
+	actlog.action_key = 'tag.'+str(campaign.main_tag.pk)
+
+	actlog.data = {'extract': campaign.short_description}
+	actlog.save()
+
+	actlog.tags.add(campaign.main_tag)
+
+	resource_saved.send(sender=ActivityLog, instance=actlog, created=True)
+
+	return actlog
+
+
+@shared_task
+def create_campaign_notifications(actlog):
+
+	notify_users = set()
+	email_users  = set()
+
+	follows = Follow.objects.filter(follow_key=actlog.action_key)
+	for f in follows:
+		notify_users.add(f.user)
+		if f.user.notify_settings.tags_reports:
+			email_users.add(f.user)
+
+	c_rsc = CampaignResource()
+	c_bundle = c_rsc.build_bundle(obj=actlog.action_object)
+	c_bundle = c_rsc.full_dehydrate(c_bundle)
+	campaign_json = c_rsc.serialize(None, c_bundle, 'application/json') 
+
+	notify_data = {
+		"actor": actlog.actor.username,
+		"actor_id": actlog.actor.pk,
+		"actor_img": actlog.actor.get_small_image(),
+		"action_object_name": 'campaign',
+		"extract": actlog.data.get('extract', ''),
+		"verb": "campaign",
+		"action_object": json.loads(campaign_json),
+	}
+
+	for user in notify_users:
+		n = Notification(type="campaign", recipient=user, activity=actlog)
+		n.data = notify_data
+		n.save()
+		
+	# email using target_object client_domain (for now)
+	client_data = get_client_data(actlog.action_object.client_domain)
+	if not client_data['send_notification_mail']:
+		return
+	campaign_url = client_data['campaign_url'].format(username=actlog.action_object.user.username,
+				user_id=actlog.action_object.user.pk, obj_id=actlog.action_id, tag_name=actlog.action_object.main_tag.tag) 
+
+	email_data = {
+		"actor": actlog.actor.username,
+		"action_object_name": ugettext(actlog.action_type.model),
+		"title": actlog.action_object.name,
+		"extract": actlog.data.get('extract', ''),
+		"url": campaign_url,
+		"created": actlog.created,
+		"site": client_data,
+		"tag" : actlog.action_object.main_tag.tag
+	}
+
+	if len(email_users) > 0:
+		send_mails(email_users, "campaign", email_data)
+
+	send_admin_mail("campaign", email_data)
+
+
 
 
 ############################################## VOTE ASYNC TASKS ##########################################
@@ -395,11 +514,11 @@ def create_vote_activity_log(vote):
 def create_vote_notifications(actlog):
 
 	# 1. Usuario afectado
-	notify_users = [actlog.target_user]
-	email_users = []
+	notify_users = set([actlog.target_user])
+	email_users = set()
 
 	if actlog.target_user.notify_settings.interaction:
-		email_users.append(actlog.target_user)
+		email_users.add(actlog.target_user)
 
 	# 2. Seguidores de hilo 
 	#follows = Follow.objects.filter(follow_key=actlog.target_key)
@@ -412,9 +531,9 @@ def create_vote_notifications(actlog):
 	if hasattr(actlog.target_object, 'tags'):
 		for tag in actlog.target_object.tags.all():
 			for c in tag.campaigns.all():
-				notify_users.append(c.user)
+				notify_users.add(c.user)
 				if c.user.notify_settings.interaction:
-					email_users.append(c.user)
+					email_users.add(c.user)
 
 	dateo_rsc = DateoResource()
 	d_bundle = dateo_rsc.build_bundle(obj=actlog.target_object)
@@ -440,33 +559,33 @@ def create_vote_notifications(actlog):
 		n = Notification(type="vote", recipient=user, activity=actlog)
 		n.data = notify_data
 		n.save()
+		
+	# email using target_object client_domain (for now)
+	client_data = get_client_data(actlog.target_object.client_domain)
+	if not client_data['send_notification_mail']:
+		return
+	dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
+				user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
+
+	email_data = {
+		"actor": actlog.actor.username,
+		"target_user": actlog.target_user.username,
+		"target_object_name": ugettext(actlog.target_type.model),
+		"extract": actlog.data.get('extract', ''),
+		"url": dateo_url,
+		"created": actlog.created,
+		"site": client_data
+	}
+
+	if hasattr(actlog.target_object, 'tags'):
+		email_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
+	if hasattr(actlog.target_object, 'content'):
+		email_data["content"] = actlog.target_object.content
 
 	if len(email_users) > 0:
-		
-		# email using target_object client_domain (for now)
-		client_data = get_client_data(actlog.target_object.client_domain)
-		if not client_data['send_notification_mail']:
-			return
-		dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
-					user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
-
-		email_data = {
-			"actor": actlog.actor.username,
-			"target_user": actlog.target_user.username,
-			"target_object_name": ugettext(actlog.target_type.model),
-			"extract": actlog.data.get('extract', ''),
-			"url": dateo_url,
-			"created": actlog.created,
-			"site": client_data
-		}
-
-		if hasattr(actlog.target_object, 'tags'):
-			email_data["tags"] = [tag.tag for tag in actlog.target_object.tags.all()]
-		if hasattr(actlog.target_object, 'content'):
-			email_data["content"] = actlog.target_object.content
-		
 		send_mails(email_users, "vote", email_data)
 
+	send_admin_mail("vote", email_data)
 
 
 ############################################## FLAG ASYNC TASKS ##########################################
@@ -476,22 +595,37 @@ def do_flag_async_tasks(flag_obj_id):
 
 	# doing strange stuff because of circular imports and celery
 	with transaction.atomic():
-		flag_obj = FLag.objects.get(pk=flag_obj_id)
+		flag_obj = Flag.objects.get(pk=flag_obj_id)
 
-	users = User.objects.filter(pk__in=settings.CONTENT_ADMIN_IDS)
-
-	# email using target_object client_domain (for now)
 	client_data = get_client_data(flag_obj.client_domain)
+	url = ''
+
+	if flag_obj.content_type.model == 'dateo':
+		url = client_data['dateo_url'].format(username=flag_obj.content_object.user.username,
+				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.pk)
+	
+	elif flag_obj.content_type.model == 'comment':
+		url = client_data['comment_url'].format(username=flag_obj.content_object.user.username,
+				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.content_object.pk, 
+				comment_id=flag_obj.object_id, obj_type=flag_obj.content_object.content_type.model)
+
+	elif flag_obj.content_type.model == 'campaign':
+		url = client_data['campaign_url'].format(username=flag_obj.content_object.user.username,
+				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.pk, slug=flag_obj.content_object.slug) 
 
 	email_data = {
-		"user": flag_obj.user.username,
+		"actor": flag_obj.user.username,
 		"app_label": flag_obj.content_type.app_label,
+		"target_user": flag_obj.content_object.user.username,
+		"target_object": flag_obj.content_object,
 		"model": flag_obj.content_type.model,
+		"object_id": flag_obj.object_id,
 		"comment": flag_obj.comment,
+		"url": url,
 		"site": client_data
 	}
 
-	send_mails(users, "flag", email_data)
+	send_admin_mail("flag", email_data)
 
 
 

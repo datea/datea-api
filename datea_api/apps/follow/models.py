@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings
+from datea_api.apps.campaign.models import Campaign
+from datea_api.apps.campaign.search_indexes import CampaignIndex
 
 
 class Follow(models.Model):
@@ -33,7 +35,22 @@ class Follow(models.Model):
             self.object_id = int(pk)
 
         super(Follow, self).save(*args, **kwargs)
-    
+
+
+    def update_stats(self, value):
+        
+        if hasattr(self.content_object, 'follow_count'):
+            self.content_object.follow_count += value
+            self.content_object.save()
+
+        if self.content_type.model == 'tag':
+            campaigns = Campaign.objects.filter(main_tag=self.content_object)
+            for c in campaigns:
+                if hasattr(c, 'follow_count'):
+                    c.follow_count += value
+                    c.save()
+                    CampaignIndex().update_object(c)
+
 
     def __unicode__(self):
         return self.user.username+": "+self.follow_key
@@ -44,22 +61,19 @@ class Follow(models.Model):
         unique_together = ("user", "follow_key")
 
 
-
-
 ####
 #  UPDATE STATS
 #  better implemented with signals, if you'd like to turn this off.
 #  updating stats on objects is done using celery
 ###
 from django.db.models.signals import post_save, pre_delete
-from .tasks import update_follow_stats 
 
 def follow_saved(sender, instance, created, **kwargs):
     if created:
-        update_follow_stats.delay(instance.content_type.model, instance.object_id, 1)
+        instance.update_stats(1)
 
 def follow_pre_delete(sender, instance, **kwargs):
-    update_follow_stats.delay(instance.content_type.model, instance.object_id, -1)
+    instance.update_stats(-1)
 
 post_save.connect(follow_saved, sender=Follow)
 pre_delete.connect(follow_pre_delete, sender=Follow)

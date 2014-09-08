@@ -41,7 +41,7 @@ class Dateo(models.Model):
 	address = models.CharField(_('Address'), max_length=255, blank=True, null=True)
     
     # optional relationship to campaign
-	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True)
+	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True, on_delete=models.SET_NULL)
     
     # category
 	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, default=None, related_name="dateos", on_delete=models.SET_NULL)
@@ -196,6 +196,7 @@ class Redateo(models.Model):
 from .search_indexes import DateoIndex
 from datea_api.apps.api.signals import resource_saved
 from django.db.models.signals import pre_delete, post_delete
+from datea_api.apps.notify.models import ActivityLog
 
 def after_dateo_saved(sender, instance, created, **kwargs):
 	if created:
@@ -205,6 +206,7 @@ def after_dateo_saved(sender, instance, created, **kwargs):
 def before_dateo_delete(sender, instance, **kwargs):
 	DateoIndex().remove_object(instance)
 	instance.update_stats(-1)
+	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()
 
 resource_saved.connect(after_dateo_saved, sender=Dateo)
 pre_delete.connect(before_dateo_delete, sender=Dateo)
@@ -224,6 +226,7 @@ def after_redateo_saved(sender, instance, created, **kwargs):
 
 def after_redateo_delete(sender, instance, **kwargs):
 	instance.update_stats(-1)
+	ActivityLog.objects.filter(action_key='redateo.'+str(instance.pk)).delete()
 	DateoIndex().update_object(instance.dateo)
 
 resource_saved.connect(after_redateo_saved, sender=Redateo)

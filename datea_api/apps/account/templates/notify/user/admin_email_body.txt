@@ -1,0 +1,9 @@
+Hola,
+
+tenemos nuevo usuario: {{user.username}}
+
+http://datea.pe/{{user.username}}
+
+saludos,
+
+datea bot

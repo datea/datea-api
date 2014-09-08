@@ -1,0 +1,15 @@
+Hola,
+
+{{ actor }} creó una nueva iniciativa en #{{tag}}:
+
+{{ title }}
+
+{{ extract }}
+
+Puedes ver la iniciativa en: 
+
+{{ url }}
+
+saludos,
+
+datea bot

@@ -1,0 +1,1 @@
+[Datea Admin] Nuevo usuario: {{user.username}}

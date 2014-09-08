@@ -96,6 +96,7 @@ class Campaign(models.Model):
 	class Meta:
 		verbose_name = _("Campaign")
 		verbose_name_plural = _("Campaigns")
+		unique_together = ("user", "slug")
 
 	def __unicode__(self):
 		return self.name
@@ -137,7 +138,9 @@ class Campaign(models.Model):
 			self.center = self.boundary.centroid
 			self.center.srid = self.boundary.get_srid()
 	        
-	    if self.slug == '':
+	    if self.slug:
+	    	self.slug = slugify(self.slug)
+	    else:
 			self.slug = slugify(self.main_tag)
 	    
 	    super(Campaign, self).save(*args, **kwargs)
@@ -152,13 +155,17 @@ class Campaign(models.Model):
 from .search_indexes import CampaignIndex
 from datea_api.apps.api.signals import resource_saved
 from django.db.models.signals import pre_delete
-def update_search_index(sender, instance, created, **kwargs):
+from datea_api.apps.notify.models import ActivityLog
+
+def on_campaign_save(sender, instance, created, **kwargs):
 	CampaignIndex().update_object(instance)
 
-def remove_search_index(sender, instance, **kwargs):
+def on_campaign_delete(sender, instance, **kwargs):
 	CampaignIndex().remove_object(instance)
+	ActivityLog.objects.filter(action_key='campaign.'+str(instance.pk)).delete()
 
-resource_saved.connect(update_search_index, sender=Campaign)
-pre_delete.connect(remove_search_index, sender=Campaign)
+
+resource_saved.connect(on_campaign_save, sender=Campaign)
+pre_delete.connect(on_campaign_delete, sender=Campaign)
 
 

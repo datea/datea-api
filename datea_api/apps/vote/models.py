@@ -51,6 +51,7 @@ class Vote(models.Model):
 
 # UPDATE STATS
 from django.db.models.signals import pre_delete, post_save
+from datea_api.apps.notify.models import ActivityLog
 
 def after_vote_saved(sender, instance, created, **kwargs):
     if created:
@@ -64,6 +65,7 @@ def after_vote_saved(sender, instance, created, **kwargs):
 
 def before_vote_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
+    ActivityLog.objects.filter(action_key='vote.'+str(instance.pk)).delete()
     if (instance.content_type.model == 'dateo'):
         # this nonesense is because celery doesn't like circular imports?
         global DateoIndex

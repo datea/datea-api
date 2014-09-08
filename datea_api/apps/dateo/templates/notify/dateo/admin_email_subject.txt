@@ -1,0 +1,1 @@
+[Datea admin] {{ actor }} dateó en{% for tag in tags %} #{{tag}}{% endfor %}

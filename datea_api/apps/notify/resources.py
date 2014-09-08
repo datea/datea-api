@@ -18,6 +18,8 @@ from datea_api.apps.dateo.resources import DateoResource, RedateoResource
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.follow.models import Follow
+from datea_api.apps.campaign.models import Campaign
+from datea_api.apps.campaign.resources import CampaignResource
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
@@ -98,7 +100,8 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         Comment: CommentResource,
         Vote: VoteResource,
         Dateo: DateoResource,
-        Redateo: RedateoResource
+        Redateo: RedateoResource,
+        Campaign: CampaignResource
     }, 'action_object', full=True, readonly=True)
 
 
@@ -156,6 +159,9 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         q_args = {"published": True}
         sqs = SearchQuerySet().models(ActivityLog).load_all()
 
+        if 'verb' in request.GET:
+            q_args['verb'] = request.GET.get('verb')
+
         if 'tags' in request.GET:
             q_args['tags__in'] = request.GET.get('tags').split(',')
 
@@ -167,7 +173,6 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
             if mode == 'actor':
                 q_args['actor_id'] = uid
-                print q_args
                 sqs = sqs.filter(**q_args)
 
             elif mode == 'target_user':
@@ -180,11 +185,12 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
             elif mode == 'all':
                 follow_keys = [f.follow_key for f in Follow.objects.filter(user__id=uid)]
-                print q_args, follow_keys
                 if len(follow_keys) > 0:
                     sqs = sqs.filter_or(follow_keys__in=follow_keys).filter_or(actor_id=uid).filter_or(target_user_id=uid).filter_and(**q_args)
                 else:
                     sqs = sqs.filter_or(actor_id=uid).filter_or(target_user_id=uid).filter_and(**q_args)
+        else:
+            sqs = sqs.filter(**q_args)
 
         sqs = sqs.order_by('-created')
         

@@ -1,1 +1,1 @@
-{% spaceless %}{% load i18n %}{% blocktrans with actor as actor and target_user as target_user and target_object_name as object_name %}Check out {{actor}}'s new campaign {% endblocktrans %}{{ main_tag }}{% endspaceless %}
+{% load i18n %}#{{ tag }} - {% blocktrans with actor as actor %}{{actor}}'s new campaign{% endblocktrans %}

@@ -1,0 +1,1 @@
+[Datea admin] {{ actor }} denunció {{model}} de {{target_user}}

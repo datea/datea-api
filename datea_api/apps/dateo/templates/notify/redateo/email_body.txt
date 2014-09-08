@@ -1,10 +1,10 @@
 {% load i18n %}
 {% blocktrans with user as user %}Hi {{ user }}{% endblocktrans %},
 
-{% blocktrans with actor as actor and object_name as object_name %}
-{{ actor }} has redateado {{target_user}}{% endblocktrans %}{% if tags %} {% trans "on" %}{% for tag in tags %} #{{tag}}{% endfor %}{% endif %}:
+{% if user != target_user %}{% blocktrans with actor as actor and object_name as object_name %}{{ actor }} has redateado {{target_user}}'s dateo{% endblocktrans %}{% else %}{% blocktrans with actor as actor %}{{actor}} has redateado your dateo{% endblocktrans %}{% endif %}{% if tags %} {% trans "on" %}{% for tag in tags %} #{{tag}}{% endfor %}{% endif %}:
 
 {{ extract }}
+
 
 {% blocktrans with url as url %}You can view the dateo on: 
 

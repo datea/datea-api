@@ -6,6 +6,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/campaign/campaign_index.txt")
     obj_id = indexes.IntegerField(model_attr='pk')
     name = indexes.CharField(model_attr='name', boost=1.25)
+    slug = indexes.CharField(model_attr='slug', faceted=True)
     user = indexes.CharField(model_attr='user__username', faceted=True)
     user_id = indexes.IntegerField(model_attr="user__pk")
     category = indexes.CharField(model_attr='category__name', null=True, faceted=True)

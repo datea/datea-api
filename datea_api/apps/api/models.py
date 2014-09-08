@@ -37,21 +37,29 @@ class ApiConfig(SingletonModel):
 ######################
 
 
-####
-#  DATEO ASYNC ACTIONS WITH CELERY
-#  better implemented with signals, if you'd like to turn this off.
-#  updating stats, creating activity stream and sending notifications 
-#  on objects is done using celery
-###
 from django.db.models.signals import post_init, post_save, pre_delete
 from .signals import resource_saved
 from celery.execute import send_task
+from datea_api.apps.account.models import User
 from datea_api.apps.dateo.models import Dateo, Redateo
+from datea_api.apps.campaign.models import Campaign
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.flag.models import Flag
 
+def user_saved(sender, instance, created, **kwargs):
+	if created:
+		global do_user_async_tasks
+		from .tasks import do_user_async_tasks
+		do_user_async_tasks.delay(instance.pk, notify=True)
 
+post_save.connect(user_saved, sender=User)
+
+####
+#  DATEO ASYNC ACTIONS WITH CELERY
+#  updating stats, creating activity stream and sending notifications 
+#  on objects is done using celery
+###
 def dateo_pre_saved(sender, instance, **kwargs):
 	instance.__orig_published = instance.published
 
@@ -90,7 +98,7 @@ def redateo_saved(sender, instance, created, **kwargs):
 	if created:
 		global do_redateo_async_tasks
 		from .tasks import do_redateo_async_tasks
-		do_redateo_async_tasks(instance, 1, True) 
+		do_redateo_async_tasks.delay(instance, 1, True) 
 
 resource_saved.connect(redateo_saved, sender=Redateo)
 
@@ -149,6 +157,17 @@ post_init.connect(comment_pre_saved, sender=Comment)
 post_save.connect(comment_saved, sender=Comment)
 pre_delete.connect(comment_pre_delete, sender=Comment)
 
+
+######
+# CAMPAIGN SAVED
+######
+def campaign_saved(sender, instance, created, **kwargs):
+	if created:
+		global do_campaign_async_tasks
+		from .tasks import do_campaign_async_tasks
+		do_campaign_async_tasks.delay(instance.pk, notify=True)
+
+resource_saved.connect(campaign_saved, sender=Campaign)
 
 
 #######

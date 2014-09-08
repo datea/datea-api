@@ -124,9 +124,10 @@ def get_client_data(domain):
         'change_email_success_url': None,
         'change_email_error_url': None,
         'pwreset_base_url': settings.PROTOCOL + '://'+ site.domain + '/account/password/reset/confirm',
-        'comment_url': 'http://datea.pe/dateos/{obj_id}#comment{comment_id}',
-        'dateo_url': 'http://datea.pe/dateos/{obj_id}',
-        'notify_settings_url': 'http://datea.pe/profile/notifications/',
+        'comment_url': settings.DEFAULT_CLIENT_URL+'/{obj_type}s/{obj_id}#comment{comment_id}',
+        'dateo_url': settings.DEFAULT_CLIENT_URL+'/dateos/{obj_id}',
+        'campaign_url': settings.DEFAULT_CLIENT_URL+'/{username}/{slug}',
+        'notify_settings_url': settings.DEFAULT_CLIENT_URL+'/configuracion',
         'create_activity_stream': True,
         'create_notifications': True,
         'send_notification_mail': True

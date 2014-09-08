@@ -191,11 +191,16 @@ class ClientDomain(models.Model):
 	comment_url = models.CharField(_('Comment url template'), max_length=255, 
 					help_text=_("Available vars: {user_id} of commented object's owner, \
 						{username} of commented object' owner, {obj_id} of commented \
-						object, {comment_id} of comment"), blank=True, null=True)
+						object, {comment_id} of comment, {obj_type} type of commented object (dateo mostly)"), blank=True, null=True)
 
 	dateo_url = models.CharField(_('Dateo url template'), max_length=255, 
 					help_text=_("Available vars: {user_id} of dateo owner, \
 						{username} of dateo owner, {obj_id} of dateo"), 
+					blank=True, null=True)
+
+	campaign_url = models.CharField(_('Campaign url template'), max_length=255, 
+					help_text=_("Available vars: {user_id} of campaign owner, \
+						{username} of campaign owner, {obj_id} of campaign, {slug} of campaign"), 
 					blank=True, null=True)
 
 	notify_settings_url = models.CharField(_('Notify settings url template'), max_length=255, 

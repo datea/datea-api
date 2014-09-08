@@ -1,0 +1,1 @@
+[Datea admin] {{actor}} creo nueva iniciativa en #{{ tag }}

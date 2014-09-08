@@ -50,6 +50,7 @@ class Comment(models.Model):
 
 # UPDATE COMMENT STATS
 from django.db.models.signals import pre_delete, post_save
+from datea_api.apps.notify.models import ActivityLog
 
 def after_comment_saved(sender, instance, created, **kwargs):
     if created:
@@ -62,6 +63,7 @@ def after_comment_saved(sender, instance, created, **kwargs):
 
 def before_comment_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
+    ActivityLog.objects.filter(action_key='comment.'+str(instance.pk)).delete()
     if (instance.content_type.model == 'dateo'):
         # this nonesense is because celery doesn't like circular imports?
         global DateoIndex

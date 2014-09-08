@@ -165,7 +165,9 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
 
-CONTENT_ADMIN_IDS = [1]
+# SEND EMAILS TO THE TEAM?
+SEND_ADMIN_EMAILS   = False
+ADMIN_EMAIL_ADDRESS = 'xxx@xxx.xx'
 
 # HAYSTACK WITH ELASTICSEARCH
 # Ngram fields appear to be broken on elasticsearch (switching to solr, more work on config!)
@@ -198,7 +200,7 @@ LANGUAGES = (
 )
 
 LOCALE_PATHS = (
-    os.path.join(PROJECT_DIR), 'locale',
+    os.path.join(PROJECT_DIR, 'locale'),
 )
 
 TIME_ZONE = 'UTC'
@@ -258,6 +260,7 @@ BROKER_URL = 'amqp://guest:guest@localhost//'
 #CELERY_TASK_SERIALIZER = 'json'
 #CELERY_RESULT_SERIALIZER = 'json'
 
+DEFAULT_CLIENT_URL = 'http://datea.pe'
 SEND_NOTIFICATION_EMAILS = False
 
 

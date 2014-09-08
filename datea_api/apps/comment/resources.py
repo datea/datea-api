@@ -35,9 +35,10 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         if bundle.request.method == 'PATCH':
             #preserve original fields
             fields = ['user', 'published', 'content_type', 'object_id', 'created', 'client_domain']
+            orig_obj = Comment.objects.get(pk=int(bundle.data['id']))
             for f in fields:
                 if f in request.data:
-                    request.data[f] = getattr(bundle.obj, f)
+                    request.data[f] = getattr(orig_obj, f)
             
         elif bundle.request.method == 'POST':
             # enforce post user
@@ -49,8 +50,20 @@ class CommentResource(JSONDefaultMixin, ModelResource):
             del bundle.data['content_type']  
             
         return bundle
+
+
+    def apply_sorting(self, obj_list, options=None):
+        if options is None:
+            options = {}
+        else:
+            options = options.copy()
+
+        if not 'order_by' in options:
+            options['order_by'] = 'created'
+
+        return super(CommentResource, self).apply_sorting(obj_list, options)
      
-     
+
     class Meta:
         queryset = Comment.objects.all()
         resource_name = 'comment'
@@ -64,6 +77,7 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         limit = 50
+        excludes = ['client_domain']
         ordering=['created']
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle(throttle_at=500)

@@ -58,7 +58,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     files = fields.ToManyField('datea_api.apps.file.resources.FileResource',
             attribute='files', null=True, full=True, readonly=True)
     comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
-            attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo'),
+            attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo', published=True).order_by('created'),
             null=True, full=True, readonly=True)
     link = fields.ToOneField('datea_api.apps.link.resources.LinkResource',
             attribute='link', null=True, full=True, readonly=True)

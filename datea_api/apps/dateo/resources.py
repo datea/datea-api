@@ -351,8 +351,8 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         # GET DATEOS BY TAGS I FOLLOW
         if 'followed_by_tags' in request.GET:
             uid = int(request.GET['followed_by_tags'])
-            tag_ids = [f.object_id for f in Follow.objects.filter(content_type__model='tag', user__id=uid)]
-            q_args['tag__in'] = tag_ids
+            tags = [f.content_object.tag for f in Follow.objects.filter(content_type__model='tag', user__id=uid)]
+            q_args['tags__in'] = tags
 
         # show published and unpublished actions
         if q_args['published'] == 'all':

@@ -188,7 +188,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     # do our own saving of related m2m fields (since tatsypie does strange stuff)
     def hydrate_m2m(self, bundle):
         
-        #print bundle.data
         if 'images' in bundle.data:
             if len(bundle.data['images']) > 0:
                 imgs = []
@@ -481,7 +480,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         tags = []
 
         if 'tags' in request.GET:
-            tags = request.GET.get('tags').split(',')
+            tags = [t.lower() for t in request.GET.get('tags').split(',')]
             if len(tags) == 1 and tags[0].strip() != '':
                 q_args['tags_exact'] = tags[0]
             else: 
@@ -489,7 +488,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         if 'campaign' in request.GET:
             cam = Campaign.objects.get(pk=int(request.GET.get('campaign')))
-            tags = [c.tag for c in cam.secondary_tags.all()]
+            tags = [c.tag.lower() for c in cam.secondary_tags.all()]
             if len(tags) == 1 and tags[0].strip() != '':
                 q_args['tags_exact'] = tags[0]
             else: 
@@ -538,7 +537,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         if len(tags) > 0:
             tag_objects = Tag.objects.filter(tag__in=tags)
             if filter_by_dateos:
-                print filter_by_dateos, dateo_pks, q_args
                 tag_objects = tag_objects.filter(dateos__pk__in=dateo_pks).distinct()
             
             tags_result = []
@@ -555,7 +553,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         # USERS
         user_objects = User.objects.filter(is_active=True, status=1)
         if filter_by_dateos:
-            #print "dateo_pks", dateo_pks
             user_objects = user_objects.filter(dateos__pk__in=dateo_pks).distinct()
         response['user_count'] = user_objects.count()
 

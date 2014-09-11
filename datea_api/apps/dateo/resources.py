@@ -480,19 +480,19 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         tags = []
 
         if 'tags' in request.GET:
-            tags = [t.lower() for t in request.GET.get('tags').split(',')]
+            tags = request.GET.get('tags').split(',')
             if len(tags) == 1 and tags[0].strip() != '':
-                q_args['tags_exact'] = tags[0]
+                q_args['tags_exact'] = tags[0].lower()
             else: 
-                q_args['tags_exact__in'] = tags
+                q_args['tags_exact__in'] = [t.lower() for t in tags]
 
         if 'campaign' in request.GET:
             cam = Campaign.objects.get(pk=int(request.GET.get('campaign')))
-            tags = [c.tag.lower() for c in cam.secondary_tags.all()]
+            tags = [c.tag for c in cam.secondary_tags.all()]
             if len(tags) == 1 and tags[0].strip() != '':
-                q_args['tags_exact'] = tags[0]
+                q_args['tags_exact'] = tags[0].lower()
             else: 
-                q_args['tags_exact__in'] = tags
+                q_args['tags_exact__in'] = [t.lower() for t in tags]
 
         filter_by_dateos = False
 

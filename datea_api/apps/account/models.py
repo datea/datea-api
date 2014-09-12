@@ -152,6 +152,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 	def get_small_image(self):
 		return self.get_image_thumb('profile_image_small')
 
+	def __init__(self, *args, **kwargs):
+		super(User, self).__init__(*args, **kwargs)
+		self.__username_changed = False
+		self.__orig_username = self.username
+		self.__email_changed = False
+		self.__orig_email = self.email
 
 	def save(self, *args, **kwargs):
 		if self.email == '':
@@ -159,7 +165,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 		if self.status == 2:
 			self.is_active = False
 		super(User, self).save(*args, **kwargs)
+		self.__username_changed = self.username != self.__orig_username
+		self.__orig_username = self.username
+		self.__email_changed = self.email != self.__orig_email
+		self.__orig_email = self.email
 
+
+	def username_changed(self):
+		return self.__username_changed
+
+	def email_changed(self):
+		return self.__email_changed
 
 	def __unicode__(self):
 		if self.full_name:

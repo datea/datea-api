@@ -408,6 +408,8 @@ class UserResource(JSONDefaultMixin, ModelResource):
              bundle.request.resolver_match.kwargs['resource_name'] in [u'user', u'account']):
             
             bundle.data['email'] = bundle.obj.email
+            if bundle.obj.username_changed():
+                bundle.data['token'] = getOrCreateKey(bundle.obj) 
 
             # FOLLOWS
             #follows = []

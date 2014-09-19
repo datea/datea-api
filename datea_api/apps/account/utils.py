@@ -68,7 +68,7 @@ def get_domain_from_url(url):
 
     d = urlparse(url).netloc
     if d.split('.')[0] == 'www':
-        d = d.replace('wwww.','')
+        d = d.replace('www.','')
 
     if d == '':
         if url == 'localhost':

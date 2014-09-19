@@ -326,7 +326,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
                 q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
 
         # check for additional date filters (with datetime objects)      
-        date_params = ['created__gt', 'created__lt', 'since', 'until']]
+        date_params = ['created__gt', 'created__lt', 'since', 'until']
         for p in date_params:
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = models.DateTimeField().to_python(request.GET.get(p))

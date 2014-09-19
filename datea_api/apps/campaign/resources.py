@@ -40,6 +40,8 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
     image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)
+    image2 = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+            attribute='image2', full=True, null=True, readonly=True)
     layer_files = fields.ToManyField('datea_api.apps.file.resources.FileResource', 
             attribute = 'layer_files', full=True, null=True, readonly=True)
     
@@ -92,6 +94,20 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 imgbundle = imgrsc.full_hydrate(imgbundle)
                 imgbundle.obj.save()
                 bundle.obj.image_id = imgbundle.obj.pk
+                bundle.request.method = orig_method
+
+        if 'image2' in bundle.data and type(bundle.data['image2']) == DictType and 'image' in bundle.data['image']:
+            if 'id' in bundle.data['image2'] and 'data_uri' not in bundle.data['image2']['image']:
+                bundle.obj.image2_id = bundle.data['image2']['id']
+            else:
+                orig_method = bundle.request.method
+                if not 'id' in bundle.data['image2']:
+                    bundle.request.method = "POST"
+                imgrsc = ImageResource()
+                imgbundle = imgrsc.build_bundle(data=bundle.data['image2'], request=bundle.request)
+                imgbundle = imgrsc.full_hydrate(imgbundle)
+                imgbundle.obj.save()
+                bundle.obj.image2_id = imgbundle.obj.pk
                 bundle.request.method = orig_method
 
         if 'id' in bundle.data['main_tag']:

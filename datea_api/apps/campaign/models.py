@@ -44,7 +44,8 @@ class Campaign(models.Model):
 
 	end_date = models.DateTimeField(_('End Date'), null=True, blank=True, help_text=_('Set an end date for your campaign (optional)'))
 
-	image = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="actions", on_delete=models.SET_NULL)
+	image = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="campaigns", on_delete=models.SET_NULL)
+	image2 = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="campaigns2", on_delete=models.SET_NULL)
 
 	short_description = models.CharField(_("Short description / Slogan"), blank=True, null=True, max_length=140, help_text=_("A short description or slogan (max. 140 characters)."))
 

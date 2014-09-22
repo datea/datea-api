@@ -264,7 +264,8 @@ DEFAULT_CLIENT_URL = 'http://datea.pe'
 SEND_NOTIFICATION_EMAILS = False
 
 
-RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd', 
+RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd',
+                    'api', 'admin', 'root',
                     'todossomosdateros', 'user', 'users', 'usuario', 'usuarios',
                     'comment', 'comments', 'comentario', 'comentarios',
                     'campaign', 'campaigns', 'iniciativa', 'iniciativas', 
@@ -277,15 +278,19 @@ RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd',
                     'tag', 'tags', 'etiqueta', 'etiquetas', 
                     'category', 'categories', 'categoria', 'categorias', 
                     'flag', 'flags', 'denuncia', 'denuncias', 'denunciar', 
-                    'inicio', 'start', 'home', 'datea.pe', 
+                    'inicio', 'start', 'home', 'datea.pe', 'datea.io' 
                     'signin', 'login', 'signup', 'signout', 'logout', 'register', 'password', 'recover',
-                    'recoverpassword', 'forgot', 
+                    'registrate', 'camabiar-contrasena', 'contrasena', 
+                    'recoverpassword', 'change-password', 'forgot', 
                     'pagina', 'paginas', 'page', 'pages',
                     'content', 'contenido', 'site', 'sites', 'sitemap', 
                     'map', 'maps', 'mapa', 'mapas', 
                     'survey', 'surveys', 'encuesta', 'encuestas', 
                     'election', 'elections', 'eleccion', 'elecciones',
                     'answer', 'answers', 'respuesta', 'respuestas',
+                    'buscar', 'busqueda', 'search', 'panel', 'dashboard', 'update', 'updateUser',
+                    'twitter', 'facebook', 'google', 'twitter-callback', '404', 'config', 'configuration',
+                    'configuracion', 'crear-cuenta'
                     ]
 
 

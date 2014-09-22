@@ -9,7 +9,7 @@ from django.utils import timezone
 from urllib import quote as urlquote
 import re
 from django.core.cache import cache
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 
 from datea_api.apps.image.models import Image
 
@@ -235,6 +235,15 @@ class ClientDomain(models.Model):
 
 	def __unicode__(self):
 		return self.domain
+
+
+def after_domain_save(sender, instance, using, **kwargs):
+	try: 
+		cache.delete('domain-'+instance.domain)
+	except:
+		pass
+
+post_save.connect(after_domain_save, sender=User)
 
 
 

@@ -2,7 +2,7 @@ Hola,
 
 {{ actor }} denunció {{model}} de {{target_user}}:
 
-http://api.datea.pe/admin/{{app_label}}/{{model}}/{{object_id}}/
+http://api.datea.io/admin/{{app_label}}/{{model}}/{{object_id}}/
 
 Haz algo pes!
 

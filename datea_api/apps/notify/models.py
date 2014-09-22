@@ -19,7 +19,7 @@ class NotifySettings(models.Model):
     
     user = models.OneToOneField(User, related_name="notify_settings")
     interaction = models.BooleanField(_("Interactions regarding my content."), default=True)
-    tags_dateos = models.BooleanField(_("Dateos in tags I follow"), default=False)
+    tags_dateos = models.BooleanField(_("Dateos in tags I follow"), default=True)
     tags_reports = models.BooleanField(_("Reports and new Campaigns in tags I follow"), default=True)
     conversations = models.BooleanField(_("Conversations I follow/engage"), default=True)
     site_news = models.BooleanField(_("News by Datea"), default=True)

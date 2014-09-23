@@ -27,9 +27,9 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
                 deb.write(response['profile_image_url'])
                 deb.close()
                 img = urlopen(response['profile_image_url'])
-        		suffix = '_tw'
-        	except HTTPError:
-        		pass
+                suffix = '_tw'
+            except HTTPError:
+                pass
 
         # GOOGLE
         if strategy.backend.name == 'google-oauth2':

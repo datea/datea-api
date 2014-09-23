@@ -23,10 +23,7 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 		# TWITTER 
         if strategy.backend.name == 'twitter':
             try:
-                deb = open('/tmp/debug_datea.txt', 'w')
-                deb.write(response['profile_image_url'])
-                deb.close()
-                img = urlopen(response['profile_image_url'])
+                img = urlopen(response['profile_image_url'].replace('_normal', ''))
                 suffix = '_tw'
             except HTTPError:
                 pass

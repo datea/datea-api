@@ -37,7 +37,7 @@ class ApiConfig(SingletonModel):
 ######################
 
 
-from django.db.models.signals import post_init, post_save, pre_delete
+from django.db.models.signals import post_init, post_save, pre_delete, pre_save
 from .signals import resource_saved
 from celery.execute import send_task
 from datea_api.apps.account.models import User
@@ -61,10 +61,10 @@ post_save.connect(user_saved, sender=User)
 #  on objects is done using celery
 ###
 def dateo_pre_saved(sender, instance, **kwargs):
-	instance.__orig_published = instance.published
+	instance._orig_published = instance.published
 
 def dateo_saved(sender, instance, created, **kwargs):
-	instance.publish_changed = instance.__orig_published != instance.published
+	instance.publish_changed = instance._orig_published != instance.published
 	value = 0
 	notify = False
 	if created and instance.published:
@@ -126,11 +126,11 @@ pre_delete.connect(vote_pre_delete, sender=Vote)
 ###
 
 def comment_pre_saved(sender, instance, **kwargs):
-    instance.__orig_published = instance.published
+    instance._orig_published = instance.published
 
 
 def comment_saved(sender, instance, created, **kwargs):
-    instance.publish_changed = instance.__orig_published != instance.published
+    instance.publish_changed = instance._orig_published != instance.published
     value = 0
     notify = False
     if created and instance.published:

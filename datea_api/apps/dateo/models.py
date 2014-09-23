@@ -149,6 +149,78 @@ class Dateo(models.Model):
 					c.dateo_count += value
 					c.save()
 
+	def refresh_stats(self, published_changed):
+
+		if self.published and not published_changed:
+			add_tags = []
+			del_tag_pks = []
+			current_tag_pks = [t.pk for t in self.tags.all()] 
+			# new tags:
+			for tag in self.tags.all():
+				if tag.pk not in self._prev_tag_pks:
+					add_tags.append(tag)
+
+			for pk in self._prev_tag_pks:
+				if pk not in current_tag_pks:
+					del_tag_pks.append(pk)
+
+			if len(add_tags) > 0:
+				# modify new tags
+				for tag in add_tags:
+					tag.dateo_count += 1
+					if self.has_images():
+						tag.image_count += 1
+					if self.has_files():
+						tag.file_count += 1
+					tag.save()
+
+				# modfiy new campaigns
+				new_campaigns = Campaign.objects.filter(main_tag__in=add_tags)
+				for c in new_campaigns:
+					if hasattr(c, 'dateo_count'):
+						c.dateo_count += 1
+						c.save()
+
+			if len(del_tag_pks) > 0:
+				del_tags = Tag.objects.filter(pk__in=del_tag_pks)
+				for tag in del_tags:
+					tag.dateo_count -= 1
+					if self.has_images():
+						tag.image_count -= 1
+					if self.has_files():
+						tag.file_count -= 1
+					tag.save()
+
+				# modfiy deleted campaigns
+				del_campaigns = Campaign.objects.filter(main_tag__in=del_tags)
+				for c in del_campaigns:
+					if hasattr(c, 'dateo_count'):
+						c.dateo_count -= 1
+						c.save()
+
+		elif self.published and published_changed:
+			self.update_stats(1)
+
+		elif not self.published and published_changed:
+			del_tags = Tag.objects.filter(pk__in=self._prev_tag_pks)
+			for tag in del_tags:
+				tag.dateo_count -= 1
+				if self.has_images():
+					tag.image_count -= 1
+				if self.has_files():
+					tag.file_count -= 1
+				tag.save()
+
+			# modfiy deleted campaigns
+			del_campaigns = Campaign.objects.filter(main_tag__in=del_tags)
+			for c in del_campaigns:
+				if hasattr(c, 'dateo_count'):
+					c.dateo_count -= 1
+					c.save()
+
+
+
+
 	class Meta:
 		verbose_name = 'Dateo'
 		verbose_name_plural = 'Dateos'
@@ -194,13 +266,22 @@ class Redateo(models.Model):
 # AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import DateoIndex
-from datea_api.apps.api.signals import resource_saved
+from datea_api.apps.api.signals import resource_saved, resource_pre_saved
 from django.db.models.signals import pre_delete, post_delete
 from datea_api.apps.notify.models import ActivityLog
+
+def before_dateo_saved(sender, instance, created, **kwargs):
+	if hasattr(instance, 'user') and hasattr(instance, 'tags') and instance.tags.count() >0:
+		instance._prev_tag_pks = [t.pk for t in instance.tags.all()]
+	else:
+		instance._prev_tag_pks = []
 
 def after_dateo_saved(sender, instance, created, **kwargs):
 	if created:
 		instance.update_stats(1)
+	else:
+		published_changed = instance.published != instance._orig_published
+		instance.refresh_stats(published_changed)
 	DateoIndex().update_object(instance)
 
 def before_dateo_delete(sender, instance, **kwargs):
@@ -208,6 +289,7 @@ def before_dateo_delete(sender, instance, **kwargs):
 	instance.update_stats(-1)
 	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()
 
+resource_pre_saved.connect(before_dateo_saved, sender=Dateo)
 resource_saved.connect(after_dateo_saved, sender=Dateo)
 pre_delete.connect(before_dateo_delete, sender=Dateo)
 

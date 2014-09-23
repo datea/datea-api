@@ -33,7 +33,7 @@ from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.follow.models import Follow
 from datea_api.apps.account.utils import get_domain_from_url
-from datea_api.apps.api.signals import resource_saved
+from datea_api.apps.api.signals import resource_saved, resource_pre_saved
 from datea_api.apps.campaign.models import Campaign
 
 from haystack.utils.geo import Point
@@ -273,6 +273,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
 
     def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
+        resource_pre_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         bundle = super(DateoResource, self).save(bundle, skip_errors)
         resource_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         return bundle

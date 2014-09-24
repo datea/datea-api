@@ -218,9 +218,6 @@ class Dateo(models.Model):
 					c.dateo_count -= 1
 					c.save()
 
-
-
-
 	class Meta:
 		verbose_name = 'Dateo'
 		verbose_name_plural = 'Dateos'

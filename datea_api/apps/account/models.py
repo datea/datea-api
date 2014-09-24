@@ -184,11 +184,23 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return self.username
 
 
+def after_user_saved(sender, instance, created, **kwargs):
+	if not created and instance.username_changed():	
+		# importing here because of loop import problems (specially with celery)	
+		from datea_api.apps.dateo.search_indexes import DateoIndex
+		from datea_api.apps.campaign.search_indexes import CampaignIndex
+		di = DateoIndex()
+		for dateo in instance.dateos.all():
+			di.update_object(dateo)
+		ci = CampaignIndex()
+		for campaign in instance.camapigns.all():
+			ci.update_object(campaign)
+
 def before_user_delete(sender, instance, using, **kwargs):
 	instance.__user_delete = True
 
 pre_delete.connect(before_user_delete, sender=User)
-
+post_save.connect(after_user_saved, sender=User)
 
 
 class ClientDomain(models.Model):

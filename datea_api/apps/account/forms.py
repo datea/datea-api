@@ -62,6 +62,9 @@ class CustomPasswordResetForm(PasswordResetForm):
             f.close()
             current_site = get_current_site(request)
             if not user.has_usable_password():
+                f = open('/tmp/datea_errors.txt', 'w')
+                f.write('no usable password')
+                f.close()
                 continue
             if not sitename_override:
                 site_name = current_site.name
@@ -72,6 +75,10 @@ class CustomPasswordResetForm(PasswordResetForm):
                 domain = current_site.domain
             else:
                 domain = domain_override
+
+            f = open('/tmp/datea_errors2.txt', 'w')
+            f.write('site_name: '+site_name+', domain: '+domain)
+            f.close()
 
             c = {
                 'email': user.email,
@@ -87,7 +94,7 @@ class CustomPasswordResetForm(PasswordResetForm):
             subject = ''.join(subject.splitlines())
             email = loader.render_to_string(email_template_name, c)
             send_mail(subject, email, from_email, [user.email])
-            f = open('/tmp/datea_errors.txt', 'w')
+            f = open('/tmp/datea_errors3.txt', 'w')
             f.write(subject+', '+email+', '+from_email+', '+user.email)
             f.close()
 

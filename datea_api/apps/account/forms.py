@@ -57,6 +57,9 @@ class CustomPasswordResetForm(PasswordResetForm):
         for user in active_users:
             # Make sure that no email is sent to a user that actually has
             # a password marked as unusable
+            f = open('/tmp/datea_errors.txt', 'w')
+            f.write('hey')
+            f.close()
             current_site = get_current_site(request)
             if not user.has_usable_password():
                 continue

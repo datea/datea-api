@@ -84,5 +84,8 @@ class CustomPasswordResetForm(PasswordResetForm):
             subject = ''.join(subject.splitlines())
             email = loader.render_to_string(email_template_name, c)
             send_mail(subject, email, from_email, [user.email])
+            f = open('/tmp/datea_errors.txt', 'w')
+            f.write(subject+', '+email+', '+from_email+', '+user.email)
+            f.close()
 
 

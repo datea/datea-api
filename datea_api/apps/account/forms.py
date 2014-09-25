@@ -61,10 +61,11 @@ class CustomPasswordResetForm(PasswordResetForm):
             f.write('hey')
             f.close()
             current_site = get_current_site(request)
-            if not user.has_usable_password():
-                f = open('/tmp/datea_errors.txt', 'w')
-                f.write('no usable password')
-                f.close()
+            #if not user.has_usable_password():
+            #    continue
+            
+            # don't send pass for superuser
+            if user.is_superuser:
                 continue
             if not sitename_override:
                 site_name = current_site.name

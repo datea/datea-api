@@ -1,5 +1,3 @@
-
-
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
@@ -77,10 +75,6 @@ class CustomPasswordResetForm(PasswordResetForm):
             else:
                 domain = domain_override
 
-            f = open('/tmp/datea_errors2.txt', 'w')
-            f.write('site_name: '+site_name+', domain: '+domain)
-            f.close()
-
             c = {
                 'email': user.email,
                 'base_url': base_url,
@@ -95,8 +89,6 @@ class CustomPasswordResetForm(PasswordResetForm):
             subject = ''.join(subject.splitlines())
             email = loader.render_to_string(email_template_name, c)
             send_mail(subject, email, from_email, [user.email])
-            f = open('/tmp/datea_errors3.txt', 'w')
-            f.write(subject+', '+email+', '+from_email+', '+user.email)
-            f.close()
+
 
 

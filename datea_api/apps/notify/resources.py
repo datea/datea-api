@@ -123,6 +123,7 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         limit = 5
+        max_limit = 30
         cache = SimpleCache(timeout=60)
         thottle = CacheThrottle(throttle_at=300)
         excludes = ['published', 'action_key', 'target_key']
@@ -152,7 +153,7 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
         # pagination
         limit = int(request.GET.get('limit', self._meta.limit))
-        limit = limit if limit <= self._meta.limit else self._meta.limit
+        limit = limit if limit <= self._meta.max_limit else self._meta.max_limit
         offset = int(request.GET.get('offset', 0))
         page = (offset / limit) + 1
 

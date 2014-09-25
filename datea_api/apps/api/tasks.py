@@ -92,12 +92,9 @@ def create_dateo_notifications(actlog):
 	# 2. Duenhos de iniciativas
 	if hasattr(actlog.action_object, 'tags'):
 		for tag in actlog.action_object.tags.all():
-			print "TAG", tag
 			for c in tag.campaigns.all():
-				print "CAMPAIGN", c
 				notify_users.add(c.user)
 				if c.user.notify_settings.interaction:
-					print "MAILERME", c.user
 					email_users.add(c.user) 
 
 	dateo_rsc = DateoResource()

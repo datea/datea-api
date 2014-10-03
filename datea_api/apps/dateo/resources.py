@@ -314,7 +314,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
-            q_args['content'] = AutoQuery(request.GET['q'])
+            q_args['content'] = AutoQuery(remove_accents(request.GET['q']))
 
         # check for more params
         params = ['category_id', 'category', 'user', 'user_id',

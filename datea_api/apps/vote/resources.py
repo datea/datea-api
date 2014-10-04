@@ -68,3 +68,4 @@ class VoteResource(JSONDefaultMixin, ModelResource):
         always_return_data = True
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle()
+        include_resource_uri = False

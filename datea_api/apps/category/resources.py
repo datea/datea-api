@@ -19,3 +19,4 @@ class CategoryResource(JSONDefaultMixin, ModelResource):
         authorization = ReadOnlyAuthorization()
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle()
+        include_resource_uri = False

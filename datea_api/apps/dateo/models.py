@@ -266,6 +266,7 @@ from .search_indexes import DateoIndex
 from datea_api.apps.api.signals import resource_saved, resource_pre_saved
 from django.db.models.signals import pre_delete, post_delete
 from datea_api.apps.notify.models import ActivityLog
+from django.core.cache import cache
 
 def before_dateo_saved(sender, instance, created, **kwargs):
 	if hasattr(instance, 'user') and hasattr(instance, 'tags') and instance.tags.count() >0:
@@ -277,11 +278,13 @@ def after_dateo_saved(sender, instance, created, **kwargs):
 	if created:
 		instance.update_stats(1)
 	else:
+		cache.delete('dateo.'+str(instance.pk))
 		published_changed = instance.published != instance._orig_published
 		instance.refresh_stats(published_changed)
 	DateoIndex().update_object(instance)
 
 def before_dateo_delete(sender, instance, **kwargs):
+	cache.delete('dateo.'+str(instance.pk))
 	DateoIndex().remove_object(instance)
 	instance.update_stats(-1)
 	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()

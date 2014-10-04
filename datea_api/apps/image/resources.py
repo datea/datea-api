@@ -43,5 +43,6 @@ class ImageResource(JSONDefaultMixin, ModelResource):
         authorization = DateaBaseAuthorization()
         cache = SimpleCache(timeout=10)
         thottle = CacheThrottle(throttle_at=300)
-        excludes = ['client_domain']
+        excludes = ['client_domain', 'width', 'height']
         always_return_data = True
+        include_resource_uri = False

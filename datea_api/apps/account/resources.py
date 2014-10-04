@@ -631,6 +631,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                   'full_name', 'message', 'status', 
                   'url', 'url_facebook', 'url_twitter', 'url_youtube']
         always_return_data = True
+        include_resource_uri = False
         
 
 

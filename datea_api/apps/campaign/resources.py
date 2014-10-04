@@ -2,6 +2,7 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
+from datea_api.apps.api.cache import SimpleDictCache
 from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
@@ -309,9 +310,12 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         objects = []
 
         for result in page.object_list:
-            bundle = self.build_bundle(obj=result.object, request=request)
-            bundle = self.full_dehydrate(bundle)
-            objects.append(bundle)
+            data = self._meta.cache.get('campaign.'+str(result.obj_id))
+            if not data:
+                bundle = self.build_bundle(obj=result.object, request=request)
+                bundle = self.full_dehydrate(bundle)
+                data = self._meta.cache.set('campaign.'+str(result.obj_id), bundle)
+            objects.append(data)
 
         object_list = {
             'meta': {
@@ -335,8 +339,9 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        cache = SimpleCache(timeout=10)
+        cache = SimpleDictCache(timeout=600)
         limit = 20
+        excludes = ['client_domain']
         filtering = {
             'id': ['exact', 'in'],
             'created': ['range', 'gt', 'gte', 'lt', 'lte'],
@@ -345,13 +350,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             'user': ALL_WITH_RELATIONS,
             'position': ['distance', 'contained','latitude', 'longitude']
         }
-        cache = SimpleCache(timeout=10)
         #throttle = CacheThrottle(throttle_at=200)
         always_return_data = True
+        include_resource_uri = False
 
-
-def after_signal_test(sender, instance, **kwargs):
-    print "AFTER TEST CARAJO"
-
-from django.db.models.signals import m2m_changed
-m2m_changed.connect(after_signal_test, sender=Campaign)

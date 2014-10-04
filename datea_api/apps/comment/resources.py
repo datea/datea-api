@@ -22,7 +22,6 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
-                     'resource_uri': bundle.data['user'].data['resource_uri'],
                      'id': bundle.data['user'].data['id'] 
                      }
         bundle.data['user'] = user_data
@@ -48,7 +47,7 @@ class CommentResource(JSONDefaultMixin, ModelResource):
             bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
             bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
             del bundle.data['content_type']  
-            
+
         return bundle
 
 
@@ -79,9 +78,10 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         limit = 50
         excludes = ['client_domain']
         ordering=['created']
-        cache = SimpleCache(timeout=10)
+        cache = SimpleCache(timeout=60)
         throttle = CacheThrottle(throttle_at=500)
         always_return_data = True
+        include_resource_uri = False
 
 
 def get_comment_resource_class():

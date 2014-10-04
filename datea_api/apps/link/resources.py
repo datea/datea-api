@@ -42,6 +42,7 @@ class LinkResource(JSONDefaultMixin, ModelResource):
         thottle = CacheThrottle(throttle_at=300)
         excludes = ['client_domain']
         always_return_data = True
+        include_resource_uri = False
 
 
 

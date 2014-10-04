@@ -122,13 +122,16 @@ class ActivityLog(models.Model):
 from .search_indexes import ActivityLogIndex
 from datea_api.apps.api.signals import resource_saved
 from django.db.models.signals import pre_delete
+from django.core.cache import cache
 
 def update_search_index(sender, instance, created, **kwargs):
     ActivityLogIndex().update_object(instance)
+    cache.delete('actlog.'+str(instance.pk))
 
 def remove_search_index(sender, instance, **kwargs):
     ActivityLogIndex().remove_object(instance)
-
+    cache.delete('actlog.'+str(instance.pk))
+    
 resource_saved.connect(update_search_index, sender=ActivityLog)
 pre_delete.connect(remove_search_index, sender=ActivityLog)
 

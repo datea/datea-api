@@ -49,3 +49,4 @@ class FlagResource(JSONDefaultMixin, ModelResource):
         cache = SimpleCache(timeout=10)
         thottle = CacheThrottle()
         always_return_data = True
+        include_resource_uri = False

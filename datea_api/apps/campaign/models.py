@@ -157,14 +157,16 @@ from .search_indexes import CampaignIndex
 from datea_api.apps.api.signals import resource_saved
 from django.db.models.signals import pre_delete
 from datea_api.apps.notify.models import ActivityLog
+from django.core.cache import cache
 
 def on_campaign_save(sender, instance, created, **kwargs):
 	CampaignIndex().update_object(instance)
+	cache.delete('campaign.'+str(instance.pk))
 
 def on_campaign_delete(sender, instance, **kwargs):
 	CampaignIndex().remove_object(instance)
 	ActivityLog.objects.filter(action_key='campaign.'+str(instance.pk)).delete()
-
+	cache.delete('campaign.'+str(instance.pk))
 
 resource_saved.connect(on_campaign_save, sender=Campaign)
 pre_delete.connect(on_campaign_delete, sender=Campaign)

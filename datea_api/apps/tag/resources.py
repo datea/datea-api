@@ -301,8 +301,9 @@ class TagResource(JSONDefaultMixin, ModelResource):
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-
+        
         always_return_data = True
         cache = SimpleCache(timeout=10)
         #throttle = CacheThrottle()
+        include_resource_uri = False
 

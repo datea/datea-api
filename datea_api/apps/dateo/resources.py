@@ -3,6 +3,7 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.utils.text import Truncator
 from tastypie.cache import SimpleCache
+from datea_api.apps.api.cache import SimpleDictCache
 from tastypie.throttle import CacheThrottle
 from django.utils.html import strip_tags
 from django.conf.urls import url
@@ -82,10 +83,12 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             'user': ALL_WITH_RELATIONS
         }
         ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
+        excludes = ['client_domain']
         limit = 200
-        cache = SimpleCache(timeout=10)
+        cache = SimpleDictCache(timeout=60)
         #throttle = CacheThrottle(throttle_at=1000)
         always_return_data = True
+        include_resource_uri = False
 
 
     def prepend_urls(self):
@@ -102,7 +105,6 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
-                     'resource_uri': bundle.data['user'].data['resource_uri'],
                      'id': bundle.data['user'].data['id']
                      }
         bundle.data['user'] = user_data
@@ -433,9 +435,12 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         objects = []
 
         for result in page.object_list:
-            bundle = self.build_bundle(obj=result.object, request=request)
-            bundle = self.full_dehydrate(bundle)
-            objects.append(bundle)
+            data = self._meta.cache.get('dateo.'+str(result.obj_id))
+            if not data:
+                bundle = self.build_bundle(obj=result.object, request=request)
+                bundle = self.full_dehydrate(bundle)
+                data = self._meta.cache.set('dateo.'+str(result.obj_id), bundle)
+            objects.append(data)
 
         object_list = {
             'meta': {

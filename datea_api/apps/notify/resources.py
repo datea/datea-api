@@ -6,6 +6,7 @@ from datea_api.apps.api.authorization import DateaBaseAuthorization, OwnerOnlyAu
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
 from datea_api.apps.api.signals import resource_saved
+from datea_api.apps.api.cache import SimpleDictCache
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -49,6 +50,7 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
         authentication = ApiKeyPlusWebAuthentication()
         authorization = OwnerOnlyAuthorization()
         always_return_data = True
+        include_resource_uri = False
 
 
 
@@ -85,6 +87,7 @@ class NotificationResource(JSONDefaultMixin, ModelResource):
             'unread': ['exact']
         }
         always_return_data = True
+        include_resource_uri = False
 
 
 
@@ -112,6 +115,23 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
     
     def dehydrate(self, bundle):
 
+        if 'actor' in bundle.data and bundle.data['actor']:
+            actor_data = {
+                     'username': bundle.data['actor'].data['username'],
+                     'image_small': bundle.data['actor'].data['image_small'],
+                     'id': bundle.data['actor'].data['id']
+                     }
+            bundle.data['actor'] = actor_data
+
+        if 'target_user' in bundle.data and bundle.data['target_user']:
+            target_user_data = {
+                     'username': bundle.data['target_user'].data['username'],
+                     'image_small': bundle.data['target_user'].data['image_small'],
+                     'id': bundle.data['target_user'].data['id']
+                     }
+            bundle.data['target_user'] = target_user_data
+
+
         bundle.data['data'] = bundle.obj.data
 
         return bundle
@@ -124,10 +144,11 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         authorization = DateaBaseAuthorization()
         limit = 5
         max_limit = 30
-        cache = SimpleCache(timeout=60)
+        cache = SimpleDictCache(timeout=1200)
         thottle = CacheThrottle(throttle_at=300)
         excludes = ['published', 'action_key', 'target_key']
         always_return_data = True
+        include_resource_uri = False
 
 
         # Replace GET dispatch_list with HAYSTACK SEARCH
@@ -205,9 +226,12 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         objects = []
 
         for result in page.object_list:
-            bundle = self.build_bundle(obj=result.object, request=request)
-            bundle = self.full_dehydrate(bundle)
-            objects.append(bundle)
+            data = self._meta.cache.get('actlog.'+str(result.obj_id))
+            if not data:
+                bundle = self.build_bundle(obj=result.object, request=request)
+                bundle = self.full_dehydrate(bundle)
+                data = self._meta.cache.set('actlog.'+str(result.obj_id), bundle)
+            objects.append(data)
 
         object_list = {
             'meta': {

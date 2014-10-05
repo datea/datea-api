@@ -15,7 +15,7 @@ from tastypie.contrib.contenttypes.fields import GenericForeignKeyField
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.comment.resources import CommentResource
 from datea_api.apps.dateo.models import Dateo, Redateo
-from datea_api.apps.dateo.resources import DateoResource, RedateoResource
+from datea_api.apps.dateo.resources import DateoFullResource, RedateoResource
 from datea_api.apps.vote.models import Vote
 from datea_api.apps.vote.resources import VoteResource
 from datea_api.apps.follow.models import Follow
@@ -102,14 +102,16 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
     action_object = GenericForeignKeyField({
         Comment: CommentResource,
         Vote: VoteResource,
-        Dateo: DateoResource,
+        Dateo: DateoFullResource,
         Redateo: RedateoResource,
         Campaign: CampaignResource
     }, 'action_object', full=True, readonly=True)
 
 
     target_object = GenericForeignKeyField({
-        Dateo: DateoResource,
+        Dateo: DateoFullResource,
+        Comment: CommentResource,
+        Campaign: CampaignResource
     }, 'target_object', null=True, full=True, readonly=True)
 
     
@@ -246,4 +248,3 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
         self.log_throttled_access(request)
         return self.create_response(request, object_list)
-

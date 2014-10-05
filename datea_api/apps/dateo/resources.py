@@ -9,7 +9,7 @@ from django.utils.html import strip_tags
 from django.conf.urls import url
 from django.http import Http404
 from django.db import models
-from types import DictType
+from types import DictType, StringType, UnicodeType
 
 #from tastypie.authentication import ApiKeyAuthentication
 from tastypie.resources import ModelResource
@@ -46,21 +46,18 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from datea_api.apps.account.models import User
 
 
-class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
+class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
     
     user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
             attribute="user", null=False, full=True, readonly=True)
-    category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
-            attribute= 'category', null=True, full=False, readonly=False)
+    #category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
+    #        attribute= 'category', null=True, full=False, readonly=False)
     tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource',
             attribute='tags', related_name='tags', null=True, full=True, readonly=True)
     images = fields.ToManyField('datea_api.apps.image.resources.ImageResource',
             attribute='images', null=True, full=True, readonly=True)
     files = fields.ToManyField('datea_api.apps.file.resources.FileResource',
             attribute='files', null=True, full=True, readonly=True)
-    comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
-            attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo', published=True).order_by('created'),
-            null=True, full=True, readonly=True)
     link = fields.ToOneField('datea_api.apps.link.resources.LinkResource',
             attribute='link', null=True, full=True, readonly=True)
     admin = fields.ToManyField('datea_api.apps.dateo.resources.DateoStatusResource',
@@ -171,7 +168,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         elif bundle.request.method in ['PUT', 'PATCH'] and ('link' not in bundle.data or not bundle.data['link']):
             bundle.obj.link = None
 
-        if 'tags' not in bundle.data['tags'] and len(bundle.data['tags']) == 0:
+        if 'tags' not in bundle.data and len(bundle.data['tags']) == 0:
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                         'error': 'dateo needs at least 1 tag'}, status=BAD_REQUEST)
             raise ImmediateHttpResponse(response=response)
@@ -250,10 +247,19 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
             if len(bundle.data['tags']) > 0:
                 tags = []
                 for tagdata in bundle.data['tags']:
-                    if 'id' in tagdata:
+                    if type(tagdata) == DictType and 'id' in tagdata:
                         tags.append(tagdata['id'])
                     else:
-                        found = Tag.objects.filter(tag__iexact=remove_accents(tagdata['tag']))
+                        if type(tagdata) == DictType:
+                            find_tag = remove_accents(tagdata['tag'])
+                        elif type(tagdata) == UnicodeType:
+                            find_tag = remove_accents(tagdata)
+                        else:
+                            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                                        'error': 'bad format in tags'}, status=BAD_REQUEST)
+                            raise ImmediateHttpResponse(response=response)
+
+                        found = Tag.objects.filter(tag__iexact=find_tag)
                         if found.count() > 0:
                             tags.append(found[0].pk)
                         else:
@@ -277,7 +283,7 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
     def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
         resource_pre_saved.send(sender=Dateo, instance=bundle.obj, created=created)
-        bundle = super(DateoResource, self).save(bundle, skip_errors)
+        bundle = super(DateoBaseResource, self).save(bundle, skip_errors)
         resource_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         return bundle
 
@@ -435,11 +441,11 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         objects = []
 
         for result in page.object_list:
-            data = self._meta.cache.get('dateo.'+str(result.obj_id))
+            data = self._meta.cache.get(self._meta.resource_name+str(result.obj_id))
             if not data:
                 bundle = self.build_bundle(obj=result.object, request=request)
                 bundle = self.full_dehydrate(bundle)
-                data = self._meta.cache.set('dateo.'+str(result.obj_id), bundle)
+                data = self._meta.cache.set(self._meta.resource_name+str(result.obj_id), bundle)
             objects.append(data)
 
         object_list = {
@@ -569,6 +575,86 @@ class DateoResource(JSONDefaultMixin, DateaBaseGeoResource):
         self.log_throttled_access(request)
         return self.create_response(request, response)
 
+
+class DateoFullResource(DateoBaseResource):
+
+    comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
+        attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo', published=True).order_by('created'),
+        null=True, full=True, readonly=True)
+
+    class Meta:
+        queryset = Dateo.objects.all()
+        resource_name = 'dateo_full'
+        list_allowed_methods = ['get', 'post', 'put', 'patch']
+        detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
+        filtering = {
+            'action': ALL_WITH_RELATIONS,
+            'id': ['exact'],
+            'created': ['range', 'gt', 'gte', 'lt', 'lte'],
+            'position': ['distance', 'contained','latitude', 'longitude'],
+            'published': ['exact'],
+            'user': ALL_WITH_RELATIONS
+        }
+        ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
+        excludes = ['client_domain']
+        limit = 200
+        cache = SimpleDictCache(timeout=3600)
+        #throttle = CacheThrottle(throttle_at=1000)
+        always_return_data = True
+        include_resource_uri = False
+
+
+class DateoResource(DateoBaseResource):
+
+    class Meta:
+        queryset = Dateo.objects.all()
+        resource_name = 'dateo'
+        list_allowed_methods = ['get', 'post', 'put', 'patch']
+        detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
+        filtering = {
+            'action': ALL_WITH_RELATIONS,
+            'id': ['exact'],
+            'created': ['range', 'gt', 'gte', 'lt', 'lte'],
+            'position': ['distance', 'contained','latitude', 'longitude'],
+            'published': ['exact'],
+            'user': ALL_WITH_RELATIONS
+        }
+        ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
+        excludes = ['client_domain', 'status']
+        limit = 200
+        cache = SimpleDictCache(timeout=3600)
+        #throttle = CacheThrottle(throttle_at=1000)
+        always_return_data = True
+        include_resource_uri = False
+
+
+    def dehydrate(self, bundle):
+        
+        user_data = {
+                     'username': bundle.data['user'].data['username'],
+                     'image_small': bundle.data['user'].data['image_small'],
+                     'id': bundle.data['user'].data['id']
+                     }
+        bundle.data['user'] = user_data
+        bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
+        bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
+        bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
+
+        if 'admin' in bundle.data and len(bundle.data['admin']) > 0:
+            adm_data = {}
+            for adm in bundle.obj.admin.all():
+                adm_data[adm.campaign_id] = {'status': adm.status, 'id': adm.id}
+            bundle.data['admin'] = adm_data
+        else:
+            bundle.data['admin'] = None
+
+        bundle.data['tags'] = [t.data['tag'] for t in bundle.data['tags']]
+
+        return bundle
 
 
 class DateoStatusResource(JSONDefaultMixin, ModelResource):

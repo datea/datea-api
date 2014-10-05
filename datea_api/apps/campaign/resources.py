@@ -234,7 +234,8 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 q_args[p] = models.DateTimeField().to_python(request.get(p))
 
         if 'tags' in request.GET:
-            q_args['tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags').split(',')]
+            q_args['secondary_tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags').split(',')]
+            print q_args['secondary_tags__in']
 
         if 'main_tag' in request.GET:
             mtags = request.GET.get('main_tag').split(',')
@@ -339,7 +340,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        cache = SimpleDictCache(timeout=600)
+        cache = SimpleDictCache(timeout=3600)
         limit = 20
         excludes = ['client_domain']
         filtering = {

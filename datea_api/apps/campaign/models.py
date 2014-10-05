@@ -9,6 +9,7 @@ from datea_api.apps.category.models import Category
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
+from jsonfield import JSONField
 
 
 class Campaign(models.Model):
@@ -82,6 +83,8 @@ class Campaign(models.Model):
         )
 	default_vis = models.CharField(_("Default visualization mode"), max_length=10, choices=status_choices, default="map")
 	default_filter = models.CharField(_("Default filter"), max_length=10, blank=True, null=True)
+
+	#settings = JSONField(verbose_name=_("Settings"), blank=True, null=True)
 
 	# statistics
 	dateo_count = models.PositiveIntegerField(_("Item count"), default=0)

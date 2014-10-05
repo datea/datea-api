@@ -160,6 +160,19 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         else:
             return self.dispatch('list', request, **kwargs)
 
+    def dispatch_detail(self, request, **kwargs):
+        if request.method == "GET":
+            cache_key = self._meta.resource_name+'.'+kwargs['pk']
+            data = self._meta.cache.get(cache_key)
+            if not data:
+                obj = ActivityLog.objects.get(pk=int(kwargs['pk']))
+                bundle = self.build_bundle(obj=obj, request=request)
+                bundle = self.full_dehydrate(bundle)
+                data = self._meta.cache.set(cache_key, bundle)
+            return self.create_response(request, data)
+        else:
+            return self.dispatch('detail', request, **kwargs)
+
     def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
         bundle = super(ActivityLogResource, self).save(bundle, skip_errors)
@@ -228,11 +241,12 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         objects = []
 
         for result in page.object_list:
-            data = self._meta.cache.get('actlog.'+str(result.obj_id))
+            cache_key = self._meta.resource_name+'.'+str(result.obj_id)
+            data = self._meta.cache.get(cache_key)
             if not data:
                 bundle = self.build_bundle(obj=result.object, request=request)
                 bundle = self.full_dehydrate(bundle)
-                data = self._meta.cache.set('actlog.'+str(result.obj_id), bundle)
+                data = self._meta.cache.set(cache_key, bundle)
             objects.append(data)
 
         object_list = {

@@ -294,6 +294,19 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         else:
             return self.dispatch('list', request, **kwargs)
 
+    def dispatch_detail(self, request, **kwargs):
+        if request.method == "GET":
+            cache_key = self._meta.resource_name+'.'+kwargs['pk']
+            data = self._meta.cache.get(cache_key)
+            if not data:
+                obj = Dateo.objects.get(pk=int(kwargs['pk']))
+                bundle = self.build_bundle(obj=obj, request=request)
+                bundle = self.full_dehydrate(bundle)
+                data = self._meta.cache.set(cache_key, bundle)
+            return self.create_response(request, data)
+        else:
+            return self.dispatch('detail', request, **kwargs)
+
     rename_get_filters = {   
         'id': 'obj_id',
         'category': 'category_exact',
@@ -441,11 +454,12 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         objects = []
 
         for result in page.object_list:
-            data = self._meta.cache.get(self._meta.resource_name+str(result.obj_id))
+            cache_key = self._meta.resource_name+'.'+str(result.obj_id)
+            data = self._meta.cache.get(cache_key)
             if not data:
                 bundle = self.build_bundle(obj=result.object, request=request)
                 bundle = self.full_dehydrate(bundle)
-                data = self._meta.cache.set(self._meta.resource_name+str(result.obj_id), bundle)
+                data = self._meta.cache.set(cache_key, bundle)
             objects.append(data)
 
         object_list = {

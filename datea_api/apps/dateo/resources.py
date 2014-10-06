@@ -106,8 +106,8 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
                      }
         bundle.data['user'] = user_data
         bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
-        bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
-        bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
+        #bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
+        #bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
 
         if 'admin' in bundle.data and len(bundle.data['admin']) > 0:
             adm_data = {}
@@ -296,12 +296,15 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
     def dispatch_detail(self, request, **kwargs):
         if request.method == "GET":
+            print "dispatch detail"
             cache_key = self._meta.resource_name+'.'+kwargs['pk']
             data = self._meta.cache.get(cache_key)
-            if not data:
+            if not data or 'next_by_user' not in data:
                 obj = Dateo.objects.get(pk=int(kwargs['pk']))
                 bundle = self.build_bundle(obj=obj, request=request)
                 bundle = self.full_dehydrate(bundle)
+                bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
+                bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
                 data = self._meta.cache.set(cache_key, bundle)
             return self.create_response(request, data)
         else:
@@ -655,8 +658,8 @@ class DateoResource(DateoBaseResource):
                      }
         bundle.data['user'] = user_data
         bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
-        bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
-        bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
+        #bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
+        #bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
 
         if 'admin' in bundle.data and len(bundle.data['admin']) > 0:
             adm_data = {}

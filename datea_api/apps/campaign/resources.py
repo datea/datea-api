@@ -28,6 +28,10 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import Http404
 from types import DictType
 
+from tastypie.resources import convert_post_to_patch
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
+from tastypie import http
+
 
 class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     
@@ -203,6 +207,47 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             return self.create_response(request, data)
         else:
             return self.dispatch('detail', request, **kwargs)
+
+    def patch_detail(self, request, **kwargs):
+        """
+        Updates a resource in-place.
+
+        Calls ``obj_update``.
+
+        If the resource is updated, return ``HttpAccepted`` (202 Accepted).
+        If the resource did not exist, return ``HttpNotFound`` (404 Not Found).
+        """
+        request = convert_post_to_patch(request)
+        basic_bundle = self.build_bundle(request=request)
+
+        # We want to be able to validate the update, but we can't just pass
+        # the partial data into the validator since all data needs to be
+        # present. Instead, we basically simulate a PUT by pulling out the
+        # original data and updating it in-place.
+        # So first pull out the original object. This is essentially
+        # ``get_detail``.
+        try:
+            obj = Campaign.objects.get(pk=int(kwargs['pk']))
+        except ObjectDoesNotExist:
+            return http.HttpNotFound()
+        except MultipleObjectsReturned:
+            return http.HttpMultipleChoices("More than one resource is found at this URI.")
+
+        bundle = self.build_bundle(obj=obj, request=request)
+        bundle = self.full_dehydrate(bundle)
+        bundle = self.alter_detail_data_to_serialize(request, bundle)
+
+        # Now update the bundle in-place.
+        deserialized = self.deserialize(request, request.body, format=request.META.get('CONTENT_TYPE', 'application/json'))
+        self.update_in_place(request, bundle, deserialized)
+
+        if not self._meta.always_return_data:
+            return http.HttpAccepted()
+        else:
+            bundle = self.full_dehydrate(bundle)
+            bundle = self.alter_detail_data_to_serialize(request, bundle)
+            return self.create_response(request, bundle, response_class=http.HttpAccepted)
+
 
     rename_get_filters = {   
         'id': 'obj_id',

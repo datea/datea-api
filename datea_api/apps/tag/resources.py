@@ -29,6 +29,8 @@ from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from django.db.models import Count
 import unicodedata
+import sys
+from types import UnicodeType
 
 
 class TagResource(JSONDefaultMixin, ModelResource):
@@ -55,7 +57,8 @@ class TagResource(JSONDefaultMixin, ModelResource):
         if bundle.request.method in ["PATCH", "PUT"]:
             bundle.data['client_domain'] = bundle.obj.client_domain
         elif bundle.request.method == "POST":
-            bundle.obj.client_domain = bundle.data['client_domain'] = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
+            if type(bundle.data) != UnicodeType:
+                bundle.obj.client_domain = bundle.data['client_domain'] = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
         return bundle 
 
 

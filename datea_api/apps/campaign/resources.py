@@ -101,7 +101,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 bundle.obj.image_id = imgbundle.obj.pk
                 bundle.request.method = orig_method
 
-        if 'image2' in bundle.data and type(bundle.data['image2']) == DictType and 'image' in bundle.data['image']:
+        if 'image2' in bundle.data and type(bundle.data['image2']) == DictType and 'image' in bundle.data['image2']:
             if 'id' in bundle.data['image2'] and 'data_uri' not in bundle.data['image2']['image']:
                 bundle.obj.image2_id = bundle.data['image2']['id']
             else:

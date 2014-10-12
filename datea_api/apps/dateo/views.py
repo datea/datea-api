@@ -55,12 +55,17 @@ def make_dateo_csv_row(dateo):
 	if dateo.images.count() > 0:
 		files = " ".join([host+f.file.url for f in dateo.files.all()])
 
+	if dateo.date:
+		dateo_date = dateo.date.strftime("%Y-%m-%d %H:%M:%S")
+	else:
+		dateo_date = ''
+
 	return [
 		dateo.user.username,
 		dateo.created.strftime("%Y-%m-%d %H:%M:%S"),
 		" ".join(['#'+t.tag for t in dateo.tags.all()]),
 		dateo.content,
-		dateo.date.strftime("%Y-%m-%d %H:%M:%S"),
+		dateo_date,
 		dateo.address or '',
 		str(lat),
 		str(lng),

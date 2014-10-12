@@ -9,7 +9,7 @@ from django.utils import timezone
 from urllib import quote as urlquote
 import re
 from django.core.cache import cache
-from django.db.models.signals import pre_delete, post_save
+from django.db.models.signals import pre_delete, post_save, pre_save
 
 from datea_api.apps.image.models import Image
 
@@ -154,10 +154,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 	def __init__(self, *args, **kwargs):
 		super(User, self).__init__(*args, **kwargs)
-		self.__username_changed = False
-		self.__orig_username = self.username
-		self.__email_changed = False
-		self.__orig_email = self.email
+		self._username_changed = False
+		self._orig_username = self.username
+		self._email_changed = False
+		self._orig_email = self.email
 
 	def save(self, *args, **kwargs):
 		if self.email == '':
@@ -165,17 +165,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 		if self.status == 2:
 			self.is_active = False
 		super(User, self).save(*args, **kwargs)
-		self.__username_changed = self.username != self.__orig_username
-		self.__orig_username = self.username
-		self.__email_changed = self.email != self.__orig_email
-		self.__orig_email = self.email
+		self._username_changed = self.username != self._orig_username
+		self._orig_username = self.username
+		self._email_changed = self.email != self._orig_email
+		self._orig_email = self.email
 
 
 	def username_changed(self):
-		return self.__username_changed
+		return self._username_changed
 
 	def email_changed(self):
-		return self.__email_changed
+		return self._email_changed
 
 	def __unicode__(self):
 		if self.full_name:
@@ -185,7 +185,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 def after_user_saved(sender, instance, created, **kwargs):
-	if not created and instance.username_changed():	
+	if not created and instance._orig_username != instance.username:
 		# importing here because of loop import problems (specially with celery)	
 		from datea_api.apps.dateo.search_indexes import DateoIndex
 		from datea_api.apps.campaign.search_indexes import CampaignIndex
@@ -193,7 +193,7 @@ def after_user_saved(sender, instance, created, **kwargs):
 		for dateo in instance.dateos.all():
 			di.update_object(dateo)
 		ci = CampaignIndex()
-		for campaign in instance.camapigns.all():
+		for campaign in instance.campaigns.all():
 			ci.update_object(campaign)
 
 def before_user_delete(sender, instance, using, **kwargs):

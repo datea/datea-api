@@ -78,7 +78,7 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         limit = 50
         excludes = ['client_domain']
         ordering=['created']
-        cache = SimpleCache(timeout=60)
+        #cache = SimpleCache(timeout=5)
         throttle = CacheThrottle(throttle_at=500)
         always_return_data = True
         include_resource_uri = False

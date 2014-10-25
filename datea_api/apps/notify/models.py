@@ -31,7 +31,7 @@ def create_notify_settings(sender, instance=None, **kwargs):
     if instance is None: return
     notify_settings, created = NotifySettings.objects.get_or_create(user=instance)
 
-post_save.connect(create_notify_settings, sender=User)
+post_save.connect(create_notify_settings, sender=User, dispatch_uid="datea_api.apps.notifysettings.saved")
         
 
 class Notification(models.Model):
@@ -132,6 +132,6 @@ def remove_search_index(sender, instance, **kwargs):
     ActivityLogIndex().remove_object(instance)
     cache.delete('actlog.'+str(instance.pk))
     
-resource_saved.connect(update_search_index, sender=ActivityLog)
-pre_delete.connect(remove_search_index, sender=ActivityLog)
+resource_saved.connect(update_search_index, sender=ActivityLog, dispatch_uid="datea_api.apps.actlog.saved")
+pre_delete.connect(remove_search_index, sender=ActivityLog, dispatch_uid="datea_api.apps.actlog.delete")
 

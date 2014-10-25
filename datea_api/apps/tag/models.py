@@ -44,6 +44,6 @@ def update_search_index(sender, instance, created, **kwargs):
 def remove_search_index(sender, instance, **kwargs):
 	TagIndex().remove_object(instance)
 
-post_save.connect(update_search_index, sender=Tag)
-pre_delete.connect(remove_search_index, sender=Tag)
+post_save.connect(update_search_index, sender=Tag, dispatch_uid="datea_api.apps.tag.saved")
+pre_delete.connect(remove_search_index, sender=Tag, dispatch_uid="datea_api.apps.tag.delete")
 

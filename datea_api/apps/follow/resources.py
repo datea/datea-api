@@ -10,6 +10,7 @@ from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.account.utils import get_domain_from_url
 from django.contrib.contenttypes.models import ContentType
+from datea_api.apps.api.signals import resource_saved
 
 
 class FollowResource(JSONDefaultMixin, ModelResource):

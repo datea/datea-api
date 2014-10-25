@@ -289,9 +289,9 @@ def before_dateo_delete(sender, instance, **kwargs):
 	instance.update_stats(-1)
 	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()
 
-resource_pre_saved.connect(before_dateo_saved, sender=Dateo)
-resource_saved.connect(after_dateo_saved, sender=Dateo)
-pre_delete.connect(before_dateo_delete, sender=Dateo)
+resource_pre_saved.connect(before_dateo_saved, sender=Dateo, dispatch_uid="datea_api.apps.dateo.pre_save")
+resource_saved.connect(after_dateo_saved, sender=Dateo, dispatch_uid="datea_api.apps.dateo.saved")
+pre_delete.connect(before_dateo_delete, sender=Dateo, dispatch_uid="datea_api.apps.dateo.delete")
 
 def after_status_saved(sender, instance, created, **kwargs):
 	DateoIndex().update_object(instance.dateo)
@@ -299,8 +299,8 @@ def after_status_saved(sender, instance, created, **kwargs):
 def after_status_delete(sender, instance, **kwargs):
 	DateoIndex().update_object(instance.dateo)
 
-resource_saved.connect(after_status_saved, sender=DateoStatus)
-post_delete.connect(after_status_delete, sender=DateoStatus)
+resource_saved.connect(after_status_saved, sender=DateoStatus, dispatch_uid="datea_api.apps.dateoStatus.saved")
+post_delete.connect(after_status_delete, sender=DateoStatus, dispatch_uid="datea_api.apps.dateoStatus.delete")
 
 def after_redateo_saved(sender, instance, created, **kwargs):
 	instance.update_stats(1)
@@ -311,5 +311,5 @@ def after_redateo_delete(sender, instance, **kwargs):
 	ActivityLog.objects.filter(action_key='redateo.'+str(instance.pk)).delete()
 	DateoIndex().update_object(instance.dateo)
 
-resource_saved.connect(after_redateo_saved, sender=Redateo)
-post_delete.connect(after_redateo_delete, sender=Redateo)
+resource_saved.connect(after_redateo_saved, sender=Redateo, dispatch_uid="datea_api.apps.redateo.saved")
+post_delete.connect(after_redateo_delete, sender=Redateo, dispatch_uid="datea_api.apps.redateo.delete")

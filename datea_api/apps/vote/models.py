@@ -72,8 +72,8 @@ def before_vote_delete(sender, instance, **kwargs):
         from datea_api.apps.dateo.search_indexes import DateoIndex
         DateoIndex().update_object(instance.content_object)
 
-post_save.connect(after_vote_saved, sender=Vote)
-pre_delete.connect(before_vote_delete, sender=Vote)
+post_save.connect(after_vote_saved, sender=Vote, dispatch_uid="datea_api.apps.vote.saved")
+pre_delete.connect(before_vote_delete, sender=Vote, dispatch_uid="datea_api.apps.vote.delete")
 
     
 

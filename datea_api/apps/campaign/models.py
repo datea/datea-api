@@ -171,7 +171,7 @@ def on_campaign_delete(sender, instance, **kwargs):
 	ActivityLog.objects.filter(action_key='campaign.'+str(instance.pk)).delete()
 	cache.delete('campaign.'+str(instance.pk))
 
-resource_saved.connect(on_campaign_save, sender=Campaign)
-pre_delete.connect(on_campaign_delete, sender=Campaign)
+resource_saved.connect(on_campaign_save, sender=Campaign, dispatch_uid="datea_api.apps.campaign.saved")
+pre_delete.connect(on_campaign_delete, sender=Campaign, dispatch_uid="datea_api.apps.campaign.delete")
 
 

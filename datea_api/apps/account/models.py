@@ -199,8 +199,8 @@ def after_user_saved(sender, instance, created, **kwargs):
 def before_user_delete(sender, instance, using, **kwargs):
 	instance.__user_delete = True
 
-pre_delete.connect(before_user_delete, sender=User)
-post_save.connect(after_user_saved, sender=User)
+pre_delete.connect(before_user_delete, sender=User, dispatch_uid="datea_api.apps.account.delete")
+post_save.connect(after_user_saved, sender=User, dispatch_uid="datea_api.apps.account.save")
 
 
 class ClientDomain(models.Model):
@@ -255,7 +255,7 @@ def after_domain_save(sender, instance, using, **kwargs):
 	except:
 		pass
 
-post_save.connect(after_domain_save, sender=User)
+post_save.connect(after_domain_save, sender=User, dispatch_uid="datea_api.apps.account.domain_save")
 
 
 

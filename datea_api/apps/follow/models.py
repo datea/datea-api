@@ -38,7 +38,7 @@ class Follow(models.Model):
 
 
     def update_stats(self, value):
-        
+        print "UPDATE_STATS"
         if hasattr(self.content_object, 'follow_count'):
             self.content_object.follow_count += value
             self.content_object.save()
@@ -66,7 +66,8 @@ class Follow(models.Model):
 #  better implemented with signals, if you'd like to turn this off.
 #  updating stats on objects is done using celery
 ###
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import pre_delete, post_save
+from datea_api.apps.api.signals import resource_saved
 
 def follow_saved(sender, instance, created, **kwargs):
     if created:
@@ -75,8 +76,8 @@ def follow_saved(sender, instance, created, **kwargs):
 def follow_pre_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
 
-post_save.connect(follow_saved, sender=Follow)
-pre_delete.connect(follow_pre_delete, sender=Follow)
+post_save.connect(follow_saved, sender=Follow, dispatch_uid="datea_api.apps.follow.save")
+pre_delete.connect(follow_pre_delete, sender=Follow, dispatch_uid="datea_api.apps.follow.delete")
         
     
  

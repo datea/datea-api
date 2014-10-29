@@ -74,11 +74,14 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
             
         elif bundle.request.method in ('PUT', 'PATCH'):
-            
+            orig_obj = Campaign.objects.get(pk=bundle.data['id']);
             forbidden_fields = ['user', 'client_domain', 'comment_count', 'dateo_count', 
                                 'follow_count', 'featured', 'created', 'user']
             for f in forbidden_fields:
-                bundle.data[f] = getattr(bundle.obj, f)
+                if f in bundle.data:
+                    del bundle.data[f]
+                if hasattr(orig_obj, f): 
+                    setattr(bundle.obj, f, getattr(orig_obj, f))
 
         if 'category' in bundle.data and bundle.data['category']:
             if type(bundle.data['category']) == DictType:
@@ -233,6 +236,9 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         except MultipleObjectsReturned:
             return http.HttpMultipleChoices("More than one resource is found at this URI.")
 
+        cache_key = 'campaign.'+str(obj.id)
+        self._meta.cache.delete(cache_key)
+
         bundle = self.build_bundle(obj=obj, request=request)
         bundle = self.full_dehydrate(bundle)
         bundle = self.alter_detail_data_to_serialize(request, bundle)
@@ -293,7 +299,6 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         if 'tags' in request.GET:
             q_args['secondary_tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags').split(',')]
-            print q_args['secondary_tags__in']
 
         if 'main_tag' in request.GET:
             mtags = request.GET.get('main_tag').split(',')
@@ -399,7 +404,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        cache = SimpleDictCache(timeout=3600)
+        cache = SimpleDictCache(timeout=5)
         limit = 20
         excludes = ['client_domain']
         filtering = {

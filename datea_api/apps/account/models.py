@@ -12,7 +12,6 @@ from django.core.cache import cache
 from django.db.models.signals import pre_delete, post_save, pre_save
 
 from datea_api.apps.image.models import Image
-from datea_api.apps.dateo.models import Dateo
 
 
 class CustomUserManager(BaseUserManager):
@@ -198,6 +197,7 @@ def after_user_saved(sender, instance, created, **kwargs):
 			ci.update_object(campaign)
 	
 	if not created:
+		from datea_api.apps.dateo.models import Dateo
 		for pk in [d.pk for d in Dateo.objects.filter(user=instance)]:
 			cache.delete('dateo.'+str(pk))
 	

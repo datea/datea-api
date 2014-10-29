@@ -317,6 +317,9 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         except MultipleObjectsReturned:
             return http.HttpMultipleChoices("More than one resource is found at this URI.")
 
+        cache_key = self._meta.resource_name+'.'+str(obj.id)
+        self._meta.cache.delete(cache_key)
+
         bundle = self.build_bundle(obj=obj, request=request)
         bundle = self.full_dehydrate(bundle)
         bundle = self.alter_detail_data_to_serialize(request, bundle)

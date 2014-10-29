@@ -662,7 +662,7 @@ class DateoFullResource(DateoBaseResource):
         ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
         excludes = ['client_domain']
         limit = 200
-        cache = SimpleDictCache(timeout=3600)
+        cache = SimpleDictCache(timeout=10)
         #throttle = CacheThrottle(throttle_at=1000)
         always_return_data = True
         include_resource_uri = False
@@ -688,7 +688,7 @@ class DateoResource(DateoBaseResource):
         ordering = ['name', 'created', 'distance', 'vote_count', 'comment_count']
         excludes = ['client_domain', 'status']
         limit = 200
-        cache = SimpleDictCache(timeout=3600)
+        cache = SimpleDictCache(timeout=10)
         #throttle = CacheThrottle(throttle_at=1000)
         always_return_data = True
         include_resource_uri = False

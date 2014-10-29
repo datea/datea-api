@@ -38,7 +38,8 @@ class SimpleDictCache(NoCache):
         data = self.serializer.to_simple(value, {})
         if timeout is None:
             timeout = self.timeout
-        cache.set(key, data, timeout)
+        #cache.set(key, data, timeout)
+        cache.set(key, data, 3600)
         return data
     
     def cache_control(self):

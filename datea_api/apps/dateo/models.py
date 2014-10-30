@@ -11,6 +11,7 @@ from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
 from datea_api.apps.link.models import Link
 import urllib2, json
+from django.core.cache import cache
 
 
 class Dateo(models.Model):
@@ -148,6 +149,7 @@ class Dateo(models.Model):
 				if hasattr(c, 'dateo_count'):
 					c.dateo_count += value
 					c.save()
+					cache.delete('campaign.'+str(c.pk))
 
 	def refresh_stats(self, published_changed):
 
@@ -180,6 +182,7 @@ class Dateo(models.Model):
 					if hasattr(c, 'dateo_count'):
 						c.dateo_count += 1
 						c.save()
+						cache.delete('campaign.'+str(c.pk))
 
 			if len(del_tag_pks) > 0:
 				del_tags = Tag.objects.filter(pk__in=del_tag_pks)
@@ -197,6 +200,7 @@ class Dateo(models.Model):
 					if hasattr(c, 'dateo_count'):
 						c.dateo_count -= 1
 						c.save()
+						cache.delete('campaign.'+str(c.pk))
 
 		elif self.published and published_changed:
 			self.update_stats(1)
@@ -217,6 +221,7 @@ class Dateo(models.Model):
 				if hasattr(c, 'dateo_count'):
 					c.dateo_count -= 1
 					c.save()
+					cache.delete('campaign.'+str(c.pk))
 
 	class Meta:
 		verbose_name = 'Dateo'
@@ -266,7 +271,6 @@ from .search_indexes import DateoIndex
 from datea_api.apps.api.signals import resource_saved, resource_pre_saved
 from django.db.models.signals import pre_delete, post_delete
 from datea_api.apps.notify.models import ActivityLog
-from django.core.cache import cache
 
 def before_dateo_saved(sender, instance, created, **kwargs):
 	if hasattr(instance, 'user') and hasattr(instance, 'tags') and instance.tags.count() >0:

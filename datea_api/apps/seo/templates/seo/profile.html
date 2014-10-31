@@ -1,0 +1,7 @@
+{% extends "seo/seo-base.html" %}
+
+{% block "body" %}
+	<div>Perfil datero de</div> 
+	<h1>{{user.username}}</h1>
+	{% if user.message %}<h3>{{user.message}}</h3>{% endif %}
+{% endblock %}

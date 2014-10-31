@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^account/', include('datea_api.apps.account.urls')),
     url(r'^csv-export/', include('datea_api.apps.dateo.urls')),
+    url(r'^seo/', include('datea_api.apps.seo.urls')),
     url(r'^', top_level),
 )
 

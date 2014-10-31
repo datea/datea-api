@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'datea_api.apps.flag',
     'datea_api.apps.link',
     'datea_api.apps.api',
+    'datea_api.apps.seo',
 
     # USER STUFF
     'registration',

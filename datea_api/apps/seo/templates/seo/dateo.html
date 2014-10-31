@@ -1,0 +1,12 @@
+{% extends "seo/seo-base.html" %}
+
+{% block "body" %}
+	<p class="user"><a href="/{{dateo.user.username}}">{{dateo.user.username}}</a></p>
+	<p class="tags">{% for tag in dateo.tags.all %}<a href="/tag/{{tag.tag}}">#{{tag.tag}}</a>, {% endfor %}</p>
+	<p class="content">{{dateo.content}}</p>
+	{% if dateo.address %}<p class="address">{{dateo.address}}</p>{% endif %}
+	{% if dateo.country %}<p class="country">{{dateo.country}}</p>{% endif %}
+	{% if dateo.admin_level1 %}<p class="admin-level1">{{dateo.admin_level1}}</p>{% endif %}
+	{% if dateo.admin_level2 %}<p class="admin-level2">{{dateo.admin_level2}}</p>{% endif %}
+	{% if dateo.admin_level3 %}<p class="admin-level3">{{dateo.admin_level3}}</p>{% endif %}
+{% endblock %}

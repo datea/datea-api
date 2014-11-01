@@ -104,19 +104,22 @@ def dateo_by_id(request, dateo_id):
 
 
 def campaign_detail(request, username, slug):
-	campaign = Campaign.objects.get(user__username=username, slug=slug)
-	ctx = default_meta.copy()
-	ctx.update({
-		'title': campaign.name + ' | Datea', 
-		'description': campaign.short_description,
-		'url': app_url+'/'+campaign.user.username+'/'+campaign.slug
-	})
-	if campaign.image:
-		ctx['image_url'] = api_img_url + campaign.image.get_thumb('image_thumb_large')
+	try:
+		campaign = Campaign.objects.get(user__username=username, slug=slug)
+		ctx = default_meta.copy()
+		ctx.update({
+			'title': campaign.name + ' | Datea', 
+			'description': campaign.short_description,
+			'url': app_url+'/'+campaign.user.username+'/'+campaign.slug
+		})
+		if campaign.image:
+			ctx['image_url'] = api_img_url + campaign.image.get_thumb('image_thumb_large')
 
-	ctx['campaign'] = campaign
+		ctx['campaign'] = campaign
 
-	return render_to_response('seo/campaign.html', ctx, context_instance=RequestContext(request))
+		return render_to_response('seo/campaign.html', ctx, context_instance=RequestContext(request))
+	except:
+		return default(request)
 
 def campaign_by_id(request, campaign_id):
 	campaign = Campaign.objects.get(pk=campaign_id)

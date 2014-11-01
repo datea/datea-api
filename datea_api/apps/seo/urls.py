@@ -20,9 +20,9 @@ urlpatterns = patterns("datea_api.apps.seo.views",
     url(r"^mapeo/(?P<campaign_id>[0-9]+)/dateos/$", 'campaign_by_id'),
     url(r"^mapeo/(?P<campaign_id>[0-9]+)/$", 'campaign_by_id'),
     url(r"^mapeo/(?P<campaign_id>[0-9]+)$", 'campaign_by_id'),
-    url(r"^(?P<username>[a-zA-Z0-9_.]+)/(?P<slug>[a-zA-Z0-9_.]+)$", 'campaign_detail'),
+    url(r"^(?P<username>[a-zA-Z0-9_.]+)/(?P<slug>[a-zA-Z0-9_-.]+)$", 'campaign_detail'),
 
     # PROFILE & IF NOT FOUND -> DEFAULT
-    url(r"^(?P<username>[a-zA-Z0-9_.]+)$", 'profile_detail')
+    url(r"^(?P<username>[a-zA-Z0-9_-.]+)$", 'profile_detail')
 
 )

@@ -108,7 +108,7 @@ def campaign_detail(request, username, slug):
 		campaign = Campaign.objects.get(user__username=username, slug=slug)
 		ctx = default_meta.copy()
 		ctx.update({
-			'title': campaign.name + ' | Datea', 
+			'title': '#'+campaign.main_tag.tag+', '+campaign.name + ' | Datea', 
 			'description': campaign.short_description,
 			'url': app_url+'/'+campaign.user.username+'/'+campaign.slug
 		})

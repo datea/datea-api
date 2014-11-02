@@ -198,8 +198,11 @@ def after_user_saved(sender, instance, created, **kwargs):
 	
 	if not created:
 		from datea_api.apps.dateo.models import Dateo
+		from datea_api.apps.campaign.models import Campaign
 		for pk in [d.pk for d in Dateo.objects.filter(user=instance)]:
 			cache.delete('dateo.'+str(pk))
+		for pk in [c.pk for c in Campaign.objects.filter(user=instance)]:
+			cache.delete('campaign.'+str(pk))
 	
 
 

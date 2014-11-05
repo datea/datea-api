@@ -158,20 +158,24 @@ class Campaign(models.Model):
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import CampaignIndex
 from datea_api.apps.api.signals import resource_saved
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from datea_api.apps.notify.models import ActivityLog
 from django.core.cache import cache
 
-def on_campaign_save(sender, instance, created, **kwargs):
+def on_resource_save(sender, instance, created, **kwargs):
 	CampaignIndex().update_object(instance)
-	cache.delete('campaign.'+str(instance.pk))
+
+def on_campaign_save(sender, instance, created, **kwargs):
+	if not created:
+		cache.delete('campaign.'+str(instance.pk))
 
 def on_campaign_delete(sender, instance, **kwargs):
 	CampaignIndex().remove_object(instance)
 	ActivityLog.objects.filter(action_key='campaign.'+str(instance.pk)).delete()
 	cache.delete('campaign.'+str(instance.pk))
 
-resource_saved.connect(on_campaign_save, sender=Campaign, dispatch_uid="datea_api.apps.campaign.saved")
+resource_saved.connect(on_resource_save, sender=Campaign, dispatch_uid="datea_api.apps.campaign.resource_saved")
+post_save.connect(on_campaign_save, sender=Campaign, dispatch_uid="datea_api.apps.campaign.saved")
 pre_delete.connect(on_campaign_delete, sender=Campaign, dispatch_uid="datea_api.apps.campaign.delete")
 
 

@@ -12,7 +12,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     category = indexes.CharField(model_attr='category__name', null=True, faceted=True)
     category_id = indexes.IntegerField(null=True)
     published = indexes.BooleanField(model_attr='published', null=True) 
-    featured = indexes.BooleanField(model_attr='featured', null=True)
+    featured = indexes.IntegerField(model_attr='featured', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
     main_tag = indexes.CharField(boost=1.25, faceted=True)

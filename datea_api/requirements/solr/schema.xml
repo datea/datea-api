@@ -221,7 +221,7 @@
 
     <field name="is_active" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="featured" type="boolean" indexed="true" stored="true" multiValued="false" />
+    <field name="featured" type="long" indexed="true" stored="true" multiValued="false" />
 
     <field name="slug" type="text_en" indexed="true" stored="true" multiValued="false" />
 

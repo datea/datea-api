@@ -6,7 +6,7 @@
 
 {{ title }}
 
-{{ extract }}
+{{ extract|striptags|safe }}
 
 {% blocktrans with url as url %}You can view the campaign on: 
 

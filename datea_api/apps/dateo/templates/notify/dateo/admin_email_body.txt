@@ -2,7 +2,7 @@ Hola,
 
 {{ actor }} dateó en{% for tag in tags %} #{{tag}}{% endfor %}:
 
-{{ extract }}
+{{ extract|striptags|safe }}
 
 Puedes ver el dateo en:
 

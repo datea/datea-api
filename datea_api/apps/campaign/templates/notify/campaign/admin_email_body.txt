@@ -4,7 +4,7 @@ Hola,
 
 {{ title }}
 
-{{ extract }}
+{{ extract|striptags|safe }}
 
 Puedes ver la iniciativa en: 
 

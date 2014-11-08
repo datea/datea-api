@@ -2,7 +2,7 @@ Hola,
 
 {{ actor }} redateó a {{target_user}}{% if tags %} en{% for tag in tags %} #{{tag}}{% endfor %}{% endif %}:
 
-{{ extract }}
+{{ extract|striptags|safe }}
 
 Puedes verlo bajo 
 

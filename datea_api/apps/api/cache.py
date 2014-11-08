@@ -41,6 +41,9 @@ class SimpleDictCache(NoCache):
         #cache.set(key, data, timeout)
         cache.set(key, data, 3600)
         return data
+
+    def delete(self, key):
+        cache.delete(key)
     
     def cache_control(self):
         control = {

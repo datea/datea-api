@@ -24,7 +24,8 @@ from datea_api.apps.campaign.resources import CampaignResource
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
-from django.core.paginator import Paginator, InvalidPage, EmptyPage 
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.conf import settings
 
 
 class NotifySettingsResource(JSONDefaultMixin, ModelResource):
@@ -36,9 +37,16 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
         forbidden_fields = ['user']
 
         if bundle.request.method == 'PATCH':
+            orig_object = NotifySettings.objects.get(pk=bundle.data['id'])
             for f in forbidden_fields:
                 if f in bundle.data:
                     del bundle.data[f]
+                    setattr(bundle.obj, f, getattr(orig_object, f))
+
+            if bundle.data['site_news'] != orig_object.site_news:
+                action = 'subscribe' if bundle.data['site_news'] else 'unsubscribe'
+                settings.EXTERNAL_NEWSLETTER_SUBSCRIBE_FUNC(orig_object.user, action)
+
         return bundle
 
     class Meta:
@@ -51,7 +59,6 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
         authorization = OwnerOnlyAuthorization()
         always_return_data = True
         include_resource_uri = False
-
 
 
 class NotificationResource(JSONDefaultMixin, ModelResource):

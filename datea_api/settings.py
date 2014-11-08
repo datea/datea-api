@@ -264,6 +264,10 @@ BROKER_URL = 'amqp://guest:guest@localhost//'
 DEFAULT_CLIENT_URL = 'http://datea.pe'
 SEND_NOTIFICATION_EMAILS = False
 
+def default_subscribe_func(user, action):
+    pass
+EXTERNAL_NEWSLETTER_SUBSCRIBE_FUNC = default_subscribe_func
+
 
 RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd',
                     'api', 'admin', 'root',

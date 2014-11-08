@@ -10,9 +10,9 @@ from urllib import quote as urlquote
 import re
 from django.core.cache import cache
 from django.db.models.signals import pre_delete, post_save, pre_save
+from django.conf import settings
 
 from datea_api.apps.image.models import Image
-
 
 class CustomUserManager(BaseUserManager):
 
@@ -203,6 +203,7 @@ def after_user_saved(sender, instance, created, **kwargs):
 			cache.delete('dateo.'+str(pk))
 		for pk in [c.pk for c in Campaign.objects.filter(user=instance)]:
 			cache.delete('campaign.'+str(pk))
+
 	
 
 

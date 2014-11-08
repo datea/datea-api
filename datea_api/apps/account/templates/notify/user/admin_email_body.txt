@@ -4,6 +4,8 @@ tenemos nuevo usuario: {{user.username}}
 
 http://datea.pe/{{user.username}}
 
+correo: {{user.email}}
+
 saludos,
 
 datea bot

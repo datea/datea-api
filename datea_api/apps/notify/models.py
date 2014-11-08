@@ -11,6 +11,7 @@ from django.contrib.sites.models import Site
 from django.conf import settings
 from jsonfield import JSONField
 from django.db.models.signals import post_save
+from django.conf import settings
 
 from datea_api.apps.tag.models import Tag
 
@@ -31,7 +32,16 @@ def create_notify_settings(sender, instance=None, **kwargs):
     if instance is None: return
     notify_settings, created = NotifySettings.objects.get_or_create(user=instance)
 
-post_save.connect(create_notify_settings, sender=User, dispatch_uid="datea_api.apps.notifysettings.saved")
+post_save.connect(create_notify_settings, sender=User, dispatch_uid="datea_api.apps.notifysettings.create")
+
+
+def save_notify_settings(sender, instance, created, **kwargs):
+    if created:
+        if instance.site_news:
+            settings.EXTERNAL_NEWSLETTER_SUBSCRIBE_FUNC(instance.user, 'subscribe')
+
+post_save.connect(save_notify_settings, sender=NotifySettings, dispatch_uid="datea_api.apps.notifysettings.save")
+
         
 
 class Notification(models.Model):

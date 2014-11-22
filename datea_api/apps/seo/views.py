@@ -10,7 +10,7 @@ from datea_api.apps.tag.models import Tag
 from datea_api.apps.dateo.models import Dateo
 from datea_api.apps.campaign.models import Campaign
 
-app_url = 'http://test2.datea.pe'
+app_url = 'http://datea.pe'
 api_img_url = 'http://api.datea.io'
 
 default_meta = {
@@ -29,7 +29,6 @@ def signin(request):
 		'title': "Datea | Ingresa", 
 		'description': "Ingresa a tu cuenta en Datea."
 	})
-	print request.meta
 	return render_to_response('seo/seo-base.html', ctx, context_instance=RequestContext(request))
 
 def acerca(request):

@@ -14,3 +14,4 @@ static/
 media/
 !datea_api/apps/media
 impdata
+sync_newsletter.py

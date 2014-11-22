@@ -6,7 +6,7 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 from datea_api.apps.campaign.models import Campaign
 from datea_api.apps.campaign.search_indexes import CampaignIndex
-
+from django.core.cache import cache
 
 class Follow(models.Model):
     
@@ -38,7 +38,6 @@ class Follow(models.Model):
 
 
     def update_stats(self, value):
-        print "UPDATE_STATS"
         if hasattr(self.content_object, 'follow_count'):
             self.content_object.follow_count += value
             self.content_object.save()
@@ -50,6 +49,7 @@ class Follow(models.Model):
                     c.follow_count += value
                     c.save()
                     CampaignIndex().update_object(c)
+                    cache.delete('campaign.'+str(c.pk))
 
 
     def __unicode__(self):

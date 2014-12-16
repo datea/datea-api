@@ -1,7 +1,7 @@
 import json
 from django.conf import settings
 from tastypie.cache import NoCache
-from tastypie.serializers import Serializer
+from .serializers import UTCSerializer
 from django.core.cache import cache
 import sys
 
@@ -17,7 +17,7 @@ class SimpleDictCache(NoCache):
         Defaults to ``60`` seconds.
         """
         super(SimpleDictCache, self).__init__(*args, **kwargs)
-        self.serializer = Serializer()
+        self.serializer = UTCSerializer()
         self.timeout = timeout or self.cache.default_timeout
         self.public = public
         self.private = private

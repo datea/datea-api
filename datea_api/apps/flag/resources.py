@@ -5,6 +5,7 @@ from .models import Flag
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.serializers import UTCSerializer
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
@@ -34,6 +35,7 @@ class FlagResource(JSONDefaultMixin, ModelResource):
         resource_name = 'flag'
         list_allowed_methods =['get', 'post']
         detail_allowed_methods = ['get', 'post', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         filtering={
                 'id' : ['exact'],
                 'user': ALL_WITH_RELATIONS,

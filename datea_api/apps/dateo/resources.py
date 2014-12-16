@@ -16,6 +16,7 @@ from tastypie.resources import ModelResource
 from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.serializers import UTCSerializer
 from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
 from datea_api.apps.api.status_codes import *
@@ -72,6 +73,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         resource_name = 'dateo'
         list_allowed_methods = ['get', 'post', 'put', 'patch']
         detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         filtering = {
@@ -652,6 +654,7 @@ class DateoFullResource(DateoBaseResource):
         resource_name = 'dateo_full'
         list_allowed_methods = ['get', 'post', 'put', 'patch']
         detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         filtering = {
@@ -678,6 +681,7 @@ class DateoResource(DateoBaseResource):
         resource_name = 'dateo'
         list_allowed_methods = ['get', 'post', 'put', 'patch']
         detail_allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         filtering = {
@@ -765,6 +769,7 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
         queryset = DateoStatus.objects.all()
         resource_name = 'dateo_status'
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         include_resource_uri = False
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
@@ -816,6 +821,7 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
         queryset = Redateo.objects.all()
         resource_name = 'redateo'
         allowed_methods = ['get', 'post', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         include_resource_uri = False
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()

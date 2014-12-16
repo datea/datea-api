@@ -3,6 +3,7 @@ from tastypie import fields
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.serializers import UTCSerializer
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -65,6 +66,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
         }
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
+        serializer = UTCSerializer(formats=['json'])
         always_return_data = True
         cache = SimpleCache(timeout=10)
         throttle = CacheThrottle()

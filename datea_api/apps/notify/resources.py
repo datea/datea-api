@@ -5,6 +5,7 @@ from .models import ActivityLog, Notification, NotifySettings
 from datea_api.apps.api.authorization import DateaBaseAuthorization, OwnerOnlyAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.serializers import UTCSerializer
 from datea_api.apps.api.signals import resource_saved
 from datea_api.apps.api.cache import SimpleDictCache
 from django.template.defaultfilters import linebreaksbr
@@ -82,6 +83,7 @@ class NotificationResource(JSONDefaultMixin, ModelResource):
         queryset = Notification.objects.all().order_by('-created')
         resource_name = 'notification'
         allowed_methods =['get', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         limit = 7
@@ -149,6 +151,7 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         queryset = ActivityLog.objects.all()
         resource_name = 'activity_log'
         allowed_methods =['get']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         limit = 5

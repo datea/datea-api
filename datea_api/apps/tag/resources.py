@@ -5,6 +5,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.serializers import UTCSerializer
 from datea_api.apps.api.signals import resource_saved
 from datea_api.utils import remove_accents
 from tastypie.cache import SimpleCache
@@ -304,7 +305,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
         detail_allowed_methods = ['get', 'post']
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        
+        serializer = UTCSerializer(formats=['json'])
         always_return_data = True
         cache = SimpleCache(timeout=10)
         #throttle = CacheThrottle()

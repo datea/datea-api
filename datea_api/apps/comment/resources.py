@@ -4,6 +4,7 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.serializers import UTCSerializer
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -67,6 +68,7 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         queryset = Comment.objects.all()
         resource_name = 'comment'
         allowed_methods = ['get', 'post', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         filtering={
                 'id' : ['exact'],
                 'user': ALL_WITH_RELATIONS,

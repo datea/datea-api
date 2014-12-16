@@ -11,6 +11,7 @@ from django.conf import settings
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.base_resources import JSONDefaultMixin
+from datea_api.apps.api.serializers import UTCSerializer
 from datea_api.apps.api.utils import get_reserved_usernames
 from datea_api.utils import remove_accents
 from django.contrib.auth.tokens import default_token_generator
@@ -618,6 +619,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
         resource_name = 'user'
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get', 'patch']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         #throttle = CacheThrottle(throttle_at=100)

@@ -6,6 +6,7 @@ from datea_api.apps.api.cache import SimpleDictCache
 from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from datea_api.apps.api.authorization import DateaBaseAuthorization
 from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
+from datea_api.apps.api.serializers import UTCSerializer
 from tastypie.authentication import ApiKeyAuthentication
 import os
 
@@ -402,6 +403,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+        serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
         cache = SimpleDictCache(timeout=5)

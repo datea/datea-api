@@ -16,8 +16,14 @@ class ImageResource(JSONDefaultMixin, ModelResource):
     image = Base64FileField('image')
 
     def dehydrate(self, bundle):
-        bundle.data['thumb'] = bundle.obj.get_thumb()
-        bundle.data['image'] = bundle.obj.get_thumb('image_thumb_large')
+        try:
+            bundle.data['thumb'] = bundle.obj.get_thumb()
+        except:
+            bundle.data['thumb'] = ''
+        try:
+            bundle.data['image'] = bundle.obj.get_thumb('image_thumb_large')
+        except:
+            bundle.data['image'] = ''
         return bundle
     
     def hydrate(self, bundle):

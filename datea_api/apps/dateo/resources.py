@@ -122,6 +122,9 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         else:
             bundle.data['admin'] = None
 
+        # put tags with campaigns first
+        bundle.data['tags'] = sorted(bundle.data['tags'], key= lambda t: len(t.data['campaigns']), reverse=True)
+
         return bundle
 
 
@@ -710,6 +713,7 @@ class DateoResource(DateoBaseResource):
                      }
         bundle.data['user'] = user_data
         bundle.data['extract'] = Truncator( strip_tags(bundle.obj.content) ).chars(140).replace("\n",' ')
+
         #bundle.data['next_by_user'] = bundle.obj.get_next_id_by_user()
         #bundle.data['previous_by_user'] = bundle.obj.get_previous_id_by_user()
 
@@ -721,7 +725,8 @@ class DateoResource(DateoBaseResource):
         else:
             bundle.data['admin'] = None
 
-        bundle.data['tags'] = [t.data['tag'] for t in bundle.data['tags']]
+        tags = sorted(bundle.data['tags'], key= lambda t: len(t.data['campaigns']), reverse=True)
+        bundle.data['tags'] = [t.data['tag'] for t in tags]
 
         return bundle
 

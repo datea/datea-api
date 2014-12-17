@@ -236,15 +236,15 @@ MEDIA_URL = '/media/'
 
 #SORL THUMBNAILS
 THUMBNAIL_PRESETS = {
-    'image_thumb': { "size": "120x120" },
-    'image_thumb_medium': {"size": "300"},
-    'image_thumb_large': {"size": "800x800", "upscale": False},
-    'profile_image': {'size': "54x54", 'options': {'crop': 'center'}},
-    'profile_image_small': {'size': "42x42", 'options': {'crop': 'center'}},
-    'profile_image_large': {'size': "182x182", 'options': {'crop': 'center'}},
-    'category_image': {'size': "130x130", 'options': {'crop': 'center'}},
-    'marker_image': {'size':"x38", "options": {'format': 'PNG'}},
-    'action_image': {'size': "110x110", 'options': {'crop': 'center'}}
+    'image_thumb': { 'size': '120x120' },
+    'image_thumb_medium': {'size': '300'},
+    'image_thumb_large': {'size': '800x800', 'options': {'upscale': False}},
+    'profile_image': {'size': '54x54', 'options': {'crop': 'center'}},
+    'profile_image_small': {'size': '42x42', 'options': {'crop': 'center'}},
+    'profile_image_large': {'size': '182x182', 'options': {'crop': 'center'}},
+    'category_image': {'size': '130x130', 'options': {'crop': 'center'}},
+    'marker_image': {'size': 'x38', 'options': {'format': 'PNG'}},
+    'action_image': {'size': '110x110', 'options': {'crop': 'center'}}
 }
 
 

@@ -95,26 +95,10 @@ def create_dateo_notifications(actlog):
 			for c in tag.campaigns.all():
 				notify_users.add(c.user)
 				if c.user.notify_settings.interaction:
-					email_users.add(c.user) 
-
-	dateo_rsc = DateoResource()
-	d_bundle = dateo_rsc.build_bundle(obj=actlog.action_object)
-	d_bundle = dateo_rsc.full_dehydrate(d_bundle)
-	dateo_json = dateo_rsc.serialize(None, d_bundle, 'application/json') 
-
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"actor_img": actlog.actor.get_small_image(),
-		"action_object_name": actlog.action_type.model,
-		"extract": actlog.data.get('extract', ''),
-		"target_object": json.loads(dateo_json),
-		"verb": "dateo",
-	}
+					email_users.add(c.user)
 
 	for user in notify_users:
 		n = Notification(type="dateo", recipient=user, activity=actlog)
-		n.data = notify_data
 		n.save()
 
 	# email using target_object client_domain (for now)
@@ -203,28 +187,8 @@ def create_redateo_notifications(actlog):
 			if c.user.notify_settings.interaction:
 				email_users.add(c.user)
 
-	dateo_rsc = DateoResource()
-	d_bundle = dateo_rsc.build_bundle(obj=actlog.target_object)
-	d_bundle = dateo_rsc.full_dehydrate(d_bundle)
-	dateo_json = dateo_rsc.serialize(None, d_bundle, 'application/json')
-
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"actor_img": actlog.actor.get_small_image(),
-		"target_object": json.loads(dateo_json),
-		"target_user": actlog.target_user.username,
-		"target_user_id": actlog.target_user.pk,
-		"target_user_img": actlog.target_user.get_small_image(),
-		"target_object_name": 'dateo',
-		"target_object_id": actlog.target_object.pk,
-		"extract": actlog.data.get('extract', ''),
-		"verb": "redateo",
-	}
-
 	for user in notify_users:
 		n = Notification(type="redateo", recipient=user, activity=actlog)
-		n.data = notify_data
 		n.save()
 
 	# email using target_object client_domain
@@ -321,28 +285,8 @@ def create_comment_notifications(actlog):
 					if c.user.notify_settings.interaction:
 						email_users.add(c.user)
 
-	comment_rsc = CommentResource()
-	c_bundle = comment_rsc.build_bundle(obj=actlog.action_object)
-	c_bundle = comment_rsc.full_dehydrate(c_bundle)
-	comment_json = comment_rsc.serialize(None, c_bundle, 'application/json')
-
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"actor_img": actlog.actor.get_small_image(),
-		"action_object": json.loads(comment_json),
-		"target_user": actlog.target_user.username,
-		"target_user_id": actlog.target_user.pk,
-		"target_user_img": actlog.target_user.get_small_image(),
-		"target_object_name": actlog.target_type.model,
-		"target_object_id": actlog.target_object.pk,
-		"extract": actlog.data.get('extract', ''),
-		"verb": "commented",
-	}
-
 	for user in notify_users:
 		n = Notification(type="comment", recipient=user, activity=actlog)
-		n.data = notify_data
 		n.save()
 
 	# email using target_object client_domain (for now)
@@ -420,24 +364,8 @@ def create_campaign_notifications(actlog):
 		if f.user.notify_settings.tags_reports:
 			email_users.add(f.user)
 
-	c_rsc = CampaignResource()
-	c_bundle = c_rsc.build_bundle(obj=actlog.action_object)
-	c_bundle = c_rsc.full_dehydrate(c_bundle)
-	campaign_json = c_rsc.serialize(None, c_bundle, 'application/json') 
-
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"actor_img": actlog.actor.get_small_image(),
-		"action_object_name": 'campaign',
-		"extract": actlog.data.get('extract', ''),
-		"verb": "campaign",
-		"action_object": json.loads(campaign_json),
-	}
-
 	for user in notify_users:
 		n = Notification(type="campaign", recipient=user, activity=actlog)
-		n.data = notify_data
 		n.save()
 		
 	# email using target_object client_domain (for now)
@@ -532,29 +460,8 @@ def create_vote_notifications(actlog):
 				if c.user.notify_settings.interaction:
 					email_users.add(c.user)
 
-	dateo_rsc = DateoResource()
-	d_bundle = dateo_rsc.build_bundle(obj=actlog.target_object)
-	d_bundle = dateo_rsc.full_dehydrate(d_bundle)
-	dateo_json = dateo_rsc.serialize(None, d_bundle, 'application/json') 
-
-	notify_data = {
-		"actor": actlog.actor.username,
-		"actor_id": actlog.actor.pk,
-		"actor_img": actlog.actor.get_small_image(),
-		"action_object_name": actlog.action_type.model,
-		"target_user": actlog.target_user.username,
-		"target_user_id": actlog.target_user.pk,
-		"target_user_img": actlog.target_user.get_small_image(),
-		"target_object_name": actlog.target_type.model,
-		"target_object_id": actlog.target_object.pk,
-		"extract": actlog.data.get('extract', ''),
-		"target_object": json.loads(dateo_json),
-		"verb": "voted",
-	}
-
 	for user in notify_users:
 		n = Notification(type="vote", recipient=user, activity=actlog)
-		n.data = notify_data
 		n.save()
 		
 	# email using target_object client_domain (for now)

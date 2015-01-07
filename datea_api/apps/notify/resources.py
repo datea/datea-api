@@ -68,8 +68,7 @@ class NotificationResource(JSONDefaultMixin, ModelResource):
         attribute='recipient', full=False, readonly=True)
 
     def dehydrate(self, bundle):
-
-        bundle.data['data'] = bundle.obj.data
+        bundle.data['data'] = bundle.obj.create_data()
         return bundle 
 
     def hydrate(self, bundle):

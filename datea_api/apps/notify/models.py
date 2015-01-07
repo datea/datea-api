@@ -51,13 +51,45 @@ class Notification(models.Model):
     recipient = models.ForeignKey(User, verbose_name=_("User"), related_name="notifications")
     unread = models.BooleanField(_("Unread"), default=True)
 
-    data = JSONField(verbose_name=_("Data"), blank=True, null=True)
+    #data = JSONField(verbose_name=_("Data"), blank=True, null=True)
     activity = models.ForeignKey('ActivityLog', verbose_name=_("ActivityLog"), null=True, blank=True)
+
+    # actually used fields:
+    # actor: username / id
+    # target_user: username / id 
+    # verb: verb
+    # tags: tags (array of strings) -> sort ones with campaigns first
+    # extract: text
+    # action_obj_type : (string)
+    # action_obj_id
+    # target_obj_type : (string)
+    # target_obj_id :
+
+    def create_data(self):
+        data = {
+            "actor": self.activity.actor.username,
+            "actor_id": self.activity.actor.pk,
+            "actor_img": self.activity.actor.get_small_image(),
+            "action_type": self.activity.action_type.model,
+            "action_id": self.activity.action_id,
+            "extract": self.activity.data.get('extract', ''),
+            #"target_object": json.loads(dateo_json),
+            "tags": [t.tag for t in self.activity.tags.all().distinct().order_by('campaigns', 'tag')],
+            "verb": self.activity.verb,
+        }
+        if self.activity.target_object:
+            data.update({
+                "target_type" : self.activity.target_type.model,
+                "target_id" : self.activity.target_id,
+                "receptor": self.activity.target_user.username,
+                "receptor_id" : self.activity.target_user.id,
+                "receptor_img": self.activity.target_user.get_small_image()
+            })
+        return data
 
 
     def __unicode__(self):
         return self.type +" notification for " + self.recipient.username
-
 
 
 # loosely inspired by https://github.com/justquick/django-activity-stream

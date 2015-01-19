@@ -289,6 +289,8 @@ class AccountResource(JSONDefaultMixin, Resource):
 
     def social_auth(self, request, **kwargs):
 
+        debug = open('/tmp/debug.txt', 'w')
+
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)
 
@@ -316,11 +318,13 @@ class AccountResource(JSONDefaultMixin, Resource):
         # Real authentication takes place here
         user = wrap_social_auth(request, access_token = access_token, **kwargs)
         print "USER SOCIAL LOADED", user
+        debug.write("USER SOCIAL LOADED "+user.username+"\r\n")
 
         if user and user.is_active:
             request.user = user
             key = getOrCreateKey(user)
             print "GET KEY", key
+            debug.write("GET KEY "+key+"\r\n")
             user_rsc = UserResource()
             u_bundle = user_rsc.build_bundle(obj=user, request=request)
             u_bundle = user_rsc.full_dehydrate(u_bundle)
@@ -335,6 +339,8 @@ class AccountResource(JSONDefaultMixin, Resource):
                 status = OK
             #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
             print "USER BUNDLE DATA", u_bundle.data
+            debug.write("USER BUNDLE DATA "+u_bundle.data+"\r\n")
+            debug.close()
             response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new}, 
                 status=status)
         else:

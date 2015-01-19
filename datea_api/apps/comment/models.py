@@ -53,7 +53,7 @@ class Comment(models.Model):
 from django.db.models.signals import pre_delete, post_save, pre_save
 from datea_api.apps.notify.models import ActivityLog
 
-def before_comment_saved(sender, instance, created, **kwargs):
+def before_comment_saved(sender, instance, **kwargs):
     if (instance.content_type.model == 'dateo'):
         cache.delete('dateo.'+str(instance.object_id))
 

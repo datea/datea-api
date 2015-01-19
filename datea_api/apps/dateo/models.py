@@ -10,6 +10,7 @@ from datea_api.apps.account.models import ClientDomain
 from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
 from datea_api.apps.link.models import Link
+from datea_api.apps.follow.models import Follow
 import urllib2, json
 from django.core.cache import cache
 
@@ -292,6 +293,7 @@ def before_dateo_delete(sender, instance, **kwargs):
 	DateoIndex().remove_object(instance)
 	instance.update_stats(-1)
 	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()
+	Follow.objects.filter(content_type__model="dateo", object_id=instance.pk).delete()
 
 resource_pre_saved.connect(before_dateo_saved, sender=Dateo, dispatch_uid="datea_api.apps.dateo.pre_save")
 resource_saved.connect(after_dateo_saved, sender=Dateo, dispatch_uid="datea_api.apps.dateo.saved")

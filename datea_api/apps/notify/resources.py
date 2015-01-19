@@ -27,6 +27,9 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.conf import settings
+from django.conf.urls import url
+from tastypie.utils import trailing_slash
+from datea_api.apps.api.status_codes import *
 
 
 class NotifySettingsResource(JSONDefaultMixin, ModelResource):
@@ -78,6 +81,37 @@ class NotificationResource(JSONDefaultMixin, ModelResource):
                 bundle.data[f] = getattr(bundle.obj, f)
         return bundle
 
+    def prepend_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/readall%s$" %
+            (self._meta.resource_name, trailing_slash()), 
+            self.wrap_view('read_all'), name="api_notify_readall")]
+
+    def get_object_list(self, request):
+        mode = 'all'
+        if 'mode' in request.GET:
+            mode = request.GET.get('mode')
+            recipient_id = request.GET.get('recipient')
+        elif 'mode' in request.POST:
+            mode = request.POST.get('mode')
+            recipient_id = request.GET.get('recipient')
+        if mode == 'not-actor':
+            return super(NotificationResource, self).get_object_list(request).exclude(activity__actor__id=recipient_id)
+        else:
+            return super(NotificationResource, self).get_object_list(request)
+
+    # TODO: AUTHENTICATE!
+    def read_all(self, request, **kwargs):
+        user_id = request.GET.get('recipient', False)
+        if user_id:
+            Notification.objects.filter(recipient__pk=user_id, unread=True).update(unread=False)
+            return self.create_response(request, {'status': OK,
+                                'msg': 'Notifications succesfully read.'}, status=OK)
+        else:
+            return self.create_response(request, {
+                    'status': BAD_REQUEST,
+                    'error': 'No recipient_id field set'}, status=BAD_REQUEST)
+
     class Meta:
         queryset = Notification.objects.all().order_by('-created')
         resource_name = 'notification'
@@ -85,7 +119,7 @@ class NotificationResource(JSONDefaultMixin, ModelResource):
         serializer = UTCSerializer(formats=['json'])
         authentication = ApiKeyPlusWebAuthentication()
         authorization = DateaBaseAuthorization()
-        limit = 7
+        limit = 15
         cache = SimpleCache(timeout=60)
         thottle = CacheThrottle()
         filtering = {

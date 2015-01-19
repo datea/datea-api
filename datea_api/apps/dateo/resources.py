@@ -496,7 +496,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         if 'distance' in order_by and 'position' in request.GET and request.GET['position'] != '':
             pos = [float(c) for c in request.GET.get('position').split(',')]
             position = Point(pos[0], pos[1])
-            sqs = sqs.distance('position', position).order_by(*order_by)
+            sqs = sqs.distance('position', position).order_by('distance')
         elif len(order_by) > 0:
             sqs = sqs.order_by(*order_by)
 

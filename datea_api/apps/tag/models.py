@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import re
 from datea_api.utils import remove_accents
+from datea_api.apps.follow.models import Follow
 
 
 class Tag(models.Model):
@@ -38,12 +39,15 @@ class Tag(models.Model):
 from .search_indexes import TagIndex
 from django.db.models.signals import pre_delete, post_save
 
-def update_search_index(sender, instance, created, **kwargs):
+def after_save(sender, instance, created, **kwargs):
 	TagIndex().update_object(instance)
 
-def remove_search_index(sender, instance, **kwargs):
+def before_delete(sender, instance, **kwargs):
 	TagIndex().remove_object(instance)
+	# remove any follow objects
+	Follow.objects.filter(content_type__model="tag", object_id=instance.pk).delete()
 
-post_save.connect(update_search_index, sender=Tag, dispatch_uid="datea_api.apps.tag.saved")
-pre_delete.connect(remove_search_index, sender=Tag, dispatch_uid="datea_api.apps.tag.delete")
+
+post_save.connect(after_save, sender=Tag, dispatch_uid="datea_api.apps.tag.saved")
+pre_delete.connect(before_delete, sender=Tag, dispatch_uid="datea_api.apps.tag.delete")
 

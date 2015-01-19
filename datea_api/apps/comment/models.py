@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 from django.utils.html import strip_tags
 from django.conf import settings
 from datea_api.apps.campaign.models import Campaign
+from django.core.cache import cache
 
 
 class Comment(models.Model):
@@ -60,6 +61,7 @@ def after_comment_saved(sender, instance, created, **kwargs):
             global DateoIndex
             from datea_api.apps.dateo.search_indexes import DateoIndex
             DateoIndex().update_object(instance.content_object)
+            cache.delete('dateo.'+str(instance.object_id))
 
 def before_comment_delete(sender, instance, **kwargs):
     instance.update_stats(-1)

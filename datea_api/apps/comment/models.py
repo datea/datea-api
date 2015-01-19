@@ -50,8 +50,13 @@ class Comment(models.Model):
 
 
 # UPDATE COMMENT STATS
-from django.db.models.signals import pre_delete, post_save
+from django.db.models.signals import pre_delete, post_save, pre_save
 from datea_api.apps.notify.models import ActivityLog
+
+def before_comment_saved(sender, instance, created, **kwargs):
+    if (instance.content_type.model == 'dateo'):
+        cache.delete('dateo.'+str(instance.object_id))
+
 
 def after_comment_saved(sender, instance, created, **kwargs):
     if created:
@@ -61,7 +66,7 @@ def after_comment_saved(sender, instance, created, **kwargs):
             global DateoIndex
             from datea_api.apps.dateo.search_indexes import DateoIndex
             DateoIndex().update_object(instance.content_object)
-            cache.delete('dateo.'+str(instance.object_id))
+
 
 def before_comment_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
@@ -73,5 +78,6 @@ def before_comment_delete(sender, instance, **kwargs):
         DateoIndex().update_object(instance.content_object)
 
 post_save.connect(after_comment_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.saved")
+pre_save.connect(before_commend_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.pre_saved")
 pre_delete.connect(before_comment_delete, sender=Comment, dispatch_uid="datea_api.apps.comment.delete")
 

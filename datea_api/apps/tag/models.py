@@ -3,7 +3,6 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import re
 from datea_api.utils import remove_accents
-#from datea_api.apps.follow.models import Follow
 
 
 class Tag(models.Model):
@@ -38,6 +37,7 @@ class Tag(models.Model):
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import TagIndex
 from django.db.models.signals import pre_delete, post_save
+from datea_api.apps.follow.models import Follow
 
 def after_save(sender, instance, created, **kwargs):
 	TagIndex().update_object(instance)

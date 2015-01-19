@@ -339,7 +339,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                 status = OK
             #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
             print "USER BUNDLE DATA", u_bundle.data
-            debug.write("USER BUNDLE DATA "+u_bundle.data+"\r\n")
+            debug.write("USER BUNDLE DATA "+str(u_bundle.data)+"\r\n")
             debug.close()
             response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new}, 
                 status=status)

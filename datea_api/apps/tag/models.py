@@ -3,7 +3,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import re
 from datea_api.utils import remove_accents
-from datea_api.apps.follow.models import Follow
+#from datea_api.apps.follow.models import Follow
 
 
 class Tag(models.Model):

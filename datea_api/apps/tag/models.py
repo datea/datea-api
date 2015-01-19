@@ -37,7 +37,6 @@ class Tag(models.Model):
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import TagIndex
 from django.db.models.signals import pre_delete, post_save
-from datea_api.apps.follow.models import Follow
 
 def after_save(sender, instance, created, **kwargs):
 	TagIndex().update_object(instance)
@@ -45,6 +44,7 @@ def after_save(sender, instance, created, **kwargs):
 def before_delete(sender, instance, **kwargs):
 	TagIndex().remove_object(instance)
 	# remove any follow objects
+	from datea_api.apps.follow.models import Follow
 	Follow.objects.filter(content_type__model="tag", object_id=instance.pk).delete()
 
 

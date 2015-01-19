@@ -78,6 +78,6 @@ def before_comment_delete(sender, instance, **kwargs):
         DateoIndex().update_object(instance.content_object)
 
 post_save.connect(after_comment_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.saved")
-pre_save.connect(before_commend_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.pre_saved")
+pre_save.connect(before_comment_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.pre_saved")
 pre_delete.connect(before_comment_delete, sender=Comment, dispatch_uid="datea_api.apps.comment.delete")
 

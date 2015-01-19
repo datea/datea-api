@@ -315,10 +315,12 @@ class AccountResource(JSONDefaultMixin, Resource):
 
         # Real authentication takes place here
         user = wrap_social_auth(request, access_token = access_token, **kwargs)
+        print "USER SOCIAL LOADED", user
 
         if user and user.is_active:
             request.user = user
             key = getOrCreateKey(user)
+            print "GET KEY", key
             user_rsc = UserResource()
             u_bundle = user_rsc.build_bundle(obj=user, request=request)
             u_bundle = user_rsc.full_dehydrate(u_bundle)
@@ -332,6 +334,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                 is_new = False
                 status = OK
             #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
+            print "USER BUNDLE DATA", u_bundle.data
             response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new}, 
                 status=status)
         else:

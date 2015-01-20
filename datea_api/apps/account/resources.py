@@ -379,12 +379,11 @@ class AccountResource(JSONDefaultMixin, Resource):
 
 @strategy()
 def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
-    debug = open('/tmp/debug.txt', 'w')
-    debug.write('auth_backend:' +str(request.strategy.backend) +'\r\n')
+
     auth_backend = request.strategy.backend
-    debug.write('before do auth'+"\r\n")
-    debug.close()
     user = auth_backend.do_auth(access_token)
+    debug = open('/tmp/debug.txt', 'w')
+    debug.write('after user auth'+"\r\n\r\n")
     return user
 
 

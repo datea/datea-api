@@ -290,11 +290,13 @@ class AccountResource(JSONDefaultMixin, Resource):
     def social_auth(self, request, **kwargs):
 
         debug = open('/tmp/debug.txt', 'w')
+        debug.write("hey\r\n")
 
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)
 
         postData = json.loads(request.body)
+        debug.write("postData: "+str(postData)+"\r\n\r\n")
 
         #auth_backend = request.strategy.backend
         if kwargs['backend'] == 'twitter':
@@ -315,6 +317,7 @@ class AccountResource(JSONDefaultMixin, Resource):
         else:
             access_token = postData['access_token']
 
+        debug.write("before social auth "+str(access_token)+"\r\n\r\n")
         # Real authentication takes place here
         user = wrap_social_auth(request, access_token = access_token, **kwargs)
         print "USER SOCIAL LOADED", user

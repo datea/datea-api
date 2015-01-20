@@ -289,14 +289,10 @@ class AccountResource(JSONDefaultMixin, Resource):
 
     def social_auth(self, request, **kwargs):
 
-        debug = open('/tmp/debug.txt', 'w')
-        debug.write("hey\r\n")
-
         self.method_check(request, allowed=['post'])
         self.throttle_check(request)
 
         postData = json.loads(request.body)
-        debug.write("postData: "+str(postData)+"\r\n\r\n")
 
         #auth_backend = request.strategy.backend
         if kwargs['backend'] == 'twitter':
@@ -317,17 +313,12 @@ class AccountResource(JSONDefaultMixin, Resource):
         else:
             access_token = postData['access_token']
 
-        debug.write("before social auth "+str(access_token)+"\r\n\r\n")
         # Real authentication takes place here
         user = wrap_social_auth(request, access_token = access_token, **kwargs)
-        print "USER SOCIAL LOADED", user
-        debug.write("USER SOCIAL LOADED "+user.username+"\r\n")
 
         if user and user.is_active:
             request.user = user
             key = getOrCreateKey(user)
-            print "GET KEY", key
-            debug.write("GET KEY "+key+"\r\n")
             user_rsc = UserResource()
             u_bundle = user_rsc.build_bundle(obj=user, request=request)
             u_bundle = user_rsc.full_dehydrate(u_bundle)
@@ -341,9 +332,6 @@ class AccountResource(JSONDefaultMixin, Resource):
                 is_new = False
                 status = OK
             #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
-            print "USER BUNDLE DATA", u_bundle.data
-            debug.write("USER BUNDLE DATA "+str(u_bundle.data)+"\r\n")
-            debug.close()
             response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new}, 
                 status=status)
         else:
@@ -391,8 +379,11 @@ class AccountResource(JSONDefaultMixin, Resource):
 
 @strategy()
 def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
-
+    debug = open('/tmp/debug.txt', 'w')
+    debug.write('auth_backend:' +str(request.strategy.backend) +'\r\n')
     auth_backend = request.strategy.backend
+    debug.write('before do auth'+"\r\n")
+    debug.close()
     user = auth_backend.do_auth(access_token)
     return user
 

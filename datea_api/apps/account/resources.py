@@ -217,6 +217,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             user = None
             response = self.create_response(request, {'status': BAD_REQUEST,
                         'error': 'No user with that email'}, status=BAD_REQUEST)
+            return response
 
         if user is not None and user.is_active:
             

@@ -242,10 +242,10 @@ class AccountResource(JSONDefaultMixin, Resource):
             else:
                 response = self.create_response(request, 
                         {'status': SYSTEM_ERROR,
-                        'message': 'form not valid'}, status=FORBIDDEN)
+                        'error': 'form not valid'}, status=FORBIDDEN)
         else:
             response = self.create_response(request, {'status':UNAUTHORIZED,
-                'message':'Account disabled'}, status=UNAUTHORIZED)
+                'error':'Account disabled'}, status=UNAUTHORIZED)
 
         self.log_throttled_access(request)
         return response
@@ -272,7 +272,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
             response = self.create_response(request, 
-                {'status': NOT_FOUND, 'message': 'User not found'}, status=NOT_FOUND)
+                {'status': NOT_FOUND, 'error': 'User not found'}, status=NOT_FOUND)
 
         if user is not None and default_token_generator.check_token(user, token):
             user.set_password(password)
@@ -280,7 +280,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             response = self.create_response(request, {'status': OK, 'message': 'Your password was successfully reset', 
                 'userid': uid}, status=OK)
         else:
-            response = self.create_response(request, {'status': UNAUTHORIZED, 'message': 'Invalid reset link'}, 
+            response = self.create_response(request, {'status': UNAUTHORIZED, 'error': 'Invalid reset link'}, 
                 status=UNAUTHORIZED)
 
         self.log_throttled_access(request)
@@ -337,7 +337,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                 status=status)
         else:
             response = self.create_response(request, {'status': UNAUTHORIZED,
-                'message':'Social access could not be verified'}, status=UNAUTHORIZED)
+                'error':'Social access could not be verified'}, status=UNAUTHORIZED)
 
         self.log_throttled_access(request)
         return response

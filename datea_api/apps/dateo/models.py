@@ -13,6 +13,7 @@ from datea_api.apps.link.models import Link
 from datea_api.apps.follow.models import Follow
 import urllib2, json
 from django.core.cache import cache
+from django.utils.html import strip_tags
 
 
 class Dateo(models.Model):
@@ -73,6 +74,7 @@ class Dateo(models.Model):
 	def save(self, *args, **kwargs):
 		if not self.date:
 			self.date = self.created
+		self.content = strip_tags(self.content)
 		super(Dateo, self).save(*args, **kwargs)
 
 	def has_images(self):

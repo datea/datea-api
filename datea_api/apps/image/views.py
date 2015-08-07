@@ -36,14 +36,6 @@ def save_image(request):
             im_bundle = ir.full_dehydrate(im_bundle)
             
             data = {'ok': True, 'message':'ok', 'resource': im_bundle.data}
-            
-            # get alternative thumb preset
-            if request.POST['thumb_preset']:
-                    try:
-                        data['resource']['thumb'] = image_instance.image[postdata['thumb_preset']].url
-                    except:
-                        pass
-
             data = json.dumps(data)
              
     else:

@@ -857,7 +857,7 @@ msgid ""
 "You have successfully confirmed your email address. You're account is now "
 "fully activated."
 msgstr ""
-"Tu dirección de correo ha sido confirmada. Tu cuenta ahora estáactivada y "
+"Tu dirección de correo ha sido confirmada. Tu cuenta ahora está activada y "
 "estás listo(a) para datear."
 
 #: templates/registration/password_reset_complete.html:4

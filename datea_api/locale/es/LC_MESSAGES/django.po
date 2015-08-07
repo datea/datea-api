@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-07 20:03-0400\n"
+"POT-Creation-Date: 2015-08-07 11:17+0000\n"
 "PO-Revision-Date: 2014-08-21 14:02+0000\n"
 "Last-Translator: Anonymous User <rodrigo@lafactura.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,9 +31,9 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: apps/account/models.py:49 apps/campaign/models.py:23
-#: apps/comment/models.py:13 apps/dateo/models.py:21 apps/dateo/models.py:161
-#: apps/dateo/models.py:181 apps/flag/models.py:11 apps/follow/models.py:14
+#: apps/account/models.py:49 apps/campaign/models.py:24
+#: apps/comment/models.py:14 apps/dateo/models.py:24 apps/dateo/models.py:238
+#: apps/dateo/models.py:258 apps/flag/models.py:11 apps/follow/models.py:14
 #: apps/tag/models.py:10
 msgid "created"
 msgstr ""
@@ -125,17 +125,17 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: apps/account/models.py:92 apps/campaign/models.py:91
-#: apps/comment/models.py:26 apps/dateo/models.py:57 apps/file/models.py:21
+#: apps/account/models.py:92 apps/campaign/models.py:95
+#: apps/comment/models.py:27 apps/dateo/models.py:60 apps/file/models.py:21
 #: apps/flag/models.py:20 apps/follow/models.py:27 apps/image/models.py:21
 #: apps/link/models.py:15 apps/tag/models.py:21 apps/vote/models.py:22
 msgid "CLient Domain"
 msgstr ""
 
-#: apps/account/models.py:100 apps/campaign/models.py:16
-#: apps/comment/models.py:12 apps/dateo/models.py:18 apps/dateo/models.py:160
-#: apps/dateo/models.py:179 apps/file/models.py:17 apps/flag/models.py:10
-#: apps/image/models.py:16 apps/link/models.py:10 apps/notify/models.py:41
+#: apps/account/models.py:100 apps/campaign/models.py:17
+#: apps/comment/models.py:13 apps/dateo/models.py:21 apps/dateo/models.py:237
+#: apps/dateo/models.py:256 apps/file/models.py:17 apps/flag/models.py:10
+#: apps/image/models.py:16 apps/link/models.py:10 apps/notify/models.py:51
 msgid "User"
 msgstr ""
 
@@ -143,83 +143,87 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: apps/account/models.py:180
+#: apps/account/models.py:219
 msgid "domain name"
 msgstr ""
 
-#: apps/account/models.py:181
+#: apps/account/models.py:220
 msgid "site name"
 msgstr ""
 
-#: apps/account/models.py:183
+#: apps/account/models.py:222
 msgid "Register success redirect URL"
 msgstr ""
 
-#: apps/account/models.py:184
+#: apps/account/models.py:223
 msgid "Register error redirect URL"
 msgstr ""
 
-#: apps/account/models.py:186
+#: apps/account/models.py:225
 msgid "Change email success redirect URL"
 msgstr ""
 
-#: apps/account/models.py:187
+#: apps/account/models.py:226
 msgid "Change email error redirect URL"
 msgstr ""
 
-#: apps/account/models.py:189
+#: apps/account/models.py:228
 msgid "Password reset base URL"
 msgstr ""
 
-#: apps/account/models.py:191
+#: apps/account/models.py:230
 msgid "Comment url template"
 msgstr ""
 
-#: apps/account/models.py:192
+#: apps/account/models.py:231
+#, python-brace-format
 msgid ""
-"Available vars: {user_id} of commented object's owner, \t\t\t\t\t\t"
-"{username} of commented object' owner, {obj_id} of commented \t\t\t\t\t"
+"Available vars: {user_id} of commented object's owner, \t\t\t\t\t"
+"\t{username} of commented object' owner, {obj_id} of commented \t\t\t\t\t"
 "\tobject, {comment_id} of comment, {obj_type} type of commented object "
 "(dateo mostly)"
 msgstr ""
 
-#: apps/account/models.py:196
+#: apps/account/models.py:235
 msgid "Dateo url template"
 msgstr ""
 
-#: apps/account/models.py:197
+#: apps/account/models.py:236
+#, python-brace-format
 msgid ""
 "Available vars: {user_id} of dateo owner, \t\t\t\t\t\t{username} of dateo "
 "owner, {obj_id} of dateo"
 msgstr ""
 
-#: apps/account/models.py:201
+#: apps/account/models.py:240
 msgid "Campaign url template"
 msgstr ""
 
-#: apps/account/models.py:202
+#: apps/account/models.py:241
+#, python-brace-format
 msgid ""
 "Available vars: {user_id} of campaign owner, \t\t\t\t\t\t{username} of "
 "campaign owner, {obj_id} of campaign, {slug} of campaign"
 msgstr ""
 
-#: apps/account/models.py:206
+#: apps/account/models.py:245
 msgid "Notify settings url template"
 msgstr ""
 
-#: apps/account/models.py:207
+#: apps/account/models.py:246
+#, python-brace-format
 msgid "Available vars: {user_id} and {username}"
 msgstr ""
 
-#: apps/account/models.py:210
+#: apps/account/models.py:249
 msgid "Send notification mail"
 msgstr ""
 
-#: apps/account/models.py:217
+#: apps/account/models.py:256
 msgid "Whitelisted client domain"
 msgstr ""
 
-#: apps/account/models.py:218
+#: apps/account/models.py:257
 msgid "Whitelisted client domains"
 msgstr ""
 
@@ -239,167 +243,168 @@ msgstr ""
 msgid "Api Configuration"
 msgstr ""
 
-#: apps/campaign/models.py:18 apps/category/models.py:8
+#: apps/campaign/models.py:19 apps/category/models.py:8
 msgid "Name"
 msgstr ""
 
-#: apps/campaign/models.py:19 apps/category/models.py:9
+#: apps/campaign/models.py:20 apps/category/models.py:9
 msgid "Slug"
 msgstr ""
 
-#: apps/campaign/models.py:19
+#: apps/campaign/models.py:20
 msgid ""
 "A string of text as a short id for use at the url of this map (alphanumeric "
 "and dashes only"
 msgstr ""
 
-#: apps/campaign/models.py:20 apps/notify/models.py:57
+#: apps/campaign/models.py:21 apps/notify/models.py:99
 msgid "Published"
 msgstr ""
 
-#: apps/campaign/models.py:20
+#: apps/campaign/models.py:21
 msgid "If checked, campaign becomes visible to others"
 msgstr ""
 
-#: apps/campaign/models.py:24 apps/dateo/models.py:22 apps/dateo/models.py:162
+#: apps/campaign/models.py:25 apps/dateo/models.py:25 apps/dateo/models.py:239
 msgid "modified"
 msgstr ""
 
-#: apps/campaign/models.py:27 apps/category/models.py:18
-#: apps/dateo/models.py:47
+#: apps/campaign/models.py:28 apps/category/models.py:18
+#: apps/dateo/models.py:50
 msgid "Category"
 msgstr ""
 
-#: apps/campaign/models.py:27
+#: apps/campaign/models.py:28
 msgid "Choose a category for this campaign"
 msgstr ""
 
-#: apps/campaign/models.py:28
+#: apps/campaign/models.py:29
 msgid "Hashtag"
 msgstr ""
 
-#: apps/campaign/models.py:28
+#: apps/campaign/models.py:29
 msgid "Main tag for your campaign."
 msgstr ""
 
-#: apps/campaign/models.py:30
+#: apps/campaign/models.py:31
 msgid "Dateo Tags"
 msgstr ""
 
-#: apps/campaign/models.py:33
+#: apps/campaign/models.py:34
 msgid "Tag suggestions for Dateos"
 msgstr ""
 
-#: apps/campaign/models.py:43
+#: apps/campaign/models.py:44
 msgid "Featured"
 msgstr ""
 
-#: apps/campaign/models.py:45
+#: apps/campaign/models.py:46
 msgid "End Date"
 msgstr ""
 
-#: apps/campaign/models.py:45
+#: apps/campaign/models.py:46
 msgid "Set an end date for your campaign (optional)"
 msgstr ""
 
-#: apps/campaign/models.py:47 apps/image/forms.py:7 apps/image/models.py:47
+#: apps/campaign/models.py:48 apps/campaign/models.py:49 apps/image/forms.py:7
+#: apps/image/models.py:47
 msgid "Image"
 msgstr ""
 
-#: apps/campaign/models.py:49
+#: apps/campaign/models.py:51
 msgid "Short description / Slogan"
 msgstr ""
 
-#: apps/campaign/models.py:49
+#: apps/campaign/models.py:51
 msgid "A short description or slogan (max. 140 characters)."
 msgstr ""
 
-#: apps/campaign/models.py:52
+#: apps/campaign/models.py:54
 msgid "Mission / Objectives"
 msgstr ""
 
-#: apps/campaign/models.py:56
+#: apps/campaign/models.py:58
 msgid "max. 500 characters"
 msgstr ""
 
-#: apps/campaign/models.py:58
+#: apps/campaign/models.py:60
 msgid "What happens with the data?"
 msgstr ""
 
-#: apps/campaign/models.py:60
+#: apps/campaign/models.py:62
 msgid ""
 "Who receives the information and what happens with it? (max 500 characters)"
 msgstr ""
 
-#: apps/campaign/models.py:63 apps/link/models.py:12
+#: apps/campaign/models.py:65 apps/link/models.py:12
 msgid "Description"
 msgstr ""
 
-#: apps/campaign/models.py:66
+#: apps/campaign/models.py:68
 msgid "Long description (optional)"
 msgstr ""
 
-#: apps/campaign/models.py:70
+#: apps/campaign/models.py:72
 msgid "Center"
 msgstr ""
 
-#: apps/campaign/models.py:71
+#: apps/campaign/models.py:73
 msgid "Boundary"
 msgstr ""
 
-#: apps/campaign/models.py:72
+#: apps/campaign/models.py:74
 msgid "Layer Files"
 msgstr ""
 
-#: apps/campaign/models.py:73
+#: apps/campaign/models.py:75
 msgid "Default zoom"
 msgstr ""
 
-#: apps/campaign/models.py:77
+#: apps/campaign/models.py:79
 msgid "Map"
 msgstr ""
 
-#: apps/campaign/models.py:78
+#: apps/campaign/models.py:80
 msgid "Timeline"
 msgstr ""
 
-#: apps/campaign/models.py:79 apps/dateo/models.py:35 apps/image/models.py:48
+#: apps/campaign/models.py:81 apps/dateo/models.py:38 apps/image/models.py:48
 msgid "Images"
 msgstr ""
 
-#: apps/campaign/models.py:80 apps/dateo/models.py:36 apps/file/models.py:28
+#: apps/campaign/models.py:82 apps/dateo/models.py:39 apps/file/models.py:28
 msgid "Files"
 msgstr ""
 
-#: apps/campaign/models.py:82
+#: apps/campaign/models.py:84
 msgid "Default visualization mode"
 msgstr ""
 
-#: apps/campaign/models.py:83
+#: apps/campaign/models.py:85
 msgid "Default filter"
 msgstr ""
 
-#: apps/campaign/models.py:86
+#: apps/campaign/models.py:90
 msgid "Item count"
 msgstr ""
 
-#: apps/campaign/models.py:88
+#: apps/campaign/models.py:92
 msgid "Comment count"
 msgstr ""
 
-#: apps/campaign/models.py:89
+#: apps/campaign/models.py:93
 msgid "Follower count"
 msgstr ""
 
-#: apps/campaign/models.py:97 apps/dateo/models.py:170
+#: apps/campaign/models.py:101 apps/dateo/models.py:247
 msgid "Campaign"
 msgstr ""
 
-#: apps/campaign/models.py:98
+#: apps/campaign/models.py:102
 msgid "Campaigns"
 msgstr ""
 
-#: apps/campaign/models.py:132
+#: apps/campaign/models.py:136
 msgid "/campaign/"
 msgstr ""
 
@@ -435,7 +440,7 @@ msgstr ""
 #: apps/campaign/templates/notify/campaign/email_body.txt:15
 #: apps/comment/templates/notify/comment/email_body.txt:13
 #: apps/dateo/templates/notify/dateo/email_body.txt:13
-#: apps/dateo/templates/notify/redateo/email_body.txt:12
+#: apps/dateo/templates/notify/redateo/email_body.txt:13
 #: apps/vote/templates/notify/vote/email_body.txt:17
 #, python-format
 msgid ""
@@ -452,7 +457,7 @@ msgstr ""
 #: apps/campaign/templates/notify/campaign/email_body.txt:22
 #: apps/comment/templates/notify/comment/email_body.txt:20
 #: apps/dateo/templates/notify/dateo/email_body.txt:20
-#: apps/dateo/templates/notify/redateo/email_body.txt:19
+#: apps/dateo/templates/notify/redateo/email_body.txt:20
 #: apps/vote/templates/notify/vote/email_body.txt:24
 #, python-format
 msgid ""
@@ -483,15 +488,15 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#: apps/comment/models.py:14 apps/comment/models.py:47
+#: apps/comment/models.py:15 apps/comment/models.py:48
 msgid "Comment"
 msgstr ""
 
-#: apps/comment/models.py:24
+#: apps/comment/models.py:25
 msgid "Object id"
 msgstr ""
 
-#: apps/comment/models.py:48
+#: apps/comment/models.py:49
 msgid "Comments"
 msgstr ""
 
@@ -538,67 +543,67 @@ msgstr ""
 msgid "%(actor)s commented your %(obj_name)s"
 msgstr "%(actor)s comentó tu %(obj_name)s"
 
-#: apps/dateo/models.py:25
+#: apps/dateo/models.py:28
 msgid "published"
 msgstr "publicado"
 
-#: apps/dateo/models.py:27 apps/dateo/models.py:164
+#: apps/dateo/models.py:30 apps/dateo/models.py:241
 msgid "new"
 msgstr "nuevo"
 
-#: apps/dateo/models.py:28 apps/dateo/models.py:165
+#: apps/dateo/models.py:31 apps/dateo/models.py:242
 msgid "reviewed"
 msgstr "atendido"
 
-#: apps/dateo/models.py:29 apps/dateo/models.py:166
+#: apps/dateo/models.py:32 apps/dateo/models.py:243
 msgid "solved"
 msgstr "solucionado"
 
-#: apps/dateo/models.py:31 apps/dateo/models.py:168
+#: apps/dateo/models.py:34 apps/dateo/models.py:245
 msgid "status"
 msgstr "estado"
 
-#: apps/dateo/models.py:34
+#: apps/dateo/models.py:37
 msgid "Content"
 msgstr ""
 
-#: apps/dateo/models.py:37
+#: apps/dateo/models.py:40
 msgid "Link"
 msgstr ""
 
-#: apps/dateo/models.py:40
+#: apps/dateo/models.py:43
 msgid "Position"
 msgstr ""
 
-#: apps/dateo/models.py:41
+#: apps/dateo/models.py:44
 msgid "Address"
 msgstr ""
 
-#: apps/dateo/models.py:48 apps/tag/models.py:29
+#: apps/dateo/models.py:51 apps/tag/models.py:29
 msgid "Tags"
 msgstr ""
 
-#: apps/dateo/models.py:56
+#: apps/dateo/models.py:59
 msgid "Date"
 msgstr ""
 
-#: apps/dateo/models.py:60
+#: apps/dateo/models.py:63
 msgid "Country"
 msgstr ""
 
-#: apps/dateo/models.py:61
+#: apps/dateo/models.py:64
 msgid "Administrative level 1"
 msgstr ""
 
-#: apps/dateo/models.py:62
+#: apps/dateo/models.py:65
 msgid "Administrative level 2"
 msgstr ""
 
-#: apps/dateo/models.py:63
+#: apps/dateo/models.py:66
 msgid "Administrative level 3"
 msgstr ""
 
-#: apps/dateo/models.py:169 apps/dateo/models.py:180
+#: apps/dateo/models.py:246 apps/dateo/models.py:257
 msgid "Dateo"
 msgstr ""
 
@@ -612,7 +617,7 @@ msgstr ""
 "%(actor)s ha dateado"
 
 #: apps/dateo/templates/notify/dateo/email_body.txt:9
-#: apps/dateo/templates/notify/redateo/email_body.txt:8
+#: apps/dateo/templates/notify/redateo/email_body.txt:9
 #, python-format
 msgid ""
 "You can view the dateo on: \n"
@@ -680,68 +685,68 @@ msgstr ""
 msgid "Image URL"
 msgstr ""
 
-#: apps/notify/models.py:21
+#: apps/notify/models.py:22
 msgid "Interactions regarding my content."
 msgstr ""
 
-#: apps/notify/models.py:22
+#: apps/notify/models.py:23
 msgid "Dateos in tags I follow"
 msgstr ""
 
-#: apps/notify/models.py:23
+#: apps/notify/models.py:24
 msgid "Reports and new Campaigns in tags I follow"
 msgstr ""
 
-#: apps/notify/models.py:24
+#: apps/notify/models.py:25
 msgid "Conversations I follow/engage"
 msgstr ""
 
-#: apps/notify/models.py:25
+#: apps/notify/models.py:26
 msgid "News by Datea"
 msgstr ""
 
-#: apps/notify/models.py:28
+#: apps/notify/models.py:29
 msgid "notify settings for"
 msgstr ""
 
-#: apps/notify/models.py:40
+#: apps/notify/models.py:50
 msgid "Type of Notifications"
 msgstr ""
 
-#: apps/notify/models.py:42
+#: apps/notify/models.py:52
 msgid "Unread"
 msgstr ""
 
-#: apps/notify/models.py:44 apps/notify/models.py:77
-msgid "Data"
-msgstr ""
-
-#: apps/notify/models.py:45
+#: apps/notify/models.py:55
 msgid "ActivityLog"
 msgstr ""
 
-#: apps/notify/models.py:59
+#: apps/notify/models.py:101
 msgid "Acting user (actor)"
 msgstr ""
 
-#: apps/notify/models.py:60
+#: apps/notify/models.py:102
 msgid "Verb"
 msgstr ""
 
-#: apps/notify/models.py:66
+#: apps/notify/models.py:108
 msgid "Action Key"
 msgstr ""
 
-#: apps/notify/models.py:72
+#: apps/notify/models.py:114
 msgid "Target Key"
 msgstr ""
 
-#: apps/notify/models.py:74
+#: apps/notify/models.py:116
 msgid "Target user"
 msgstr ""
 
-#: apps/notify/models.py:75 apps/tag/models.py:12 apps/tag/models.py:28
+#: apps/notify/models.py:117 apps/tag/models.py:12 apps/tag/models.py:28
 msgid "Tag"
+msgstr ""
+
+#: apps/notify/models.py:119
+msgid "Data"
 msgstr ""
 
 #: apps/tag/models.py:16

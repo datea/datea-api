@@ -9,7 +9,7 @@ from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.category.resources import CategoryResource
 from datea_api.apps.comment.resources import CommentResource
 from datea_api.apps.follow.resources import FollowResource
-from datea_api.apps.image.resources import ImageResource, ImageResourceMP
+from datea_api.apps.image.resources import ImageResource
 from datea_api.apps.file.resources import FileResource
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.vote.resources import VoteResource
@@ -29,7 +29,6 @@ v2_api.register(CategoryResource())
 v2_api.register(CommentResource())
 v2_api.register(FollowResource())
 v2_api.register(ImageResource())
-v2_api.register(ImageResourceMP())
 v2_api.register(FileResource())
 v2_api.register(TagResource())
 v2_api.register(VoteResource())

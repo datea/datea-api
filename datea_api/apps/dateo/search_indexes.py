@@ -1,5 +1,5 @@
 from haystack import indexes
-from .models import Dateo
+from dateo.models import Dateo
 
 class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     

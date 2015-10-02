@@ -2,11 +2,11 @@ from account.models import User
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.serializers import UTCSerializer
-from datea_api.apps.api.signals import resource_saved
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import JSONDefaultMixin
+from api.serializers import UTCSerializer
+from api.signals import resource_saved
 from datea_api.utils import remove_accents
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -15,10 +15,10 @@ from django.conf.urls import url
 import json
 from django.http import HttpResponse, Http404
 
-from .models import Tag
+from tag.models import Tag
 from account.utils import get_domain_from_url
-from datea_api.apps.dateo.models import Dateo
-from datea_api.apps.follow.models import Follow
+from dateo.models import Dateo
+from follow.models import Follow
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -34,7 +34,7 @@ from types import UnicodeType
 
 class TagResource(JSONDefaultMixin, ModelResource):
 
-    campaigns = fields.ToManyField('datea_api.apps.campaign.resources.CampaignResource',
+    campaigns = fields.ToManyField('campaign.resources.CampaignResource',
             attribute='campaigns', null=True, full=False, readonly=True)
 
     def dehydrate(self, bundle):

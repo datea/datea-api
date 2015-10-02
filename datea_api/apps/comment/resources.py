@@ -1,21 +1,21 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.serializers import UTCSerializer
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import JSONDefaultMixin
+from api.serializers import UTCSerializer
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.contenttypes.models import ContentType
 from account.utils import get_domain_from_url
-from .models import Comment
+from comment.models import Comment
 
 
 class CommentResource(JSONDefaultMixin, ModelResource):
     
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=True, readonly=True)
     
     def dehydrate(self, bundle):

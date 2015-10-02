@@ -3,14 +3,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.utils.html import strip_tags
 
-from datea_api.apps.tag.models import Tag
-from datea_api.apps.campaign.models import Campaign
-from datea_api.apps.category.models import Category
+from tag.models import Tag
+from campaign.models import Campaign
+from category.models import Category
 from account.models import ClientDomain
-from datea_api.apps.image.models import Image
-from datea_api.apps.file.models import File
-from datea_api.apps.link.models import Link
-from datea_api.apps.follow.models import Follow
+from image.models import Image
+from file.models import File
+from link.models import Link
+from follow.models import Follow
 import urllib2, json
 from django.core.cache import cache
 from django.utils.html import strip_tags
@@ -270,10 +270,10 @@ class Redateo(models.Model):
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
 # AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
 # -> only happens with calls to the api (tastypie)
-from .search_indexes import DateoIndex
-from datea_api.apps.api.signals import resource_saved, resource_pre_saved
+from dateo.search_indexes import DateoIndex
+from api.signals import resource_saved, resource_pre_saved
 from django.db.models.signals import pre_delete, post_delete
-from datea_api.apps.notify.models import ActivityLog
+from notify.models import ActivityLog
 
 def before_dateo_saved(sender, instance, created, **kwargs):
 	if hasattr(instance, 'user') and hasattr(instance, 'tags') and instance.tags.count() >0:
@@ -297,9 +297,9 @@ def before_dateo_delete(sender, instance, **kwargs):
 	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()
 	Follow.objects.filter(content_type__model="dateo", object_id=instance.pk).delete()
 
-resource_pre_saved.connect(before_dateo_saved, sender=Dateo, dispatch_uid="datea_api.apps.dateo.pre_save")
-resource_saved.connect(after_dateo_saved, sender=Dateo, dispatch_uid="datea_api.apps.dateo.saved")
-pre_delete.connect(before_dateo_delete, sender=Dateo, dispatch_uid="datea_api.apps.dateo.delete")
+resource_pre_saved.connect(before_dateo_saved, sender=Dateo, dispatch_uid="dateo.pre_save")
+resource_saved.connect(after_dateo_saved, sender=Dateo, dispatch_uid="dateo.saved")
+pre_delete.connect(before_dateo_delete, sender=Dateo, dispatch_uid="dateo.delete")
 
 def after_status_saved(sender, instance, created, **kwargs):
 	DateoIndex().update_object(instance.dateo)
@@ -307,8 +307,8 @@ def after_status_saved(sender, instance, created, **kwargs):
 def after_status_delete(sender, instance, **kwargs):
 	DateoIndex().update_object(instance.dateo)
 
-resource_saved.connect(after_status_saved, sender=DateoStatus, dispatch_uid="datea_api.apps.dateoStatus.saved")
-post_delete.connect(after_status_delete, sender=DateoStatus, dispatch_uid="datea_api.apps.dateoStatus.delete")
+resource_saved.connect(after_status_saved, sender=DateoStatus, dispatch_uid="dateoStatus.saved")
+post_delete.connect(after_status_delete, sender=DateoStatus, dispatch_uid="dateoStatus.delete")
 
 def after_redateo_saved(sender, instance, created, **kwargs):
 	instance.update_stats(1)
@@ -319,5 +319,5 @@ def after_redateo_delete(sender, instance, **kwargs):
 	ActivityLog.objects.filter(action_key='redateo.'+str(instance.pk)).delete()
 	DateoIndex().update_object(instance.dateo)
 
-resource_saved.connect(after_redateo_saved, sender=Redateo, dispatch_uid="datea_api.apps.redateo.saved")
-post_delete.connect(after_redateo_delete, sender=Redateo, dispatch_uid="datea_api.apps.redateo.delete")
+resource_saved.connect(after_redateo_saved, sender=Redateo, dispatch_uid="redateo.saved")
+post_delete.connect(after_redateo_delete, sender=Redateo, dispatch_uid="redateo.delete")

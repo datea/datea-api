@@ -1,12 +1,12 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL
-from .models import Category
+from category.models import Category
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from datea_api.apps.api.base_resources import JSONDefaultMixin
+from api.base_resources import JSONDefaultMixin
 
 
 class CategoryResource(JSONDefaultMixin, ModelResource):

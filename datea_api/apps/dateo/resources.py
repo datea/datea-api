@@ -3,7 +3,7 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from django.utils.text import Truncator
 from tastypie.cache import SimpleCache
-from datea_api.apps.api.cache import SimpleDictCache
+from api.cache import SimpleDictCache
 from tastypie.throttle import CacheThrottle
 from django.utils.html import strip_tags
 from django.conf.urls import url
@@ -13,30 +13,30 @@ from types import DictType, StringType, UnicodeType
 
 #from tastypie.authentication import ApiKeyAuthentication
 from tastypie.resources import ModelResource
-from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.serializers import UTCSerializer
+from api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.serializers import UTCSerializer
 from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
-from datea_api.apps.api.status_codes import *
+from api.status_codes import *
 from datea_api.utils import remove_accents
-from datea_api.apps.tag.utils import normalize_tag
+from tag.utils import normalize_tag
 
-from .models import Dateo, DateoStatus, Redateo
-from datea_api.apps.image.models import Image
-from datea_api.apps.image.resources import ImageResource
-from datea_api.apps.file.models import File
-from datea_api.apps.file.resources import FileResource
-from datea_api.apps.link.models import Link
-from datea_api.apps.link.resources import LinkResource
-from datea_api.apps.tag.models import Tag
-from datea_api.apps.tag.resources import TagResource
-from datea_api.apps.comment.models import Comment
-from datea_api.apps.follow.models import Follow
+from dateo.models import Dateo, DateoStatus, Redateo
+from image.models import Image
+from image.resources import ImageResource
+from file.models import File
+from file.resources import FileResource
+from link.models import Link
+from link.resources import LinkResource
+from tag.models import Tag
+from tag.resources import TagResource
+from comment.models import Comment
+from follow.models import Follow
 from account.utils import get_domain_from_url
-from datea_api.apps.api.signals import resource_saved, resource_pre_saved
-from datea_api.apps.campaign.models import Campaign
+from api.signals import resource_saved, resource_pre_saved
+from campaign.models import Campaign
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -52,19 +52,19 @@ from tastypie import http
 
 class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
     
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
+    user = fields.ToOneField('account.resources.UserResource',
             attribute="user", null=False, full=True, readonly=True)
-    #category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
+    #category = fields.ToOneField('category.resources.CategoryResource',
     #        attribute= 'category', null=True, full=False, readonly=False)
-    tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource',
+    tags = fields.ToManyField('tag.resources.TagResource',
             attribute='tags', related_name='tags', null=True, full=True, readonly=True)
-    images = fields.ToManyField('datea_api.apps.image.resources.ImageResource',
+    images = fields.ToManyField('image.resources.ImageResource',
             attribute='images', null=True, full=True, readonly=True)
-    files = fields.ToManyField('datea_api.apps.file.resources.FileResource',
+    files = fields.ToManyField('file.resources.FileResource',
             attribute='files', null=True, full=True, readonly=True)
-    link = fields.ToOneField('datea_api.apps.link.resources.LinkResource',
+    link = fields.ToOneField('link.resources.LinkResource',
             attribute='link', null=True, full=True, readonly=True)
-    admin = fields.ToManyField('datea_api.apps.dateo.resources.DateoStatusResource',
+    admin = fields.ToManyField('dateo.resources.DateoStatusResource',
             attribute='admin', null=True, full=True, readonly=True)
 
 
@@ -648,7 +648,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
 class DateoFullResource(DateoBaseResource):
 
-    comments = fields.ToManyField('datea_api.apps.comment.resources.CommentResource',
+    comments = fields.ToManyField('comment.resources.CommentResource',
         attribute=lambda bundle: Comment.objects.filter(object_id=bundle.obj.id, content_type__model='dateo', published=True).order_by('created'),
         null=True, full=True, readonly=True)
 
@@ -733,9 +733,9 @@ class DateoResource(DateoBaseResource):
 
 class DateoStatusResource(JSONDefaultMixin, ModelResource):
 
-    dateo = fields.ToOneField('datea_api.apps.dateo.resources.DateoResource',
+    dateo = fields.ToOneField('dateo.resources.DateoResource',
             attribute="dateo", null=False, full=False, readonly=True)
-    campaign = fields.ToOneField('datea_api.apps.campaign.resources.CampaignResource',
+    campaign = fields.ToOneField('campaign.resources.CampaignResource',
             attribute="campaign", null=False, full=False, readonly=True)
 
     def save(self, bundle, skip_errors=False):
@@ -794,9 +794,9 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
 
 class RedateoResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource',
+    user = fields.ToOneField('account.resources.UserResource',
             attribute="user", null=False, full=False, readonly=True)
-    dateo = fields.ToOneField('datea_api.apps.dateo.resources.DateoResource',
+    dateo = fields.ToOneField('dateo.resources.DateoResource',
             attribute="dateo", null=False, full=False, readonly=True)
 
     def save(self, bundle, skip_errors=False):

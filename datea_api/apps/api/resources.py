@@ -1,4 +1,4 @@
-from .base_resources import JSONDefaultMixin
+from api.base_resources import JSONDefaultMixin
 from tastypie.resources import Resource
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
@@ -7,7 +7,7 @@ from django.conf.urls import url
 
 from geoip import geolite2
 from ipware.ip import get_real_ip
-from datea_api.apps.api.status_codes import *
+from api.status_codes import *
 
 
 class IPLocationResource(JSONDefaultMixin, Resource): 

@@ -4,8 +4,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User, ClientDomain
-from .forms import CustomUserChangeForm, CustomUserCreationForm
+from account.models import User, ClientDomain
+from account.forms import CustomUserChangeForm, CustomUserCreationForm
 
 from tastypie.admin import ApiKeyInline
 from tastypie.models import ApiAccess, ApiKey

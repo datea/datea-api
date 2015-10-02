@@ -5,7 +5,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.sites.models import get_current_site
 from django.template import loader
 
-from .models import User
+from account.models import User
 
 
 class CustomUserCreationForm(UserCreationForm):

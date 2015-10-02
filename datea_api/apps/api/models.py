@@ -38,14 +38,14 @@ class ApiConfig(SingletonModel):
 
 
 from django.db.models.signals import post_init, post_save, pre_delete, pre_save
-from .signals import resource_saved
+from api.signals import resource_saved
 from celery.execute import send_task
 from account.models import User
-from datea_api.apps.dateo.models import Dateo, Redateo
-from datea_api.apps.campaign.models import Campaign
-from datea_api.apps.vote.models import Vote
-from datea_api.apps.comment.models import Comment
-from datea_api.apps.flag.models import Flag
+from dateo.models import Dateo, Redateo
+from campaign.models import Campaign
+from vote.models import Vote
+from comment.models import Comment
+from flag.models import Flag
 
 def user_saved(sender, instance, created, **kwargs):
 	if created:

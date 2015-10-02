@@ -1,10 +1,10 @@
 import sys
 import json
-from .models import File
-from .forms import FileUploadForm
+from dateo.models import File
+from dateo.forms import FileUploadForm
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .resources import FileResource
+from dateo.resources import FileResource
 from tastypie.authentication import ApiKeyAuthentication
 
 @csrf_exempt

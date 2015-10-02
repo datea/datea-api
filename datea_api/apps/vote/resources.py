@@ -1,22 +1,22 @@
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.serializers import UTCSerializer
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import JSONDefaultMixin
+from api.serializers import UTCSerializer
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from account.utils import get_domain_from_url
 from django.contrib.contenttypes.models import ContentType
 from tastypie.exceptions import ImmediateHttpResponse
-from datea_api.apps.api.status_codes import *
+from api.status_codes import *
 
-from .models import Vote
+from vote.models import Vote
 
 class VoteResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     
     def hydrate(self, bundle):

@@ -2,23 +2,23 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from datea_api.apps.api.cache import SimpleDictCache
-from datea_api.apps.api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.serializers import UTCSerializer
+from api.cache import SimpleDictCache
+from api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.serializers import UTCSerializer
 from tastypie.authentication import ApiKeyAuthentication
 import os
 
-from .models import Campaign
+from campaign.models import Campaign
 from account.models import User
-from datea_api.apps.tag.models import Tag
-from datea_api.apps.tag.resources import TagResource
-from datea_api.apps.file.models import File
-from datea_api.apps.file.resources import FileResource
-from datea_api.apps.image.resources import ImageResource
+from tag.models import Tag
+from tag.resources import TagResource
+from file.models import File
+from file.resources import FileResource
+from image.resources import ImageResource
 from account.utils import get_domain_from_url
-from datea_api.apps.api.signals import resource_saved
+from api.signals import resource_saved
 from datea_api.utils import remove_accents
 
 from haystack.utils.geo import Point
@@ -36,19 +36,19 @@ from tastypie import http
 
 class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=True, readonly=True)
-    category = fields.ToOneField('datea_api.apps.category.resources.CategoryResource',
+    category = fields.ToOneField('category.resources.CategoryResource',
             attribute="category", full=True, null=True, readonly=True)
-    main_tag = fields.ToOneField('datea_api.apps.tag.resources.TagResource',
+    main_tag = fields.ToOneField('tag.resources.TagResource',
                 attribute="main_tag", full=True, null=True, readonly=True)
-    secondary_tags = fields.ToManyField('datea_api.apps.tag.resources.TagResource', 
+    secondary_tags = fields.ToManyField('tag.resources.TagResource', 
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
-    image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+    image = fields.ToOneField('image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)
-    image2 = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+    image2 = fields.ToOneField('image.resources.ImageResource', 
             attribute='image2', full=True, null=True, readonly=True)
-    layer_files = fields.ToManyField('datea_api.apps.file.resources.FileResource', 
+    layer_files = fields.ToManyField('file.resources.FileResource', 
             attribute = 'layer_files', full=True, null=True, readonly=True)
     
 

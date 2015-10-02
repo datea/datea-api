@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 
-from views import CustomActivationView
+from account.views import CustomActivationView
 from django.views.generic.base import TemplateView
 from registration.backends.default.views import RegistrationView
 

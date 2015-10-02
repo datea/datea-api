@@ -13,7 +13,7 @@ from jsonfield import JSONField
 from django.db.models.signals import post_save
 from django.conf import settings
 
-from datea_api.apps.tag.models import Tag
+from tag.models import Tag
 
 
 class NotifySettings(models.Model):
@@ -32,7 +32,7 @@ def create_notify_settings(sender, instance=None, **kwargs):
     if instance is None: return
     notify_settings, created = NotifySettings.objects.get_or_create(user=instance)
 
-post_save.connect(create_notify_settings, sender=User, dispatch_uid="datea_api.apps.notifysettings.create")
+post_save.connect(create_notify_settings, sender=User, dispatch_uid="notifysettings.create")
 
 
 def save_notify_settings(sender, instance, created, **kwargs):
@@ -40,7 +40,7 @@ def save_notify_settings(sender, instance, created, **kwargs):
         if instance.site_news:
             settings.EXTERNAL_NEWSLETTER_SUBSCRIBE_FUNC(instance.user, 'subscribe')
 
-post_save.connect(save_notify_settings, sender=NotifySettings, dispatch_uid="datea_api.apps.notifysettings.save")
+post_save.connect(save_notify_settings, sender=NotifySettings, dispatch_uid="notifysettings.save")
 
         
 
@@ -162,7 +162,7 @@ class ActivityLog(models.Model):
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
 # -> only happens with calls to the api (tastypie)
 from .search_indexes import ActivityLogIndex
-from datea_api.apps.api.signals import resource_saved
+from api.signals import resource_saved
 from django.db.models.signals import pre_delete
 from django.core.cache import cache
 
@@ -174,6 +174,6 @@ def remove_search_index(sender, instance, **kwargs):
     ActivityLogIndex().remove_object(instance)
     cache.delete('actlog.'+str(instance.pk))
     
-resource_saved.connect(update_search_index, sender=ActivityLog, dispatch_uid="datea_api.apps.actlog.saved")
-pre_delete.connect(remove_search_index, sender=ActivityLog, dispatch_uid="datea_api.apps.actlog.delete")
+resource_saved.connect(update_search_index, sender=ActivityLog, dispatch_uid="actlog.saved")
+pre_delete.connect(remove_search_index, sender=ActivityLog, dispatch_uid="actlog.delete")
 

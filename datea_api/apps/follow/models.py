@@ -4,8 +4,8 @@ from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.conf import settings
-from datea_api.apps.campaign.models import Campaign
-from datea_api.apps.campaign.search_indexes import CampaignIndex
+from campaign.models import Campaign
+from campaign.search_indexes import CampaignIndex
 from django.core.cache import cache
 
 class Follow(models.Model):
@@ -67,7 +67,7 @@ class Follow(models.Model):
 #  updating stats on objects is done using celery
 ###
 from django.db.models.signals import pre_delete, post_save
-from datea_api.apps.api.signals import resource_saved
+from api.signals import resource_saved
 
 def follow_saved(sender, instance, created, **kwargs):
     if created:
@@ -76,8 +76,8 @@ def follow_saved(sender, instance, created, **kwargs):
 def follow_pre_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
 
-post_save.connect(follow_saved, sender=Follow, dispatch_uid="datea_api.apps.follow.save")
-pre_delete.connect(follow_pre_delete, sender=Follow, dispatch_uid="datea_api.apps.follow.delete")
+post_save.connect(follow_saved, sender=Follow, dispatch_uid="follow.save")
+pre_delete.connect(follow_pre_delete, sender=Follow, dispatch_uid="follow.delete")
         
     
  

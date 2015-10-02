@@ -5,10 +5,10 @@ from django.utils.text import Truncator
 from django.utils.html import strip_tags
 import os
 
-from datea_api.apps.account.models import User
-from datea_api.apps.tag.models import Tag
-from datea_api.apps.dateo.models import Dateo
-from datea_api.apps.campaign.models import Campaign
+from account.models import User
+from tag.models import Tag
+from dateo.models import Dateo
+from campaign.models import Campaign
 
 app_url = 'http://datea.pe'
 api_img_url = 'http://api.datea.io'

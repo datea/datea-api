@@ -35,7 +35,7 @@ class Tag(models.Model):
 
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
 # -> only happens with calls to the api (tastypie)
-from .search_indexes import TagIndex
+from tag.search_indexes import TagIndex
 from django.db.models.signals import pre_delete, post_save
 
 def after_save(sender, instance, created, **kwargs):
@@ -44,10 +44,10 @@ def after_save(sender, instance, created, **kwargs):
 def before_delete(sender, instance, **kwargs):
 	TagIndex().remove_object(instance)
 	# remove any follow objects
-	from datea_api.apps.follow.models import Follow
+	from follow.models import Follow
 	Follow.objects.filter(content_type__model="tag", object_id=instance.pk).delete()
 
 
-post_save.connect(after_save, sender=Tag, dispatch_uid="datea_api.apps.tag.saved")
-pre_delete.connect(before_delete, sender=Tag, dispatch_uid="datea_api.apps.tag.delete")
+post_save.connect(after_save, sender=Tag, dispatch_uid="tag.saved")
+pre_delete.connect(before_delete, sender=Tag, dispatch_uid="tag.delete")
 

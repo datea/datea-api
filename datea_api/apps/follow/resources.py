@@ -1,22 +1,22 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from .models import Follow
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.serializers import UTCSerializer
+from follow.models import Follow
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import JSONDefaultMixin
+from api.serializers import UTCSerializer
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.authentication import ApiKeyAuthentication
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from django.contrib.contenttypes.models import ContentType
-from datea_api.apps.api.signals import resource_saved
+from api.signals import resource_saved
 
 
 class FollowResource(JSONDefaultMixin, ModelResource):
     
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     
     def hydrate(self, bundle):

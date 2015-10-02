@@ -1,4 +1,4 @@
-from .models import User, ClientDomain
+from account.models import User, ClientDomain
 from tastypie.resources import Resource, ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
@@ -8,31 +8,31 @@ from tastypie.utils import trailing_slash
 from tastypie.exceptions import ImmediateHttpResponse
 from django.conf.urls import url
 from django.conf import settings
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.serializers import UTCSerializer
-from datea_api.apps.api.utils import get_reserved_usernames
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.authorization import DateaBaseAuthorization
+from api.base_resources import JSONDefaultMixin
+from api.serializers import UTCSerializer
+from api.utils import get_reserved_usernames
 from datea_api.utils import remove_accents
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 import re
 
-from datea_api.apps.tag.models import Tag
-from datea_api.apps.notify.models import NotifySettings
+from tag.models import Tag
+from notify.models import NotifySettings
 
-from datea_api.apps.campaign.resources import CampaignResource
-from datea_api.apps.follow.resources import FollowResource
-from datea_api.apps.vote.resources import VoteResource
-from datea_api.apps.notify.resources import NotifySettingsResource, NotificationResource
-from datea_api.apps.image.resources import ImageResource
-from datea_api.apps.tag.resources import TagResource
+from campaign.resources import CampaignResource
+from follow.resources import FollowResource
+from vote.resources import VoteResource
+from notify.resources import NotifySettingsResource, NotificationResource
+from image.resources import ImageResource
+from tag.resources import TagResource
 
 import json
 from django.contrib.auth import authenticate
-from .forms import CustomPasswordResetForm
-from .utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url, new_username_allowed
-from datea_api.apps.api.status_codes import *
+from account.forms import CustomPasswordResetForm
+from account.utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url, new_username_allowed
+from api.status_codes import *
 
 from registration.models import RegistrationProfile
 from registration import signals
@@ -391,9 +391,9 @@ def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
 
 class UserResource(JSONDefaultMixin, ModelResource):
 
-    image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+    image = fields.ToOneField('image.resources.ImageResource', 
             attribute='image', full=True, null=True, readonly=True)
-    bg_image = fields.ToOneField('datea_api.apps.image.resources.ImageResource', 
+    bg_image = fields.ToOneField('image.resources.ImageResource', 
             attribute='bg_image', full=True, null=True, readonly=True)
     
     def dehydrate(self, bundle):

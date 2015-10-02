@@ -1,27 +1,27 @@
 from tastypie import fields
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from .models import ActivityLog, Notification, NotifySettings
-from datea_api.apps.api.authorization import DateaBaseAuthorization, OwnerOnlyAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.base_resources import JSONDefaultMixin
-from datea_api.apps.api.serializers import UTCSerializer
-from datea_api.apps.api.signals import resource_saved
-from datea_api.apps.api.cache import SimpleDictCache
+from notify.models import ActivityLog, Notification, NotifySettings
+from api.authorization import DateaBaseAuthorization, OwnerOnlyAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import JSONDefaultMixin
+from api.serializers import UTCSerializer
+from api.signals import resource_saved
+from api.cache import SimpleDictCache
 from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from tastypie.contrib.contenttypes.fields import GenericForeignKeyField
 
-from datea_api.apps.comment.models import Comment
-from datea_api.apps.comment.resources import CommentResource
-from datea_api.apps.dateo.models import Dateo, Redateo
-from datea_api.apps.dateo.resources import DateoFullResource, RedateoResource
-from datea_api.apps.vote.models import Vote
-from datea_api.apps.vote.resources import VoteResource
-from datea_api.apps.follow.models import Follow
-from datea_api.apps.campaign.models import Campaign
-from datea_api.apps.campaign.resources import CampaignResource
+from comment.models import Comment
+from comment.resources import CommentResource
+from dateo.models import Dateo, Redateo
+from dateo.resources import DateoFullResource, RedateoResource
+from vote.models import Vote
+from vote.resources import VoteResource
+from follow.models import Follow
+from campaign.models import Campaign
+from campaign.resources import CampaignResource
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
@@ -29,12 +29,12 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.conf import settings
 from django.conf.urls import url
 from tastypie.utils import trailing_slash
-from datea_api.apps.api.status_codes import *
+from api.status_codes import *
 
 
 class NotifySettingsResource(JSONDefaultMixin, ModelResource):
     
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
 
     def hydrate(self, bundle):
@@ -67,7 +67,7 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
 
 class NotificationResource(JSONDefaultMixin, ModelResource):
         
-    recipient = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    recipient = fields.ToOneField('account.resources.UserResource', 
         attribute='recipient', full=False, readonly=True)
 
     def dehydrate(self, bundle):
@@ -135,10 +135,10 @@ class NotificationResource(JSONDefaultMixin, ModelResource):
 
 class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
-    actor = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    actor = fields.ToOneField('account.resources.UserResource', 
         attribute='actor', full=True, readonly=True)
 
-    target_user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    target_user = fields.ToOneField('account.resources.UserResource', 
         attribute='target_user', full=True, null=True, readonly=True)
 
     action_object = GenericForeignKeyField({

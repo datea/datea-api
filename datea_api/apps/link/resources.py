@@ -1,20 +1,20 @@
 from tastypie import fields
 from tastypie.resources import ModelResource, Resource
-from .models import Link
-from datea_api.apps.api.authorization import DateaBaseAuthorization
-from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
-from datea_api.apps.api.base_resources import JSONDefaultMixin
+from link.models import Link
+from api.authorization import DateaBaseAuthorization
+from api.authentication import ApiKeyPlusWebAuthentication
+from api.base_resources import JSONDefaultMixin
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from account.utils import get_domain_from_url
 from django.conf.urls import url
 from tastypie.utils import trailing_slash
-from datea_api.apps.api.status_codes import *
+from api.status_codes import *
 import requests, extraction, urlparse, os.path
 
 class LinkResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('datea_api.apps.account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     
     def hydrate(self, bundle):

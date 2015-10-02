@@ -1,4 +1,4 @@
-from .models import ApiConfig
+from api.models import ApiConfig
 from django.conf import settings 
 import unicodedata
 

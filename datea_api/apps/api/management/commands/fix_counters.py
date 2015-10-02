@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
-from datea_api.apps.dateo.models import Dateo
-from datea_api.apps.account.models import User
-from datea_api.apps.campaign.models import Campaign
-from datea_api.apps.tag.models import Tag
-from datea_api.apps.follow.models import Follow
-from datea_api.apps.vote.models import Vote
-from datea_api.apps.comment.models import Comment
+from dateo.models import Dateo
+from account.models import User
+from campaign.models import Campaign
+from tag.models import Tag
+from follow.models import Follow
+from vote.models import Vote
+from comment.models import Comment
 
 class Command(BaseCommand):
 	help = "fix counters of datea's objects"

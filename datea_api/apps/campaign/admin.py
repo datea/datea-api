@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Campaign
+from campaign.models import Campaign
 
 class CampaignAdmin(admin.ModelAdmin):
 	model = Campaign

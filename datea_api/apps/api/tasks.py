@@ -8,22 +8,22 @@ from django.utils.translation import ugettext
 import json
 
 from account.models import User
-from datea_api.apps.campaign.models import Campaign
-from datea_api.apps.campaign.resources import CampaignResource
-from datea_api.apps.notify.models import ActivityLog, Notification
-from datea_api.apps.follow.models import Follow
-from datea_api.apps.comment.models import Comment
-from datea_api.apps.comment.resources import CommentResource
-from datea_api.apps.dateo.models import Dateo, Redateo
-from datea_api.apps.dateo.resources import DateoResource
-from datea_api.apps.vote.models import Vote
-import datea_api.apps.vote.resources
-from datea_api.apps.flag.models import Flag
+from campaign.models import Campaign
+from campaign.resources import CampaignResource
+from notify.models import ActivityLog, Notification
+from follow.models import Follow
+from comment.models import Comment
+from comment.resources import CommentResource
+from dateo.models import Dateo, Redateo
+from dateo.resources import DateoResource
+from vote.models import Vote
+import vote.resources
+from flag.models import Flag
 
-from datea_api.apps.notify.utils import send_mails, send_admin_mail
+from notify.utils import send_mails, send_admin_mail
 from account.utils import get_client_data
 
-from datea_api.apps.api.signals import resource_saved
+from api.signals import resource_saved
 
 from django.db import IntegrityError, transaction
 from django.conf import settings

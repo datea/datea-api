@@ -80,20 +80,20 @@ INSTALLED_APPS = (
 
     # DATEA APPS
     'account',
-    'datea_api.apps.dateo',
-    'datea_api.apps.tag',
-    'datea_api.apps.category',
-    'datea_api.apps.image',
-    'datea_api.apps.file',
-    'datea_api.apps.comment',
-    'datea_api.apps.follow',
-    'datea_api.apps.vote',
-    'datea_api.apps.campaign',
-    'datea_api.apps.notify',
-    'datea_api.apps.flag',
-    'datea_api.apps.link',
-    'datea_api.apps.api',
-    'datea_api.apps.seo',
+    'dateo',
+    'tag',
+    'category',
+    'image',
+    'file',
+    'comment',
+    'follow',
+    'vote',
+    'campaign',
+    'notify',
+    'flag',
+    'link',
+    'api',
+    'seo',
 
     # USER STUFF
     'registration',
@@ -151,14 +151,14 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_uid',
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
-    'datea_api.apps.account.pipeline.get_username',
+    'account.pipeline.get_username',
     # 'social.pipeline.mail.mail_validation',
     'social.pipeline.social_auth.associate_by_email',
-    'datea_api.apps.account.pipeline.create_user',
+    'account.pipeline.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',
-    'datea_api.apps.account.pipeline.save_avatar'
+    'account.pipeline.save_avatar'
 )
 
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']

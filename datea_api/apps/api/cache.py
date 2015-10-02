@@ -1,7 +1,7 @@
 import json
 from django.conf import settings
 from tastypie.cache import NoCache
-from .serializers import UTCSerializer
+from api.serializers import UTCSerializer
 from django.core.cache import cache
 import sys
 

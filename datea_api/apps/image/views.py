@@ -1,6 +1,6 @@
 import sys
 import json
-from models import Image
+from image.models import Image
 from forms import ImageUploadForm
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt

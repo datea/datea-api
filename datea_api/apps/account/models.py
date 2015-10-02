@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.db.models.signals import pre_delete, post_save, pre_save
 from django.conf import settings
 
-from datea_api.apps.image.models import Image
+from image.models import Image
 
 class CustomUserManager(BaseUserManager):
 

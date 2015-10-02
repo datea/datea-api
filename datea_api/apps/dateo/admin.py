@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Dateo
+from dateo.models import Dateo
 
 # Register your models here.
 

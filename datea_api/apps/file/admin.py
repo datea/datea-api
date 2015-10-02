@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import File
+from file.models import File
 
 class FileAdmin(admin.ModelAdmin):
     model = File

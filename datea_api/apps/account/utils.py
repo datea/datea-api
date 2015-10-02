@@ -1,10 +1,9 @@
 
 from tastypie.models import ApiKey
 from django.template.defaultfilters import slugify
-from account.models import User
+from account.models import User, ClientDomain
 from urlparse import urlparse
 from django.core.validators import URLValidator
-from models import ClientDomain
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.models import get_current_site

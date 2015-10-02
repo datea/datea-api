@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.html import strip_tags
 from django.conf import settings
-from datea_api.apps.campaign.models import Campaign
+from campaign.models import Campaign
 from django.core.cache import cache
 
 
@@ -27,7 +27,7 @@ class Comment(models.Model):
     client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
     def get_resource_class(self):
-        return datea_api.apps.comment.resources.CommentResource
+        return comment.resources.CommentResource
 
     def update_stats(self, value):
         if hasattr(self.content_object, 'comment_count'):
@@ -51,7 +51,7 @@ class Comment(models.Model):
 
 # UPDATE COMMENT STATS
 from django.db.models.signals import pre_delete, post_save, pre_save
-from datea_api.apps.notify.models import ActivityLog
+from notify.models import ActivityLog
 
 def before_comment_saved(sender, instance, **kwargs):
     if (instance.content_type.model == 'dateo'):
@@ -64,7 +64,7 @@ def after_comment_saved(sender, instance, created, **kwargs):
         if (instance.content_type.model == 'dateo'):
             # this nonesense is because celery doesn't like circular imports?
             global DateoIndex
-            from datea_api.apps.dateo.search_indexes import DateoIndex
+            from dateo.search_indexes import DateoIndex
             DateoIndex().update_object(instance.content_object)
 
 
@@ -74,10 +74,10 @@ def before_comment_delete(sender, instance, **kwargs):
     if (instance.content_type.model == 'dateo'):
         # this nonesense is because celery doesn't like circular imports?
         global DateoIndex
-        from datea_api.apps.dateo.search_indexes import DateoIndex
+        from dateo.search_indexes import DateoIndex
         DateoIndex().update_object(instance.content_object)
 
-post_save.connect(after_comment_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.saved")
-pre_save.connect(before_comment_saved, sender=Comment, dispatch_uid="datea_api.apps.comment.pre_saved")
-pre_delete.connect(before_comment_delete, sender=Comment, dispatch_uid="datea_api.apps.comment.delete")
+post_save.connect(after_comment_saved, sender=Comment, dispatch_uid="comment.saved")
+pre_save.connect(before_comment_saved, sender=Comment, dispatch_uid="comment.pre_saved")
+pre_delete.connect(before_comment_delete, sender=Comment, dispatch_uid="comment.delete")
 

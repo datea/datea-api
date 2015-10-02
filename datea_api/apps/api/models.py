@@ -40,7 +40,7 @@ class ApiConfig(SingletonModel):
 from django.db.models.signals import post_init, post_save, pre_delete, pre_save
 from .signals import resource_saved
 from celery.execute import send_task
-from datea_api.apps.account.models import User
+from account.models import User
 from datea_api.apps.dateo.models import Dateo, Redateo
 from datea_api.apps.campaign.models import Campaign
 from datea_api.apps.vote.models import Vote

@@ -1,7 +1,0 @@
-
-See 
-
-http://stackoverflow.com/questions/15868052/cant-build-index-for-solr-haystack-unknown-field-django-id
-
-after ./manage.py build_solr_schema
-

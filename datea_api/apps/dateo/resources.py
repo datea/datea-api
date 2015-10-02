@@ -34,7 +34,7 @@ from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.comment.models import Comment
 from datea_api.apps.follow.models import Follow
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from datea_api.apps.api.signals import resource_saved, resource_pre_saved
 from datea_api.apps.campaign.models import Campaign
 
@@ -44,7 +44,7 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
-from datea_api.apps.account.models import User
+from account.models import User
 from tastypie.resources import convert_post_to_patch
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
 from tastypie import http
@@ -415,9 +415,9 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             tags = map(normalize_tag, request.GET.get('tags').split(','))
             if tag_op == 'or':
                 if len(tags) == 1 and tags[0].strip() != '':
-                    q_args['tags_exact'] = tags[0]
+                    q_args['tags__exact'] = tags[0]
                 else: 
-                    q_args['tags_exact__in'] = tags
+                    q_args['tags__exact__in'] = tags
             elif tag_op == 'and':
                 narrow_args.append('tags:'+','.join(tags))
 

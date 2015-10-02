@@ -1,116 +1,67 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import re
+import django.core.validators
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'User'
-        db.create_table(u'account_user', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('password', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('last_login', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('is_superuser', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('username', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
-            ('full_name', self.gf('django.db.models.fields.CharField')(max_length=254, blank=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(unique=True, max_length=254)),
-            ('message', self.gf('django.db.models.fields.CharField')(max_length=140, null=True, blank=True)),
-            ('image', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'user_avatar', null=True, to=orm['image.Image'])),
-            ('bg_image', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'user_background', null=True, to=orm['image.Image'])),
-            ('dateo_count', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-            ('comment_count', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-            ('vote_count', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'account', ['User'])
+    dependencies = [
+    ]
 
-        # Adding M2M table for field groups on 'User'
-        m2m_table_name = db.shorten_name(u'account_user_groups')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('user', models.ForeignKey(orm[u'account.user'], null=False)),
-            ('group', models.ForeignKey(orm[u'auth.group'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['user_id', 'group_id'])
-
-        # Adding M2M table for field user_permissions on 'User'
-        m2m_table_name = db.shorten_name(u'account_user_user_permissions')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('user', models.ForeignKey(orm[u'account.user'], null=False)),
-            ('permission', models.ForeignKey(orm[u'auth.permission'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['user_id', 'permission_id'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'User'
-        db.delete_table(u'account_user')
-
-        # Removing M2M table for field groups on 'User'
-        db.delete_table(db.shorten_name(u'account_user_groups'))
-
-        # Removing M2M table for field user_permissions on 'User'
-        db.delete_table(db.shorten_name(u'account_user_user_permissions'))
-
-
-    models = {
-        u'account.user': {
-            'Meta': {'object_name': 'User'},
-            'bg_image': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'user_background'", 'null': 'True', 'to': u"orm['image.Image']"}),
-            'comment_count': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'dateo_count': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '254'}),
-            'full_name': ('django.db.models.fields.CharField', [], {'max_length': '254', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'user_avatar'", 'null': 'True', 'to': u"orm['image.Image']"}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '140', 'null': 'True', 'blank': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
-            'vote_count': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'})
-        },
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'image.image': {
-            'Meta': {'object_name': 'Image'},
-            'height': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('sorl.thumbnail.fields.ImageField', [], {'max_length': '100'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
-            'width': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['account']
+    operations = [
+        migrations.CreateModel(
+            name='User',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('password', models.CharField(max_length=128, verbose_name='password')),
+                ('last_login', models.DateTimeField(null=True, verbose_name='last login', blank=True)),
+                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
+                ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='date joined')),
+                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
+                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
+                ('username', models.CharField(help_text='Required. 30 characters or fewer. Letters, numbers and @/./+/-/_ characters', unique=True, max_length=30, verbose_name='username', validators=[django.core.validators.RegexValidator(re.compile('^[\\w.@+-]+$'), 'Enter a valid username.', 'invalid')])),
+                ('full_name', models.CharField(max_length=254, null=True, verbose_name='full name', blank=True)),
+                ('email', models.EmailField(max_length=254, unique=True, null=True, verbose_name='email address', blank=True)),
+                ('message', models.CharField(max_length=140, null=True, verbose_name='personal message', blank=True)),
+                ('url', models.URLField(null=True, verbose_name='External URL', blank=True)),
+                ('url_facebook', models.URLField(null=True, verbose_name='Facebook URL', blank=True)),
+                ('url_twitter', models.URLField(null=True, verbose_name='Twitter URL', blank=True)),
+                ('url_youtube', models.URLField(null=True, verbose_name='Youtube URL', blank=True)),
+                ('dateo_count', models.PositiveIntegerField(default=0, verbose_name='Dateo count')),
+                ('voted_count', models.PositiveIntegerField(default=0, verbose_name='Voted count')),
+                ('status', models.PositiveIntegerField(default=0, verbose_name='Status', choices=[(0, 'unconfirmed'), (1, 'confirmed'), (2, 'banned')])),
+                ('client_domain', models.CharField(max_length=100, null=True, verbose_name='CLient Domain', blank=True)),
+            ],
+            options={
+                'abstract': False,
+                'verbose_name': 'User',
+                'verbose_name_plural': 'Users',
+            },
+        ),
+        migrations.CreateModel(
+            name='ClientDomain',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('domain', models.CharField(max_length=100, verbose_name='domain name')),
+                ('name', models.CharField(max_length=255, verbose_name='site name')),
+                ('register_success_url', models.URLField(null=True, verbose_name='Register success redirect URL', blank=True)),
+                ('register_error_url', models.URLField(null=True, verbose_name='Register error redirect URL', blank=True)),
+                ('change_email_success_url', models.URLField(null=True, verbose_name='Change email success redirect URL', blank=True)),
+                ('change_email_error_url', models.URLField(null=True, verbose_name='Change email error redirect URL', blank=True)),
+                ('pwreset_base_url', models.URLField(null=True, verbose_name='Password reset base URL', blank=True)),
+                ('comment_url', models.CharField(help_text="Available vars: {user_id} of commented object's owner, \t\t\t\t\t\t{username} of commented object' owner, {obj_id} of commented \t\t\t\t\t\tobject, {comment_id} of comment, {obj_type} type of commented object (dateo mostly)", max_length=255, null=True, verbose_name='Comment url template', blank=True)),
+                ('dateo_url', models.CharField(help_text='Available vars: {user_id} of dateo owner, \t\t\t\t\t\t{username} of dateo owner, {obj_id} of dateo', max_length=255, null=True, verbose_name='Dateo url template', blank=True)),
+                ('campaign_url', models.CharField(help_text='Available vars: {user_id} of campaign owner, \t\t\t\t\t\t{username} of campaign owner, {obj_id} of campaign, {slug} of campaign', max_length=255, null=True, verbose_name='Campaign url template', blank=True)),
+                ('notify_settings_url', models.CharField(help_text='Available vars: {user_id} and {username}', max_length=255, null=True, verbose_name='Notify settings url template', blank=True)),
+                ('send_notification_mail', models.BooleanField(default=True, verbose_name='Send notification mail')),
+            ],
+            options={
+                'verbose_name': 'Whitelisted client domain',
+                'verbose_name_plural': 'Whitelisted client domains',
+            },
+        ),
+    ]

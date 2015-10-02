@@ -1,36 +1,32 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Tag'
-        db.create_table(u'tag_tag', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
-            ('long_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
-            ('description', self.gf('django.db.models.fields.TextField')(max_length=500, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'tag', ['Tag'])
+    dependencies = [
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'Tag'
-        db.delete_table(u'tag_tag')
-
-
-    models = {
-        u'tag.tag': {
-            'Meta': {'object_name': 'Tag'},
-            'description': ('django.db.models.fields.TextField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'long_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
-            'name': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
-        }
-    }
-
-    complete_apps = ['tag']
+    operations = [
+        migrations.CreateModel(
+            name='Tag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
+                ('tag', models.SlugField(unique=True, max_length=100, verbose_name='Tag')),
+                ('title', models.CharField(max_length=100, null=True, verbose_name='Title', blank=True)),
+                ('description', models.TextField(max_length=500, null=True, verbose_name='Description (optional)', blank=True)),
+                ('follow_count', models.IntegerField(default=0, null=True, verbose_name='Follow count', blank=True)),
+                ('dateo_count', models.IntegerField(default=0, null=True, verbose_name='Dateo count', blank=True)),
+                ('image_count', models.IntegerField(default=0, verbose_name='Image count')),
+                ('file_count', models.IntegerField(default=0, verbose_name='File count')),
+                ('client_domain', models.CharField(max_length=100, null=True, verbose_name='CLient Domain', blank=True)),
+            ],
+            options={
+                'verbose_name': 'Tag',
+                'verbose_name_plural': 'Tags',
+            },
+        ),
+    ]

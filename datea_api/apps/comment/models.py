@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.html import strip_tags
 from django.conf import settings
 from datea_api.apps.campaign.models import Campaign
@@ -18,7 +18,7 @@ class Comment(models.Model):
     
     # generic content type relation to commented object
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     
     # do we need content type relation? perhaps this is more simple and fast...
     #object_type = models.CharField(_('Object Name'), max_length=50) # object typeid -> whatever

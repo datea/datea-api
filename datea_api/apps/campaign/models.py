@@ -150,9 +150,6 @@ class Campaign(models.Model):
 	    super(Campaign, self).save(*args, **kwargs)
 
 
-	
-
-
 
 # KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
 # -> only happens with calls to the api (tastypie)

@@ -11,13 +11,13 @@ from tastypie.authentication import ApiKeyAuthentication
 import os
 
 from .models import Campaign
-from datea_api.apps.account.models import User
+from account.models import User
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.tag.resources import TagResource
 from datea_api.apps.file.models import File
 from datea_api.apps.file.resources import FileResource
 from datea_api.apps.image.resources import ImageResource
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from datea_api.apps.api.signals import resource_saved
 from datea_api.utils import remove_accents
 

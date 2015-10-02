@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.conf import settings
 from datea_api.apps.campaign.models import Campaign
 from datea_api.apps.campaign.search_indexes import CampaignIndex
@@ -15,7 +15,7 @@ class Follow(models.Model):
     
     # generic content type relation to followed object
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     object_id = models.PositiveIntegerField(null=True, blank=True)
 
     # a sort of natural key by which easily and rapidly 

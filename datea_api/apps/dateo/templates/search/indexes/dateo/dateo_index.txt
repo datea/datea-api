@@ -1,7 +1,8 @@
-{{object.content}}
+{% load uninormalize %}
+{{object.content | uninormalize }}
 {% for tag in object.tags.all %}#{{tag}} {% endfor %}
 {% for tag in object.tags.all %}{% if tag.title %}tag.title, {% endif %}{% endfor %}
-{{object.category.name}}
+{{object.category.name | uninormalize}}
 @{{object.user.username}}
-{% if object.address %}{{object.address}}{% endif %}
-{{ object.country }} {{ object.admin_level1 }} {{ objects.admin_level2 }} {{ object.admin_level3 }}
+{% if object.address %}{{object.address | uninormalize}}{% endif %}
+{{ object.country | uninormalize}} {{ object.admin_level1 | uninormalize}} {{ objects.admin_level2 | uninormalize}} {{ object.admin_level3 | uninormalize}}

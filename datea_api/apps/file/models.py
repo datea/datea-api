@@ -8,8 +8,8 @@ from django.db.models.deletion import Collector
 from django.db import router
 
 from .fields import ContentTypeRestrictedFileField
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^datea_api\.apps\.file\.fields\.ContentTypeRestrictedFileField"]) 
+#from south.modelsinspector import add_introspection_rules
+#add_introspection_rules([], ["^datea_api\.apps\.file\.fields\.ContentTypeRestrictedFileField"]) 
 
 
 class File(models.Model):

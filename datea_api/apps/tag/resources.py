@@ -16,7 +16,7 @@ import json
 from django.http import HttpResponse, Http404
 
 from .models import Tag
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from datea_api.apps.dateo.models import Dateo
 from datea_api.apps.follow.models import Follow
 
@@ -29,10 +29,8 @@ from django.core.cache import cache
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from django.db.models import Count
-import unicodedata
 import sys
 from types import UnicodeType
-
 
 class TagResource(JSONDefaultMixin, ModelResource):
 
@@ -103,7 +101,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
         self.throttle_check(request)
         limit = int(request.GET.get('limit', 5))
 
-        q = request.GET.get('q','')
+        q = remove_accents(request.GET.get('q',u''))
         if len(q) > 0 and len(q) <= 2:
             sqs = SearchQuerySet().models(Tag).autocomplete(tag__startswith=q).order_by('-dateo_count')[0:limit]
         else:
@@ -171,7 +169,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
 
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
-            q_args['content'] = AutoQuery(request.GET['q'])
+            q_args['content'] = AutoQuery(remove_accents(request.GET['q']))
 
         if 'tag' in request.GET:
             q_args['tag_exact'] = remove_accents(request.GET.get('tag').lower())

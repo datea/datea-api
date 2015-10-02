@@ -7,7 +7,7 @@ from django.utils.text import Truncator
 from django.utils.translation import ugettext
 import json
 
-from datea_api.apps.account.models import User
+from account.models import User
 from datea_api.apps.campaign.models import Campaign
 from datea_api.apps.campaign.resources import CampaignResource
 from datea_api.apps.notify.models import ActivityLog, Notification
@@ -21,7 +21,7 @@ import datea_api.apps.vote.resources
 from datea_api.apps.flag.models import Flag
 
 from datea_api.apps.notify.utils import send_mails, send_admin_mail
-from datea_api.apps.account.utils import get_client_data
+from account.utils import get_client_data
 
 from datea_api.apps.api.signals import resource_saved
 

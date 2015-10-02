@@ -100,6 +100,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 	    verbose_name = _('User')
 	    verbose_name_plural = _('Users')
 	    abstract = False
+    	app_label = 'datea.account'
 
 	def get_absolute_url(self):
 	    return "/users/%s/" % urlquote(self.username)

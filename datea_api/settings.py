@@ -71,7 +71,6 @@ INSTALLED_APPS = (
 
     'solo',
     'django.contrib.gis',
-    'south',
     'django_extensions',
     'sorl.thumbnail',
     'tastypie',
@@ -99,8 +98,6 @@ INSTALLED_APPS = (
     # USER STUFF
     'registration',
     'social.apps.django_app.default',
-
-    'rosetta'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -181,12 +178,11 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 '''
-
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr',
-        'TIMEOUT': 30  # large timeout because of celery 
+        'ENGINE' : 'haystack.backends.solr_backend.SolrEngine',
+        'URL'    : 'http://127.0.0.1:8983/solr',
+        'TIMEOUT': 60  # large timeout because of celery 
     },
 }
 #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor' -> using custom code for this

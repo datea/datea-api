@@ -12,7 +12,7 @@ from django_resized import ResizedImageField
 
 class Image(models.Model):
  
-    image =  ResizedImageField(max_width=2048, max_height=2048, upload_to="images")  
+    image =  ResizedImageField(size=[2048, 2048], upload_to="images")  
     user =   models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="images")
     order =  models.IntegerField(blank=True, null=True, default=0)
     width =  models.PositiveIntegerField(blank=True, null=True)

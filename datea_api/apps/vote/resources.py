@@ -7,7 +7,7 @@ from datea_api.apps.api.serializers import UTCSerializer
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from django.contrib.contenttypes.models import ContentType
 from tastypie.exceptions import ImmediateHttpResponse
 from datea_api.apps.api.status_codes import *

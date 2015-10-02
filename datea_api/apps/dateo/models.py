@@ -6,7 +6,7 @@ from django.utils.html import strip_tags
 from datea_api.apps.tag.models import Tag
 from datea_api.apps.campaign.models import Campaign
 from datea_api.apps.category.models import Category
-from datea_api.apps.account.models import ClientDomain
+from account.models import ClientDomain
 from datea_api.apps.image.models import Image
 from datea_api.apps.file.models import File
 from datea_api.apps.link.models import Link

@@ -1,8 +1,9 @@
-{{object.name}}
+{% load uninormalize %}
+{{object.name | uninormalize }}
 #{{object.main_tag.tag}} {{object.main_tag.tag}}
 {% for tag in object.secondary_tags.all %}#{{tag.tag}} {{tag.tag}} {% endfor %}
 {% for tag in object.secondary_tags.all %}{% if tag.title %}{{tag.title}}, {% endif %}{% endfor %}
-{{object.short_description}}
+{{object.short_description | uninormalize}}
 @{{object.user.username}}
-{{object.mission}}
-{{object.category.name}}
+{{object.mission | uninormalize}}
+{{object.category.name | uninormalize}}

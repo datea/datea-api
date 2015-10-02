@@ -9,7 +9,7 @@ from django.template.defaultfilters import linebreaksbr
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
 from django.contrib.contenttypes.models import ContentType
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from .models import Comment
 
 

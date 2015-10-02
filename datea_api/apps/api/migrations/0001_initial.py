@@ -1,36 +1,26 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'ApiConfig'
-        db.create_table(u'api_apiconfig', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('maintainance_mode', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('reserved_usernames', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('reserved_campaign_names', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'api', ['ApiConfig'])
+    dependencies = [
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'ApiConfig'
-        db.delete_table(u'api_apiconfig')
-
-
-    models = {
-        u'api.apiconfig': {
-            'Meta': {'object_name': 'ApiConfig'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'maintainance_mode': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'reserved_campaign_names': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'reserved_usernames': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['api']
+    operations = [
+        migrations.CreateModel(
+            name='ApiConfig',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('maintainance_mode', models.BooleanField(default=False, verbose_name='Maintainance mode')),
+                ('reserved_usernames', models.TextField(null=True, verbose_name='Reserved usernames', blank=True)),
+                ('reserved_campaign_names', models.TextField(null=True, verbose_name='Reserved campaign names', blank=True)),
+            ],
+            options={
+                'verbose_name': 'Api Configuration',
+                'verbose_name_plural': 'Api Configuration',
+            },
+        ),
+    ]

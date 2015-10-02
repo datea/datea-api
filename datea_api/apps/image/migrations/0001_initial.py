@@ -1,38 +1,32 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import django_resized.forms
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Image'
-        db.create_table(u'image_image', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('image', self.gf('sorl.thumbnail.fields.ImageField')(max_length=100)),
-            ('order', self.gf('django.db.models.fields.IntegerField')(default=0, null=True, blank=True)),
-            ('width', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('height', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'image', ['Image'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'Image'
-        db.delete_table(u'image_image')
-
-
-    models = {
-        u'image.image': {
-            'Meta': {'object_name': 'Image'},
-            'height': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('sorl.thumbnail.fields.ImageField', [], {'max_length': '100'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
-            'width': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['image']
+    operations = [
+        migrations.CreateModel(
+            name='Image',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('image', django_resized.forms.ResizedImageField(upload_to=b'images')),
+                ('order', models.IntegerField(default=0, null=True, blank=True)),
+                ('width', models.PositiveIntegerField(null=True, blank=True)),
+                ('height', models.PositiveIntegerField(null=True, blank=True)),
+                ('client_domain', models.CharField(max_length=100, null=True, verbose_name='CLient Domain', blank=True)),
+                ('user', models.ForeignKey(related_name='images', verbose_name='User', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'Image',
+                'verbose_name_plural': 'Images',
+            },
+        ),
+    ]

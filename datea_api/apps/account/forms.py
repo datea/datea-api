@@ -20,6 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
+        fields = '__all__'
 
 class CustomUserChangeForm(UserChangeForm):
     """A form for updating users. Includes all the fields on
@@ -33,6 +34,7 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = User
+        fields = '__all__'
 
 
 class CustomPasswordResetForm(PasswordResetForm):

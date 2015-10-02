@@ -1,5 +1,6 @@
 from haystack import indexes
 from .models import Campaign
+import unicodedata
 
 class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     
@@ -30,6 +31,9 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     
     def index_queryset(self, using=None):
         return self.get_model().objects.all()
+
+    def prepare_name(self, obj):
+        return unicodedata.normalize('NFKD', obj.name).encode('ascii', 'ignore')
 
     def prepare_main_tag_id(self, obj):
         return obj.main_tag.id

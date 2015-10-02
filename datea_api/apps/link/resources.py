@@ -6,7 +6,7 @@ from datea_api.apps.api.authentication import ApiKeyPlusWebAuthentication
 from datea_api.apps.api.base_resources import JSONDefaultMixin
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
-from datea_api.apps.account.utils import get_domain_from_url
+from account.utils import get_domain_from_url
 from django.conf.urls import url
 from tastypie.utils import trailing_slash
 from datea_api.apps.api.status_codes import *

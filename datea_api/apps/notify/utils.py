@@ -1,5 +1,5 @@
 
-from follow.models import Follow
+from datea_api.apps.follow.models import Follow
 from models import Notification
 from django.template.loader import render_to_string, get_template
 from django.template import Context

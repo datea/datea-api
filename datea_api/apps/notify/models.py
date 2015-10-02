@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 from django.core.mail import EmailMessage
 from django.contrib.sites.models import Site
@@ -101,13 +101,13 @@ class ActivityLog(models.Model):
     actor = models.ForeignKey(User, verbose_name=_("Acting user (actor)"), related_name="acting_user")
     verb = models.CharField(_('Verb'), max_length=50)
 
-    action_object = generic.GenericForeignKey('action_type', 'action_id')
+    action_object = GenericForeignKey('action_type', 'action_id')
     action_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="action_types")
     action_id = models.PositiveIntegerField(null=True, blank=True)
 
     action_key = models.CharField(_("Action Key"), max_length=50)
 
-    target_object = generic.GenericForeignKey('target_type', 'target_id')
+    target_object = GenericForeignKey('target_type', 'target_id')
     target_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="target_types")
     target_id = models.PositiveIntegerField(null=True, blank=True)
 

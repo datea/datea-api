@@ -6,6 +6,9 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from campaign.models import Campaign
 from django.core.cache import cache
+from dateo.search_indexes import DateoIndex
+from django.db.models.signals import pre_delete, post_save, pre_save
+from notify.models import ActivityLog
 
 
 class Comment(models.Model):
@@ -50,9 +53,6 @@ class Comment(models.Model):
 
 
 # UPDATE COMMENT STATS
-from django.db.models.signals import pre_delete, post_save, pre_save
-from notify.models import ActivityLog
-
 def before_comment_saved(sender, instance, **kwargs):
     if (instance.content_type.model == 'dateo'):
         cache.delete('dateo.'+str(instance.object_id))
@@ -62,9 +62,6 @@ def after_comment_saved(sender, instance, created, **kwargs):
     if created:
         instance.update_stats(1)
         if (instance.content_type.model == 'dateo'):
-            # this nonesense is because celery doesn't like circular imports?
-            global DateoIndex
-            from dateo.search_indexes import DateoIndex
             DateoIndex().update_object(instance.content_object)
 
 
@@ -72,9 +69,6 @@ def before_comment_delete(sender, instance, **kwargs):
     instance.update_stats(-1)
     ActivityLog.objects.filter(action_key='comment.'+str(instance.pk)).delete()
     if (instance.content_type.model == 'dateo'):
-        # this nonesense is because celery doesn't like circular imports?
-        global DateoIndex
-        from dateo.search_indexes import DateoIndex
         DateoIndex().update_object(instance.content_object)
 
 post_save.connect(after_comment_saved, sender=Comment, dispatch_uid="comment.saved")

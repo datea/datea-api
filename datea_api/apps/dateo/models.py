@@ -6,7 +6,6 @@ from django.utils.html import strip_tags
 from tag.models import Tag
 from campaign.models import Campaign
 from category.models import Category
-from account.models import ClientDomain
 from image.models import Image
 from file.models import File
 from link.models import Link
@@ -253,6 +252,7 @@ class DateoStatus(models.Model):
 
 
 class Redateo(models.Model):
+	
 	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
 	dateo = models.ForeignKey('Dateo', verbose_name=_('Dateo'), related_name="redateos")
 	created = models.DateTimeField(_('created'), auto_now_add=True)
@@ -266,15 +266,15 @@ class Redateo(models.Model):
 		self.dateo.redateo_count += value
 		self.dateo.save()
 
-
-# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
-# AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
-# -> only happens with calls to the api (tastypie)
+# importing here to aavoid circular imports
 from dateo.search_indexes import DateoIndex
 from api.signals import resource_saved, resource_pre_saved
 from django.db.models.signals import pre_delete, post_delete
 from notify.models import ActivityLog
 
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
+# AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
+# -> only happens with calls to the api (tastypie)
 def before_dateo_saved(sender, instance, created, **kwargs):
 	if hasattr(instance, 'user') and hasattr(instance, 'tags') and instance.tags.count() >0:
 		instance._prev_tag_pks = [t.pk for t in instance.tags.all()]

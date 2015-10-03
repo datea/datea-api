@@ -1,5 +1,4 @@
 from django.db import models
-from account.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -18,7 +17,7 @@ from tag.models import Tag
 
 class NotifySettings(models.Model):
     
-    user = models.OneToOneField(User, related_name="notify_settings")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="notify_settings")
     interaction = models.BooleanField(_("Interactions regarding my content."), default=True)
     tags_dateos = models.BooleanField(_("Dateos in tags I follow"), default=True)
     tags_reports = models.BooleanField(_("Reports and new Campaigns in tags I follow"), default=True)
@@ -32,7 +31,7 @@ def create_notify_settings(sender, instance=None, **kwargs):
     if instance is None: return
     notify_settings, created = NotifySettings.objects.get_or_create(user=instance)
 
-post_save.connect(create_notify_settings, sender=User, dispatch_uid="notifysettings.create")
+post_save.connect(create_notify_settings, sender=settings.AUTH_USER_MODEL, dispatch_uid="notifysettings.create")
 
 
 def save_notify_settings(sender, instance, created, **kwargs):
@@ -48,7 +47,7 @@ class Notification(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(_('Type of Notifications'), max_length=30)
-    recipient = models.ForeignKey(User, verbose_name=_("User"), related_name="notifications")
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="notifications")
     unread = models.BooleanField(_("Unread"), default=True)
 
     #data = JSONField(verbose_name=_("Data"), blank=True, null=True)
@@ -98,7 +97,7 @@ class ActivityLog(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     published = models.BooleanField(_('Published'), default=True)
 
-    actor = models.ForeignKey(User, verbose_name=_("Acting user (actor)"), related_name="acting_user")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Acting user (actor)"), related_name="acting_user")
     verb = models.CharField(_('Verb'), max_length=50)
 
     action_object = GenericForeignKey('action_type', 'action_id')
@@ -113,7 +112,7 @@ class ActivityLog(models.Model):
 
     target_key = models.CharField(_("Target Key"), max_length=50)
 
-    target_user = models.ForeignKey(User, verbose_name=_("Target user"), related_name="target_user", null=True, blank=True)
+    target_user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Target user"), related_name="target_user", null=True, blank=True)
     tags = models.ManyToManyField(Tag, verbose_name=_("Tag"), null=True, blank=True)
 
     data = JSONField(verbose_name=_("Data"), blank=True, null=True)
@@ -158,14 +157,14 @@ class ActivityLog(models.Model):
         super(ActivityLog, self).save(*args, **kwargs)
 
 
-
-# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
-# -> only happens with calls to the api (tastypie)
-from .search_indexes import ActivityLogIndex
+# importing here to avoid circular imports
+from notify.search_indexes import ActivityLogIndex
 from api.signals import resource_saved
 from django.db.models.signals import pre_delete
 from django.core.cache import cache
 
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# -> only happens with calls to the api (tastypie)
 def update_search_index(sender, instance, created, **kwargs):
     ActivityLogIndex().update_object(instance)
     cache.delete('actlog.'+str(instance.pk))

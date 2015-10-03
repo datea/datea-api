@@ -7,6 +7,8 @@ from django.conf import settings
 from campaign.models import Campaign
 from campaign.search_indexes import CampaignIndex
 from django.core.cache import cache
+from django.db.models.signals import pre_delete, post_save
+from api.signals import resource_saved
 
 class Follow(models.Model):
     
@@ -66,8 +68,6 @@ class Follow(models.Model):
 #  better implemented with signals, if you'd like to turn this off.
 #  updating stats on objects is done using celery
 ###
-from django.db.models.signals import pre_delete, post_save
-from api.signals import resource_saved
 
 def follow_saved(sender, instance, created, **kwargs):
     if created:

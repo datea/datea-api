@@ -11,6 +11,10 @@ import re
 from django.core.cache import cache
 from django.db.models.signals import pre_delete, post_save, pre_save
 from django.conf import settings
+from dateo.models import Dateo
+from campaign.models import Campaign
+from dateo.search_indexes import DateoIndex
+from campaign.search_indexes import CampaignIndex
 
 from image.models import Image
 
@@ -187,9 +191,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 def after_user_saved(sender, instance, created, **kwargs):
 	if not created and instance._orig_username != instance.username:
-		# importing here because of loop import problems (specially with celery)	
-		from datea_api.apps.dateo.search_indexes import DateoIndex
-		from datea_api.apps.campaign.search_indexes import CampaignIndex
 		di = DateoIndex()
 		for dateo in instance.dateos.all():
 			di.update_object(dateo)
@@ -198,8 +199,6 @@ def after_user_saved(sender, instance, created, **kwargs):
 			ci.update_object(campaign)
 	
 	if not created:
-		from datea_api.apps.dateo.models import Dateo
-		from datea_api.apps.campaign.models import Campaign
 		for pk in [d.pk for d in Dateo.objects.filter(user=instance)]:
 			cache.delete('dateo.'+str(pk))
 		for pk in [c.pk for c in Campaign.objects.filter(user=instance)]:

@@ -150,15 +150,15 @@ class Campaign(models.Model):
 	    super(Campaign, self).save(*args, **kwargs)
 
 
-
-# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
-# -> only happens with calls to the api (tastypie)
-from .search_indexes import CampaignIndex
+# importing here to avoid circular imports
+from campaign.search_indexes import CampaignIndex
 from api.signals import resource_saved
 from django.db.models.signals import pre_delete, post_save
 from notify.models import ActivityLog
 from django.core.cache import cache
 
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# -> only happens with calls to the api (tastypie)
 def on_resource_save(sender, instance, created, **kwargs):
 	CampaignIndex().update_object(instance)
 

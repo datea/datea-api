@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import re
 from datea_api.utils import remove_accents
+from django.apps import apps
 
 
 class Tag(models.Model):
@@ -32,19 +33,19 @@ class Tag(models.Model):
 		return self.tag
 
 
-
-# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
-# -> only happens with calls to the api (tastypie)
+# importing here to avoid circular imports
 from tag.search_indexes import TagIndex
 from django.db.models.signals import pre_delete, post_save
 
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
+# -> only happens with calls to the api (tastypie)
 def after_save(sender, instance, created, **kwargs):
 	TagIndex().update_object(instance)
 
 def before_delete(sender, instance, **kwargs):
 	TagIndex().remove_object(instance)
 	# remove any follow objects
-	from follow.models import Follow
+	Follow = apps.get_model('follow', 'Follow')
 	Follow.objects.filter(content_type__model="tag", object_id=instance.pk).delete()
 
 

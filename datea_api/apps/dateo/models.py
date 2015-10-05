@@ -34,8 +34,8 @@ class Dateo(models.Model):
 
 	# content
 	content = models.TextField(_("Content"))
-	images = models.ManyToManyField(Image, verbose_name=_('Images'), null=True, blank=True, related_name="dateo")
-	files = models.ManyToManyField(File, verbose_name=_('Files'), null=True, blank=True, related_name="dateo")
+	images = models.ManyToManyField(Image, verbose_name=_('Images'), blank=True, related_name="dateo")
+	files = models.ManyToManyField(File, verbose_name=_('Files'), blank=True, related_name="dateo")
 	link  = models.ForeignKey(Link, verbose_name=_('Link'), null=True, blank=True, related_name="dateos", on_delete=models.SET_NULL)
     
     # location
@@ -252,10 +252,11 @@ class DateoStatus(models.Model):
 
 
 class Redateo(models.Model):
-	
+
 	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
 	dateo = models.ForeignKey('Dateo', verbose_name=_('Dateo'), related_name="redateos")
 	created = models.DateTimeField(_('created'), auto_now_add=True)
+	tags = models.ManyToManyField(Tag, verbose_name=_("Tags"), related_name="redateos");
 
 	class Meta:
 		verbose_name = 'Redateo'

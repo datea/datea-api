@@ -29,7 +29,7 @@ class Campaign(models.Model):
 	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."), related_name="campaigns", on_delete=models.PROTECT)
 	secondary_tags = models.ManyToManyField(Tag, 
 	                        verbose_name=_("Dateo Tags"), 
-	                        blank=True, null=True, 
+	                        blank=True,
 	                        default=None, 
 	                        help_text=_("Tag suggestions for Dateos"), 
 	                        related_name="campaigns_secondary")
@@ -71,7 +71,7 @@ class Campaign(models.Model):
 	# GEO:
 	center = models.PointField(_("Center"), blank=True, null=True, spatial_index=False)
 	boundary = models.PolygonField(_("Boundary"), blank=True, null=True, spatial_index=False)
-	layer_files = models.ManyToManyField(File, verbose_name=_('Layer Files'), null=True, blank=True)
+	layer_files = models.ManyToManyField(File, verbose_name=_('Layer Files'), blank=True)
 	zoom = models.PositiveIntegerField(_("Default zoom"), default=12)
 
 	# Visualization options

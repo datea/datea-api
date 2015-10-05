@@ -113,7 +113,7 @@ class ActivityLog(models.Model):
     target_key = models.CharField(_("Target Key"), max_length=50)
 
     target_user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Target user"), related_name="target_user", null=True, blank=True)
-    tags = models.ManyToManyField(Tag, verbose_name=_("Tag"), null=True, blank=True)
+    tags = models.ManyToManyField(Tag, verbose_name=_("Tag"), blank=True)
 
     data = JSONField(verbose_name=_("Data"), blank=True, null=True)
 

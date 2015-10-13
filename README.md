@@ -17,7 +17,7 @@ This repo contains the server backend with all the endpoints necessary for the c
 Datea needs the following services: django, postgres 2.x with postgis, memcached, rabbitmq, apache solr 4.x.
 On a production environment, Datea will run with gunicorn and a server like nginx.
 
-On a Debian/Ubuntu machine it means something like: apt-get install postgresql-server postgresql-client postgis memcached rabbitmq python-pip rabbitmq
+On a Debian/Ubuntu machine it means something like: apt-get install postgresql-server postgresql-client postgis memcached rabbitmq python-pip
 
 2. clone this repo:
   git clone https://github.com/datea/datea-api.git
@@ -56,7 +56,7 @@ On a Debian/Ubuntu machine it means something like: apt-get install postgresql-s
   - python manage.py runserver
 
 9. Run rabbitmq (messaging system used by celery to queue tasks):
-  - As with memcached, if service not being run already: rabbitmq-server (may have to run as root or special priviledges)
+  - As with memcached, if this service is not being run already, run: rabbitmq-server (this may require special priviledges)
 
 9. Run async tasks with celery (in new terminal)
  - cd <path to datea> 
@@ -65,7 +65,7 @@ On a Debian/Ubuntu machine it means something like: apt-get install postgresql-s
 That should be it for a dev environment. If anything pops up, contact us on the datea-gitter channel or at contacto@datea.pe. There's a lot we probably didn't cover in this brief introduction. If you plan to develop or use this repo, help us make a better documentation.
 
 ## Endpoints
-This service is already running at https://api.datea.io. We encourage you to use it instead of having your own (too complex right now). take a look at the individual endpoints documentation in the doc folder.
+This service is already running at https://api.datea.io. We encourage you to use it instead of having your own, and help us make it better. Take a look at the individual endpoints documentation in the doc folder.
 
 ## License
 GNU AFFERO PUBLIC LICENSE, see attached LICENSE file for details

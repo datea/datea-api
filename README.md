@@ -1,13 +1,19 @@
-datea-api
-=========
+Datea
+=====
 
-Datea is a civic engagement platform. It is composed of a server API based on django and tastypie (this repo), a web client and a mobile client (see other repos).
+Django based backend for Datea.
 
-The installation of this API involves a series of steps. A more detailed documentation will follow soon.
+Datea is a corwdsourcing and civic engagement platform to create and visualize citizen reports (dateos) in maps, picture galleries, timelines and charts. It's mail goal is to allow citizens to share and visualize useful information for any purpose. It's flexibel, hashtag based structure allows anyone to create a map, timeline or gallery just by creating a report (dateo) using a hashtag. Furthermore, report iniciatives can be created by organizations such as NGOs, local governments and activists, which allow them to campaign for certain issues in order to obtain useful information from citizens (dateros).
 
-See the doc folder for info about how to use the API, which is not online yet.
+If you are interested in using or contributing to this project, or want to know a litle bit more about us or the plattform, please feel free to contact us at contacto@datea.pe or via gitter (datea-gitter channel). For special a deployment or new feature, we also provide commercial support.
 
-If you wish to contribute, please contact us.
+##Datea Api
+
+This repo contains the server backend with all the endpoints necessary for the client apps (see other repos). It's based upong a bundle of tools and services, which makes it powerful, but complex to replicate and install. That's why we'd rather recommend using the existing API at https://api.datea.io/api/v2/ (read about the endpoints)
+
+Datea 
+
+##Installation
 
 
 

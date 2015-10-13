@@ -14,7 +14,7 @@ This repo contains the server backend with all the endpoints necessary for the c
 ##Installation
 
 1. Service dependencies 
-Datea needs the following services: django, postgres 2.x with postgis, memcached, rabbitmq, apache solr 4.x.
+Datea needs the following services: django (and dependencies: check the datea_api/requirements/requirements.txt file if you'd like to know the details), postgres 2.x with postgis, memcached, rabbitmq, apache solr 4.x.
 On a production environment, Datea will run with gunicorn and a server like nginx.
 
 On a Debian/Ubuntu machine it means something like: apt-get install postgresql-server postgresql-client postgis memcached rabbitmq python-pip
@@ -36,7 +36,7 @@ On a Debian/Ubuntu machine it means something like: apt-get install postgresql-s
     - create extension postgis;
   - cd datea_api
   - create local settings: cp local_settings_template.py local_settings.py
-  - edit your local_settings.py and add your DB configurations (and other stuff). You can override other things from settings.py there if you like.
+  - edit your local_settings.py and add your DB configurations (and other stuff). You can override other things from settings.py in local_settings.py if you like.
 
 5. Sync DB
   - in root dir of repo: python manage.py migrate
@@ -62,7 +62,7 @@ On a Debian/Ubuntu machine it means something like: apt-get install postgresql-s
  - cd <path to datea> 
  - ../env/bin/celery -A datea_api worker -l info
 
-That should be it for a dev environment. If anything pops up, contact us on the datea-gitter channel or at contacto@datea.pe. There's a lot we probably didn't cover in this brief introduction. If you plan to develop or use this repo, help us make a better documentation.
+That should be it for a dev environment. This instructions might be incomplete. If anything pops up, contact us on the datea-gitter channel or at contacto@datea.pe. There's a lot we probably didn't cover in this brief intro. If you plan to develop or use this repo, help us make a better documentation.
 
 ## Endpoints
 This service is already running at https://api.datea.io. We encourage you to use it instead of having your own, and help us make it better. Take a look at the individual endpoints documentation in the doc folder.

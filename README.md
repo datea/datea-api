@@ -1,4 +1,4 @@
-tea
+Datea
 =====
 
 Django based backend for Datea.

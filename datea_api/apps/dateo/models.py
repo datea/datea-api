@@ -73,6 +73,7 @@ class Dateo(models.Model):
 	def save(self, *args, **kwargs):
 		if not self.date:
 			self.date = self.created
+		self.get_administrative_levels()
 		self.content = strip_tags(self.content)
 		super(Dateo, self).save(*args, **kwargs)
 
@@ -108,7 +109,7 @@ class Dateo(models.Model):
 				return None
 
 
-	def get_administrative_levels(self):
+	def get_administrative_levels(self, save=False):
 		if self.position:
 			xy = str(self.position.get_x())+','+str(self.position.get_y())
 			url = 'http://global.mapit.mysociety.org/point/'+str(self.position.srid)+'/'+xy
@@ -129,7 +130,8 @@ class Dateo(models.Model):
 			for i in range(num_items):
 				setattr(self, fields[i], result[i])
 
-			self.save()
+			if save:
+				self.save()
 
 
 	def update_stats(self, value = 1):

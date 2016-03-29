@@ -36,9 +36,9 @@ from api.status_codes import *
 
 from registration.models import RegistrationProfile
 from registration import signals
-from django.contrib.sites.models import RequestSite
+from django.contrib.sites.requests import RequestSite
 from django.contrib.sites.models import Site
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import validate_email
 
 from social.apps.django_app.utils import strategy
@@ -72,14 +72,14 @@ class AccountResource(JSONDefaultMixin, Resource):
 
             #register datea account
             url(r"^(?P<resource_name>%s)/register%s$" %
-            (self._meta.resource_name, trailing_slash()), 
-            self.wrap_view('register'), name="api_register_datea_account"), 
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('register'), name="api_register_datea_account"),
 
             #activate datea account
             url(r"^(?P<resource_name>%s)/activate%s$" %
-            (self._meta.resource_name, trailing_slash()), 
-            self.wrap_view('activate'), name="api_activate_datea_account"), 
-            
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('activate'), name="api_activate_datea_account"),
+
             #login to datea account
             url(r"^(?P<resource_name>%s)/signin%s$" %
             (self._meta.resource_name, trailing_slash()),
@@ -118,12 +118,12 @@ class AccountResource(JSONDefaultMixin, Resource):
         username = postData['username']
         email = postData['email']
         password = postData['password']
-    
+
         if re.match("^(?=.*\d)(?=.*[a-z])(?!.*\s).{6,32}$", password) is None:
              response = self.create_response(request,{
                     'status': BAD_REQUEST,
                     'error': 'Password too weak'}, status=BAD_REQUEST)
-        
+
         elif User.objects.filter(email=email).count() > 0:
             response = self.create_response(request,{
                     'status': BAD_REQUEST,
@@ -192,10 +192,10 @@ class AccountResource(JSONDefaultMixin, Resource):
                 u_bundle.data['email'] = user.email
                 response = self.create_response(request, {'status': OK, 'token': key, 'user': u_bundle.data}, status =OK)
             else:
-                response = self.create_response(request,{'status':UNAUTHORIZED, 
+                response = self.create_response(request,{'status':UNAUTHORIZED,
                     'error': 'Account disabled'}, status = UNAUTHORIZED)
         else:
-            response = self.create_response(request,{'status':UNAUTHORIZED, 
+            response = self.create_response(request,{'status':UNAUTHORIZED,
                 'error': 'Wrong username or password'}, status = UNAUTHORIZED)
 
         self.log_throttled_access(request)
@@ -220,12 +220,12 @@ class AccountResource(JSONDefaultMixin, Resource):
             return response
 
         if user is not None and user.is_active:
-            
+
             data = { 'email': email }
 
             # Function for sending token and so forth
             resetForm = CustomPasswordResetForm(data)
-        
+
             if resetForm.is_valid():
                 client_domain = get_client_domain(request)
                 client_data = get_client_data(client_domain)
@@ -234,13 +234,13 @@ class AccountResource(JSONDefaultMixin, Resource):
                     'base_url': client_data['pwreset_base_url'],
                     'sitename_override': client_data['name'],
                     'domain_override': client_data['domain']
-                } 
+                }
                 resetForm.save(**save_data)
 
                 response = self.create_response(request,{'status':OK,
                     'message': 'Check your email for further instructions'}, status=OK)
             else:
-                response = self.create_response(request, 
+                response = self.create_response(request,
                         {'status': SYSTEM_ERROR,
                         'error': 'form not valid'}, status=FORBIDDEN)
         else:
@@ -271,16 +271,16 @@ class AccountResource(JSONDefaultMixin, Resource):
             uid = urlsafe_base64_decode(uidb64)
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
-            response = self.create_response(request, 
+            response = self.create_response(request,
                 {'status': NOT_FOUND, 'error': 'User not found'}, status=NOT_FOUND)
 
         if user is not None and default_token_generator.check_token(user, token):
             user.set_password(password)
             user.save()
-            response = self.create_response(request, {'status': OK, 'message': 'Your password was successfully reset', 
+            response = self.create_response(request, {'status': OK, 'message': 'Your password was successfully reset',
                 'userid': uid}, status=OK)
         else:
-            response = self.create_response(request, {'status': UNAUTHORIZED, 'error': 'Invalid reset link'}, 
+            response = self.create_response(request, {'status': UNAUTHORIZED, 'error': 'Invalid reset link'},
                 status=UNAUTHORIZED)
 
         self.log_throttled_access(request)
@@ -304,12 +304,12 @@ class AccountResource(JSONDefaultMixin, Resource):
                 }
             else:
                 self.log_throttled_access(request)
-                return self.create_response(request,{'status': BAD_REQUEST, 
+                return self.create_response(request,{'status': BAD_REQUEST,
                 'error': 'oauth_token and oauth_token_secret not provided'}, status = BAD_REQUEST)
 
         elif 'access_token' not in postData:
             self.log_throttled_access(request)
-            return self.create_response(request,{'status': BAD_REQUEST, 
+            return self.create_response(request,{'status': BAD_REQUEST,
                 'error': 'access_token not provided'}, status = BAD_REQUEST)
         else:
             access_token = postData['access_token']
@@ -333,7 +333,7 @@ class AccountResource(JSONDefaultMixin, Resource):
                 is_new = False
                 status = OK
             #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
-            response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new}, 
+            response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new},
                 status=status)
         else:
             response = self.create_response(request, {'status': UNAUTHORIZED,
@@ -349,7 +349,7 @@ class AccountResource(JSONDefaultMixin, Resource):
         self.throttle_check(request)
 
         result = new_username_allowed(request.GET.get('username'))
-        
+
         if result:
             message = "new username is valid"
         else:
@@ -366,7 +366,7 @@ class AccountResource(JSONDefaultMixin, Resource):
         self.throttle_check(request)
 
         result = User.objects.filter(email=request.GET.get('email', '')).count() > 0
-        
+
         if result:
             message = "email already exists"
         else:
@@ -391,11 +391,11 @@ def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
 
 class UserResource(JSONDefaultMixin, ModelResource):
 
-    image = fields.ToOneField('image.resources.ImageResource', 
+    image = fields.ToOneField('image.resources.ImageResource',
             attribute='image', full=True, null=True, readonly=True)
-    bg_image = fields.ToOneField('image.resources.ImageResource', 
+    bg_image = fields.ToOneField('image.resources.ImageResource',
             attribute='bg_image', full=True, null=True, readonly=True)
-    
+
     def dehydrate(self, bundle):
         # profile images
         bundle.data['image_small'] = bundle.obj.get_small_image()
@@ -407,13 +407,13 @@ class UserResource(JSONDefaultMixin, ModelResource):
             bundle.data['bg_image'] = None
 
         # send all user data user is one's own and is authenticated
-        if ( hasattr(bundle.request, 'user') and 
-             bundle.request.user.id == bundle.obj.id and 
+        if ( hasattr(bundle.request, 'user') and
+             bundle.request.user.id == bundle.obj.id and
              bundle.request.resolver_match.kwargs['resource_name'] in [u'user', u'account']):
-            
+
             bundle.data['email'] = bundle.obj.email
             if bundle.obj.username_changed():
-                bundle.data['token'] = getOrCreateKey(bundle.obj) 
+                bundle.data['token'] = getOrCreateKey(bundle.obj)
 
             # FOLLOWS
             #follows = []
@@ -435,7 +435,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                     t_bundle = tag_rsc.full_dehydrate(t_bundle)
                     followed_tags.append(t_bundle.data)
             bundle.data['tags_followed'] = followed_tags
-            
+
             # VOTES
             votes = []
             vote_rsc = VoteResource()
@@ -480,20 +480,20 @@ class UserResource(JSONDefaultMixin, ModelResource):
                 bundle.data['ip_country']  = None
 
         return bundle
-    
+
 
     def hydrate(self, bundle):
-            
+
         if bundle.request.method == 'PATCH' and bundle.obj.status != 2:
 
             postData = json.loads(bundle.request.body)
-            
+
             # only change one's own user
             if bundle.request.user.id != bundle.obj.id:
                 raise Unauthorized('not authorized')
 
             # don't change created, is_active or is_staff fields
-            forbidden_fields = ['date_joined', 'is_staff', 'is_active', 
+            forbidden_fields = ['date_joined', 'is_staff', 'is_active',
                                 'dateo_count', 'comment_count', 'vote_count', 'status', 'client_domain']
 
             for f in forbidden_fields:
@@ -566,7 +566,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                             old_profile.delete()
                         except:
                             pass
-                    
+
                         # create registration profile
                         bundle.obj.date_joined = bundle.data['date_joined'] = datetime.datetime.utcnow().replace(tzinfo=utc)
                         new_profile = RegistrationProfile.objects.create_profile(bundle.obj)
@@ -587,7 +587,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
             for imgfield in ['image', 'bg_image']:
 
                 if imgfield in bundle.data and type(bundle.data[imgfield]) == DictType and 'image' in bundle.data[imgfield]:
-                    
+
                     if 'id' in bundle.data[imgfield] and 'data_uri' not in bundle.data[imgfield]['image']:
                         setattr(bundle.obj, imgfield+"_id", bundle.data[imgfield]['id'])
                     else:
@@ -602,7 +602,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         bundle.request.method = orig_method
 
         return bundle
-        
+
 
     def prepend_urls(self):
         return [
@@ -631,13 +631,9 @@ class UserResource(JSONDefaultMixin, ModelResource):
             'follows': ALL,
             'id': ALL,
         }
-        fields = ['username', 'id', 'date_joined', 'last_login', 
+        fields = ['username', 'id', 'date_joined', 'last_login',
                   'image', 'bg_image', 'dateo_count', 'comment_count', 'vote_count',
-                  'full_name', 'message', 'status', 
+                  'full_name', 'message', 'status',
                   'url', 'url_facebook', 'url_twitter', 'url_youtube']
         always_return_data = True
         include_resource_uri = False
-        
-
-
-

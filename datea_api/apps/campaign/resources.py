@@ -14,6 +14,7 @@ from campaign.models import Campaign
 from account.models import User
 from tag.models import Tag
 from tag.resources import TagResource
+from follow.models import Follow
 from file.models import File
 from file.resources import FileResource
 from image.resources import ImageResource
@@ -27,6 +28,7 @@ from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery, Exact
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import Http404
+from django.db import models
 from types import DictType
 
 from tastypie.resources import convert_post_to_patch
@@ -35,22 +37,22 @@ from tastypie import http
 
 
 class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
-    
-    user = fields.ToOneField('account.resources.UserResource', 
+
+    user = fields.ToOneField('account.resources.UserResource',
             attribute='user', full=True, readonly=True)
     category = fields.ToOneField('category.resources.CategoryResource',
             attribute="category", full=True, null=True, readonly=True)
     main_tag = fields.ToOneField('tag.resources.TagResource',
                 attribute="main_tag", full=True, null=True, readonly=True)
-    secondary_tags = fields.ToManyField('tag.resources.TagResource', 
+    secondary_tags = fields.ToManyField('tag.resources.TagResource',
             attribute = 'secondary_tags', full=True, null=True, readonly=True)
-    image = fields.ToOneField('image.resources.ImageResource', 
+    image = fields.ToOneField('image.resources.ImageResource',
             attribute='image', full=True, null=True, readonly=True)
-    image2 = fields.ToOneField('image.resources.ImageResource', 
+    image2 = fields.ToOneField('image.resources.ImageResource',
             attribute='image2', full=True, null=True, readonly=True)
-    layer_files = fields.ToManyField('file.resources.FileResource', 
+    layer_files = fields.ToManyField('file.resources.FileResource',
             attribute = 'layer_files', full=True, null=True, readonly=True)
-    
+
 
     def dehydrate(self, bundle):
         bundle.data['image_thumb'] = bundle.obj.get_image_thumb('image_thumb_medium')
@@ -58,7 +60,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         return bundle
 
 
-    def save(self, bundle, skip_errors=False): 
+    def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
         bundle = super(CampaignResource, self).save(bundle, skip_errors)
         resource_saved.send(sender=Campaign, instance=bundle.obj, created=created)
@@ -66,22 +68,22 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
 
     def hydrate(self, bundle):
-    # save fks by ourselves, because tastypie also saves 
+    # save fks by ourselves, because tastypie also saves
     # the related object -> we don't want that -> set to readonly
 
         if bundle.request.method == 'POST':
             # use request user
             bundle.obj.user = bundle.request.user
             bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
-            
+
         elif bundle.request.method in ('PUT', 'PATCH'):
             orig_obj = Campaign.objects.get(pk=bundle.data['id']);
-            forbidden_fields = ['user', 'client_domain', 'comment_count', 'dateo_count', 
+            forbidden_fields = ['user', 'client_domain', 'comment_count', 'dateo_count',
                                 'follow_count', 'featured', 'created', 'user']
             for f in forbidden_fields:
                 if f in bundle.data:
                     del bundle.data[f]
-                if hasattr(orig_obj, f): 
+                if hasattr(orig_obj, f):
                     setattr(bundle.obj, f, getattr(orig_obj, f))
 
         if 'category' in bundle.data and bundle.data['category']:
@@ -89,7 +91,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 cid = int(bundle.data['category']['id'])
             else:
                 cid = int(bundle.data['category'])
-            bundle.obj.category_id = cid 
+            bundle.obj.category_id = cid
 
         if 'image' in bundle.data and type(bundle.data['image']) == DictType and 'image' in bundle.data['image']:
             if 'id' in bundle.data['image'] and 'data_uri' not in bundle.data['image']['image']:
@@ -134,7 +136,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 tagbundle.obj.save()
                 bundle.obj.main_tag_id = tagbundle.obj.pk
                 bundle.request.method = orig_method
-    
+
         return bundle
 
 
@@ -167,10 +169,10 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             files = []
             for filedata in bundle.data['layer_files']:
 
-                # validate files (only by name, the custom model filefield validates by content) 
+                # validate files (only by name, the custom model filefield validates by content)
                 if hasattr(filedata['file'], 'name'):
                     # only pdf files for now
-                    if filedata['file']['name'].split('.')[-1].lower() not in ['kml', 'json']: 
+                    if filedata['file']['name'].split('.')[-1].lower() not in ['kml', 'json']:
                         response = self.create_response(request,{'status': BAD_REQUEST,
                                 'error': 'allowed filetypes: kml, json (geoJSON)'}, status=BAD_REQUEST)
                         raise ImmediateHttpResponse(response=response)
@@ -256,7 +258,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             return self.create_response(request, bundle, response_class=http.HttpAccepted)
 
 
-    rename_get_filters = {   
+    rename_get_filters = {
         'id': 'obj_id',
         'main_tag': 'main_tag_exact',
         'category': 'category_exact',
@@ -264,7 +266,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
     }
 
     # HAYSTACK SEARCH
-    def get_search(self, request, **kwargs): 
+    def get_search(self, request, **kwargs):
 
         # tests
         self.method_check(request, allowed=['get'])
@@ -276,23 +278,23 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         offset = int(request.GET.get('offset', 0))
         page = (offset / limit) + 1
 
-        # Do the query 
+        # Do the query
         q_args = {'published': request.GET.get('published', True)}
-        
+
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(remove_accents(request.GET['q']))
 
         # check for more params
-        params = ['category_id', 'category', 'user', 'user_id', 
+        params = ['category_id', 'category', 'user', 'user_id',
                   'is_active', 'id', 'featured',
-                  'created__year', 'created__month', 'created__day', 
+                  'created__year', 'created__month', 'created__day',
                   'main_tag_id']
         for p in params:
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = Exact(request.GET.get(p))
 
-        # check for additional date filters (with datetime objects)      
+        # check for additional date filters (with datetime objects)
         date_params = ['created__gt', 'created__lt']
         for p in date_params:
             if p in request.GET:
@@ -305,7 +307,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             mtags = request.GET.get('main_tag').split(',')
             if len(mtags) == 1:
                 q_args['main_tag_exact'] = remove_accents(mtags[0].lower())
-            else: 
+            else:
                 q_args['main_tag_exact__in'] = [remove_accents(t.lower()) for t in mtags]
 
         if 'slug' in request.GET:
@@ -345,16 +347,16 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')
-        
+
         # in elastic search 'score' is '_score'
         #order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
 
 
-        if 'q' in request.GET: 
+        if 'q' in request.GET:
             if order_by == ['-created'] and '-created' not in request.GET:
                 #order_by = ['_score']
                 order_by = ['score']
-    
+
         # if q is set, then order will be relevance first
         # if not, then do normal order by
         if 'distance' in order_by and 'center' in request.GET and request.GET['center'] != '':
@@ -371,7 +373,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             page = paginator.page(page)
         except InvalidPage:
             raise Http404("Sorry, no results on that page.")
-        
+
         objects = []
 
         for result in page.object_list:
@@ -396,7 +398,7 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         self.log_throttled_access(request)
         return self.create_response(request, object_list)
-        
+
 
 
     class Meta:
@@ -420,4 +422,3 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
         #throttle = CacheThrottle(throttle_at=200)
         always_return_data = True
         include_resource_uri = False
-

@@ -51,7 +51,7 @@ from tastypie import http
 
 
 class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
-    
+
     user = fields.ToOneField('account.resources.UserResource',
             attribute="user", null=False, full=True, readonly=True)
     #category = fields.ToOneField('category.resources.CategoryResource',
@@ -103,7 +103,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
 
     def dehydrate(self, bundle):
-        
+
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
@@ -147,7 +147,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
             bundle.data['user'] = bundle.obj.user = bundle.request.user
             bundle.data['client_domain'] = bundle.obj.client_domain = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
-                
+
         elif bundle.request.method == 'PATCH':
             # don't touch some fields
             forbidden_fields = ['created', 'modified', 'user', 'vote_count', 'follow_count', 'redateo_count', 'comment_count', 'client_domain']
@@ -156,7 +156,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
                     del bundle.data[f]
 
         if 'link' in bundle.data and type(bundle.data['link']) == DictType and 'url' in bundle.data['link']:
-   
+
             orig_method = bundle.request.method
             lrsc = LinkResource()
             if not 'id' in bundle.data['link']:
@@ -172,7 +172,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             bundle.obj.link_id = lbundle.obj.pk
             bundle.data['link'] = lbundle.data
             bundle.obj.link = lbundle.obj
-            
+
         elif bundle.request.method in ['PUT', 'PATCH'] and ('link' not in bundle.data or not bundle.data['link']):
             bundle.obj.link = None
 
@@ -187,15 +187,15 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             else:
                 try:
                     bundle.obj.campaign_id = int(bundle.data['campaign'])
-                except: 
+                except:
                     pass
-        
+
         return bundle
 
 
     # do our own saving of related m2m fields (since tatsypie does strange stuff)
     def hydrate_m2m(self, bundle):
-        
+
         if 'images' in bundle.data:
             if len(bundle.data['images']) > 0:
                 imgs = []
@@ -223,10 +223,10 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
                 files = []
                 for filedata in bundle.data['files']:
 
-                    # validate files (only by name, the custom model filefield validates by content) 
+                    # validate files (only by name, the custom model filefield validates by content)
                     #if hasattr(filedata['file'], 'name'):
                         # only pdf files for now
-                        #if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']: 
+                        #if filedata['file']['name'].split('.')[-1].lower() not in ['pdf']:
                         #    response = self.create_response(request,{'status': BAD_REQUEST,
                         #            'error': 'allowed filetypes: pdf'}, status=BAD_REQUEST)
                         #    raise ImmediateHttpResponse(response=response)
@@ -239,14 +239,14 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
                     else:
                         orig_obj = File.objects.get(pk=filedata['id'])
                         fbundle = frsc.build_bundle(data=filedata, obj=orig_obj, request=bundle.request)
-                    
+
                     fbundle = frsc.full_hydrate(fbundle)
                     fbundle.obj.save()
                     files.append(fbundle.obj.pk)
                     bundle.request.method = orig_method
 
                 bundle.obj.files = File.objects.filter(pk__in=files)
-            
+
             elif bundle.request.method in ['PUT', 'PATCH']:
                 bundle.obj.files.clear()
 
@@ -296,7 +296,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         resource_saved.send(sender=Dateo, instance=bundle.obj, created=created)
         return bundle
 
-    
+
     def patch_detail(self, request, **kwargs):
         """
         Updates a resource in-place.
@@ -339,7 +339,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             bundle = self.full_dehydrate(bundle)
             bundle = self.alter_detail_data_to_serialize(request, bundle)
             return self.create_response(request, bundle, response_class=http.HttpAccepted)
-    
+
 
     # Replace GET dispatch_list with HAYSTACK SEARCH
     def dispatch_list(self, request, **kwargs):
@@ -363,7 +363,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         else:
             return self.dispatch('detail', request, **kwargs)
 
-    rename_get_filters = {   
+    rename_get_filters = {
         'id': 'obj_id',
         'category': 'category_exact',
         'user': 'user_exact',
@@ -373,7 +373,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
     }
 
     # HAYSTACK SEARCH
-    def get_search(self, request, **kwargs): 
+    def get_search(self, request, **kwargs):
 
         # tests
         self.method_check(request, allowed=['get'])
@@ -385,10 +385,10 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         offset = int(request.GET.get('offset', 0))
         page = (offset / limit) + 1
 
-        # Build query args 
+        # Build query args
         q_args = {'published': request.GET.get('published', True)}
         narrow_args = []
-        
+
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(remove_accents(request.GET['q']))
@@ -404,7 +404,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
 
-        # check for additional date filters (with datetime objects)      
+        # check for additional date filters (with datetime objects)
         date_params = ['created__gt', 'created__lt', 'since', 'until']
         for p in date_params:
             if p in request.GET:
@@ -416,7 +416,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             if tag_op == 'or':
                 if len(tags) == 1 and tags[0].strip() != '':
                     q_args['tags__exact'] = tags[0]
-                else: 
+                else:
                     q_args['tags__exact__in'] = tags
             elif tag_op == 'and':
                 narrow_args.append('tags:'+','.join(tags))
@@ -454,7 +454,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY
-        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left_latitude', 
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left_latitude',
             'bottom_left_longitude','top_right_latitude', 'top_right_longitude')):
             bl_x = float(request.GET.get('bottom_left_longitude'))
             bl_y = float(request.GET.get('bottom_left_latitude'))
@@ -483,14 +483,14 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')
 
-        if 'q' in request.GET: 
+        if 'q' in request.GET:
             if order_by == ['-created'] and 'order_by' not in request.GET:
                 #order_by = ['_score']
                 order_by = ['score']
-        
+
         # in elastic search 'score' is '_score'
         # order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
-    
+
         # if q is set, then order will be relevance first
         # if not, then do normal order by
         if 'distance' in order_by and 'position' in request.GET and request.GET['position'] != '':
@@ -506,7 +506,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             page = paginator.page(page)
         except InvalidPage:
             raise Http404("Sorry, no results on that page.")
-        
+
         objects = []
 
         for result in page.object_list:
@@ -534,19 +534,19 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
 
     def get_dateo_stats(self, request, **kwargs):
-        
+
         self.method_check(request, allowed=['get'])
         self.throttle_check(request)
 
-        # Do the query 
+        # Do the query
         q_args = {'published': request.GET.get('published', True)}
-        
+
         # add search query
         if 'q' in request.GET and request.GET['q'] != '':
             q_args['content'] = AutoQuery(request.GET['q'])
 
         # check for more params
-        params = ['category_id', 'category', 'user', 'user_id', 
+        params = ['category_id', 'category', 'user', 'user_id',
                   'published', 'status', 'id',
                   'created__year', 'created__month', 'created__day',
                   'country', 'admin_level1', 'admin_level2', 'admin_level3',
@@ -556,7 +556,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = request.GET.get(p)
 
-        # check for additional date filters (with datetime objects)      
+        # check for additional date filters (with datetime objects)
         date_params = ['created__gt', 'created__lt', 'since', 'until']
         for p in date_params:
             if p in request.GET:
@@ -568,7 +568,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             tags = request.GET.get('tags').split(',')
             if len(tags) == 1 and tags[0].strip() != '':
                 q_args['tags_exact'] = tags[0].lower()
-            else: 
+            else:
                 q_args['tags_exact__in'] = [t.lower() for t in tags]
 
         if 'campaign' in request.GET:
@@ -576,7 +576,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             tags = [c.tag for c in cam.secondary_tags.all()]
             if len(tags) == 1 and tags[0].strip() != '':
                 q_args['tags_exact'] = tags[0].lower()
-            else: 
+            else:
                 q_args['tags_exact__in'] = [t.lower() for t in tags]
 
         filter_by_dateos = False
@@ -588,7 +588,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
         # SPATIAL QUERY ADDONS
         # WITHIN QUERY
-        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left_latitude', 
+        if all(k in request.GET and request.GET.get(k) != '' for k in ('bottom_left_latitude',
             'bottom_left_longitude','top_right_latitude', 'top_right_longitude')):
             bl_x = float(request.GET.get('bottom_left_longitude'))
             bl_y = float(request.GET.get('bottom_left_latitude'))
@@ -623,7 +623,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             tag_objects = Tag.objects.filter(tag__in=tags)
             if filter_by_dateos:
                 tag_objects = tag_objects.filter(dateos__pk__in=dateo_pks).distinct()
-            
+
             tags_result = []
             for t in tag_objects:
                 tags_result.append({
@@ -705,7 +705,7 @@ class DateoResource(DateoBaseResource):
 
 
     def dehydrate(self, bundle):
-        
+
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
@@ -746,19 +746,19 @@ class DateoStatusResource(JSONDefaultMixin, ModelResource):
 
     def dehydrate(self, bundle):
         return bundle
-        
+
     def hydrate(self, bundle):
         if 'dateo' in bundle.data:
             bundle.obj.dateo_id = int(bundle.data['dateo'])
         bundle.obj.user_id = bundle.request.user.id
-        
+
         if 'campaign' in bundle.data:
             cid = int(bundle.data['campaign'])
         elif bundle.request.method == 'PATCH':
             orig_obj = DateoStatus.objects.get(pk=bundle.data['id'])
             cid = orig_obj.campaign_id
             bundle.obj = orig_obj
-        
+
         campaign = Campaign.objects.get(pk=cid)
         # TODO: do permissions in the right place
         if bundle.request.user.id != campaign.user.id:
@@ -798,6 +798,8 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
             attribute="user", null=False, full=False, readonly=True)
     dateo = fields.ToOneField('dateo.resources.DateoResource',
             attribute="dateo", null=False, full=False, readonly=True)
+    tags = fields.ToManyField('tag.resources.TagResource',
+            attribute='tags', related_name='tags', null=True, full=True, readonly=True)
 
     def save(self, bundle, skip_errors=False):
         created = False if bundle.obj.pk else True
@@ -806,8 +808,11 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
         return bundle
 
     def dehydrate(self, bundle):
+        # put tags with campaigns first
+        if 'tags' in bundle.data:
+            bundle.data['tags'] = sorted(bundle.data['tags'], key= lambda t: len(t.data['campaigns']), reverse=True)
         return bundle
-        
+
     def hydrate(self, bundle):
 
         dateo = Dateo.objects.get(pk=int(bundle.data['dateo']))
@@ -816,10 +821,46 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                     'error': 'not on own objects'}, status=BAD_REQUEST)
             raise ImmediateHttpResponse(response=response)
-    
+
         bundle.obj.dateo = dateo
         bundle.obj.user_id = bundle.request.user.id
         return bundle
+
+    def hydrate_m2m(self, bundle):
+        if 'tags' in bundle.data:
+            if len(bundle.data['tags']) > 0:
+                tags = []
+                for tagdata in bundle.data['tags']:
+                    if type(tagdata) == DictType and 'id' in tagdata:
+                        tags.append(tagdata['id'])
+                    else:
+                        if type(tagdata) == DictType:
+                            find_tag = remove_accents(tagdata['tag'])
+                        elif type(tagdata) == UnicodeType:
+                            find_tag = remove_accents(tagdata)
+                        else:
+                            response = self.create_response(bundle.request,{'status': BAD_REQUEST,
+                                        'error': 'bad format in tags'}, status=BAD_REQUEST)
+                            raise ImmediateHttpResponse(response=response)
+
+                        found = Tag.objects.filter(tag__iexact=find_tag)
+                        if found.count() > 0:
+                            tags.append(found[0].pk)
+                        else:
+                            orig_method = bundle.request.method
+                            bundle.request.method = "POST"
+                            new_tag_data = {'tag': find_tag}
+                            tagrsc = TagResource()
+                            tagbundle = tagrsc.build_bundle(data=new_tag_data, request=bundle.request)
+                            tagbundle = tagrsc.full_hydrate(tagbundle)
+                            tagbundle.obj.save()
+                            tags.append(tagbundle.obj.pk)
+                            bundle.request.method = orig_method
+
+                bundle.obj.tags = Tag.objects.filter(pk__in=tags)
+
+            elif bundle.request.method in ['PUT', 'PATCH']:
+                bundle.obj.tags.clear()
 
 
     class Meta:
@@ -840,34 +881,3 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
         cache = SimpleCache(timeout=10)
         #throttle = CacheThrottle(throttle_at=1000)
         always_return_data = True
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

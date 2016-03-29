@@ -25,20 +25,20 @@ class Campaign(models.Model):
 	modified = models.DateTimeField(_('modified'), auto_now=True)
 
 	# Tags / Categories
-	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, related_name="campaigns_primary", help_text=_("Choose a category for this campaign"), on_delete=models.SET_NULL) 
+	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, related_name="campaigns_primary", help_text=_("Choose a category for this campaign"), on_delete=models.SET_NULL)
 	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."), related_name="campaigns", on_delete=models.PROTECT)
-	secondary_tags = models.ManyToManyField(Tag, 
-	                        verbose_name=_("Dateo Tags"), 
+	secondary_tags = models.ManyToManyField(Tag,
+	                        verbose_name=_("Dateo Tags"),
 	                        blank=True,
-	                        default=None, 
-	                        help_text=_("Tag suggestions for Dateos"), 
+	                        default=None,
+	                        help_text=_("Tag suggestions for Dateos"),
 	                        related_name="campaigns_secondary")
 
 
 	featured_choices = (
             (3, 'importante!'),
-            (2, 'bien interesante'), 
-            (1, 'interesante'), 
+            (2, 'bien interesante'),
+            (1, 'interesante'),
             (0, 'normal')
         )
 	featured = models.PositiveIntegerField(_('Featured'), default=0, choices=featured_choices)
@@ -51,20 +51,20 @@ class Campaign(models.Model):
 	short_description = models.CharField(_("Short description / Slogan"), blank=True, null=True, max_length=140, help_text=_("A short description or slogan (max. 140 characters)."))
 
 	# text input fields
-	mission = models.TextField(_("Mission / Objectives"), 
-	                        blank=True, 
-	                        null=True, 
-	                        max_length=500, 
+	mission = models.TextField(_("Mission / Objectives"),
+	                        blank=True,
+	                        null=True,
+	                        max_length=500,
 	                        help_text=_("max. 500 characters"))
 
-	information_destiny = models.TextField(_("What happens with the data?"), 
-	                        max_length=500, 
+	information_destiny = models.TextField(_("What happens with the data?"),
+	                        max_length=500,
 	                        help_text=_("Who receives the information and what happens with it? (max 500 characters)")
 	                    )
 
-	long_description = models.TextField(_("Description"), 
-	                        blank=True, 
-	                        null=True, 
+	long_description = models.TextField(_("Description"),
+	                        blank=True,
+	                        null=True,
 	                        help_text=_("Long description (optional)"))
 
 
@@ -76,8 +76,8 @@ class Campaign(models.Model):
 
 	# Visualization options
 	def_modes =  status_choices = (
-            ('map',_('Map')), 
-            ('timeline', _('Timeline')), 
+            ('map',_('Map')),
+            ('timeline', _('Timeline')),
             ('images', _('Images')),
             ('files', _('Files'))
         )
@@ -91,12 +91,13 @@ class Campaign(models.Model):
 	#user_count = models.PositiveIntegerField(_("Participant count"), default=0)
 	comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
 	follow_count = models.PositiveIntegerField(_('Follower count'), default=0)
+	rank = models.PositiveIntegerField(_('Search rank'),default=0)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
 	# Object Manager from geodjango
 	objects = models.GeoManager()
-	    
+
 	class Meta:
 		verbose_name = _("Campaign")
 		verbose_name_plural = _("Campaigns")
@@ -137,16 +138,16 @@ class Campaign(models.Model):
 
 
 	def save(self, *args, **kwargs):
-	    
+
 	    if self.center == None and self.boundary != None:
 			self.center = self.boundary.centroid
 			self.center.srid = self.boundary.get_srid()
-	        
+
 	    if self.slug:
 	    	self.slug = slugify(self.slug)
 	    else:
 			self.slug = slugify(self.main_tag)
-	    
+
 	    super(Campaign, self).save(*args, **kwargs)
 
 
@@ -174,5 +175,3 @@ def on_campaign_delete(sender, instance, **kwargs):
 resource_saved.connect(on_resource_save, sender=Campaign, dispatch_uid="campaign.resource_saved")
 post_save.connect(on_campaign_save, sender=Campaign, dispatch_uid="campaign.saved")
 pre_delete.connect(on_campaign_delete, sender=Campaign, dispatch_uid="campaign.delete")
-
-

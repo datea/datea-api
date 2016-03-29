@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Password
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.template import loader
 
 from account.models import User
@@ -53,7 +53,7 @@ class CustomPasswordResetForm(PasswordResetForm):
         email = self.cleaned_data["email"]
         active_users = User.objects.filter(
             email__iexact=email, is_active=True)
-        
+
         for user in active_users:
             # Make sure that no email is sent to a user that actually has
             # a password marked as unusable
@@ -63,7 +63,7 @@ class CustomPasswordResetForm(PasswordResetForm):
             current_site = get_current_site(request)
             #if not user.has_usable_password():
             #    continue
-            
+
             # don't send pass for superuser
             if user.is_superuser:
                 continue
@@ -91,6 +91,3 @@ class CustomPasswordResetForm(PasswordResetForm):
             subject = ''.join(subject.splitlines())
             email = loader.render_to_string(email_template_name, c)
             send_mail(subject, email, from_email, [user.email])
-
-
-

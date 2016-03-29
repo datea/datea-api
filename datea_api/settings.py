@@ -1,11 +1,5 @@
 """
 Django settings for datea_api project.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -27,30 +21,28 @@ SECRET_KEY = '9ko#ts81m_)h$hjyae!1xpx2#_le+ir3^tvg(dqv7^(jx-*dwe'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_DIR , "templates"),
-)
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.request",   #grappelli
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(PROJECT_DIR , "templates"),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                "django.template.context_processors.request",   #grappelli
+            ],
+            'debug' : True
+        },
+    },
+]
 
 
 ALLOWED_HOSTS = []
@@ -127,11 +119,11 @@ APPEND_SLASH = False
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'db_name',          
-        'USER': '',                      
-        'PASSWORD': '',                 
-        'HOST': '',                      
-        'PORT': '',                  
+        'NAME': 'db_name',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
@@ -182,7 +174,7 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE' : 'haystack.backends.solr_backend.SolrEngine',
         'URL'    : 'http://127.0.0.1:8983/solr',
-        'TIMEOUT': 60  # large timeout because of celery 
+        'TIMEOUT': 60  # large timeout because of celery
     },
 }
 #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor' -> using custom code for this
@@ -270,24 +262,24 @@ RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd',
                     'api', 'admin', 'root',
                     'todossomosdateros', 'user', 'users', 'usuario', 'usuarios',
                     'comment', 'comments', 'comentario', 'comentarios',
-                    'campaign', 'campaigns', 'iniciativa', 'iniciativas', 
+                    'campaign', 'campaigns', 'iniciativa', 'iniciativas',
                     'follow', 'follows', 'followers', 'seguir', 'siguiendo', 'seguidores',
-                    'vote', 'votes', 'voto', 'votos', 'votacion', 'votaciones', 
-                    'profile', 'profiles', 'perfil', 'perfiles', 
+                    'vote', 'votes', 'voto', 'votos', 'votacion', 'votaciones',
+                    'profile', 'profiles', 'perfil', 'perfiles',
                     'info', 'about', 'acerca', 'faq', 'help', 'ayuda', 'feedback',
-                    'contact', 'contacts', 'contacto', 'contactos', 
+                    'contact', 'contacts', 'contacto', 'contactos',
                     'report', 'reports', 'reporte', 'reportes', 'reportar',
-                    'tag', 'tags', 'etiqueta', 'etiquetas', 
-                    'category', 'categories', 'categoria', 'categorias', 
-                    'flag', 'flags', 'denuncia', 'denuncias', 'denunciar', 
-                    'inicio', 'start', 'home', 'datea.pe', 'datea.io' 
+                    'tag', 'tags', 'etiqueta', 'etiquetas',
+                    'category', 'categories', 'categoria', 'categorias',
+                    'flag', 'flags', 'denuncia', 'denuncias', 'denunciar',
+                    'inicio', 'start', 'home', 'datea.pe', 'datea.io'
                     'signin', 'login', 'signup', 'signout', 'logout', 'register', 'password', 'recover',
-                    'registrate', 'camabiar-contrasena', 'contrasena', 
-                    'recoverpassword', 'change-password', 'forgot', 
+                    'registrate', 'camabiar-contrasena', 'contrasena',
+                    'recoverpassword', 'change-password', 'forgot',
                     'pagina', 'paginas', 'page', 'pages',
-                    'content', 'contenido', 'site', 'sites', 'sitemap', 
-                    'map', 'maps', 'mapa', 'mapas', 
-                    'survey', 'surveys', 'encuesta', 'encuestas', 
+                    'content', 'contenido', 'site', 'sites', 'sitemap',
+                    'map', 'maps', 'mapa', 'mapas',
+                    'survey', 'surveys', 'encuesta', 'encuestas',
                     'election', 'elections', 'eleccion', 'elecciones',
                     'answer', 'answers', 'respuesta', 'respuestas',
                     'buscar', 'busqueda', 'search', 'panel', 'dashboard', 'update', 'updateUser',

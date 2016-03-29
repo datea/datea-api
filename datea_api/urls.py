@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.conf import settings
+from django.views.static import serve as static_serve
 
 admin.autodiscover()
 
@@ -12,24 +13,23 @@ def top_level(request):
     """
     return redirect(reverse('api_v2_top_level', kwargs={'api_name': 'v2'}))
 
-urlpatterns = patterns('',
-
+urlpatterns = [
 	url(r'^', include('datea_api.apps.api.urls')),
-    (r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^account/', include('datea_api.apps.account.urls')),
     url(r'^csv-export/', include('datea_api.apps.dateo.urls')),
     url(r'^seo/', include('datea_api.apps.seo.urls')),
-    url(r'^', top_level),
-)
+    url(r'^', top_level)
+]
 
 if settings.DEBUG:
-	urlpatterns = patterns('',
-	url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-	url(r'', include('django.contrib.staticfiles.urls')),
-) + urlpatterns
+	urlpatterns += [
+	   url(r'^media/(?P<path>.*)$', static_serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+	   url(r'', include('django.contrib.staticfiles.urls')),
+    ]
 
 if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns = patterns('',
+    urlpatterns += [
         url(r'^rosetta/', include('rosetta.urls')),
-    ) + urlpatterns
+    ]

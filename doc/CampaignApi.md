@@ -15,7 +15,6 @@ Filters:
 * q: search for a phrase
 * user: filter by username [string]
 * user_id: filter by user id [integer]
-* is_active: filter by status ['new', 'reviewed', 'solved']
 * published: [0, 1 or 'all'] (default is 1)
 * id: object id
 * main_tag: filter only by main tag (without hash) [string]
@@ -24,9 +23,9 @@ Filters:
 * featured: boolean [0 or 1]
 
 date related filters:
-* created__year: year dateo was created [four digits] (watch for double underscore -> django filters)
-* created__month: in combination with year, month dateo was created [two digits]
-* created__day: combined with month and year, day a dateo was created [two digits]
+* created__year: year campaign was created [four digits] (watch for double underscore -> django filters)
+* created__month: in combination with year, month campaign was created [two digits]
+* created__day: combined with month and year, day a campaign was created [two digits]
 * created__gt: created after date [date in ISO format]
 * created__lt: created before date [date in ISO format]. Together with created__gt, you can form a range.
 
@@ -34,13 +33,13 @@ follow filters:
 * followed_by_tags: get all campaigns by the tags a user follows. [user id: integer]
 
 spatial filters:
-* Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter dateos by a geographic bounding box. Each param has \<latitude,longitude\> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
-* Within distance to point: 'distance' and 'center' GET params need to be present. Filters dateos within given distance in meters from given point. Center given as \<latitude,longitude\>, distance in meters as an integer.
+* Within bounding box: 'bottom_left' and 'top_right' GET params need to be present (both) to filter campaigns which center is within a geographic bounding box. Each param has \<latitude,longitude\> [lat and long coordinates separated by commas -> "-95.23362278938293,38.973081081164715"]
+* Within distance to point: 'distance' and 'center' GET params need to be present. Filters campaigns which center is within given distance in meters from given point. Center given as \<latitude,longitude\>, distance in meters as an integer.
 
 
 ######Order_options
 
-The "order_by" GET parameter accepts a comma separated list of options. The first parameters take presedence.
+The "order_by" GET parameter accepts a comma separated list of options. The first parameters take precedence.
 
 example: order_by=score,-created
 
@@ -49,7 +48,7 @@ all parameters invert ascending or descending order when a '-' (minus) on front:
 * 'created' -> created ascending
 * '-created' -> descending (probably what you want)
 
-options: 
+options:
 * 'score': works only in combination with 'q' parameter above, means search relevance
 * 'created'
 * 'published'
@@ -91,7 +90,7 @@ options:
 					},
 			order: 0 				// optional integer for ordering
 		}
-		
+
 		center: {						// geoJSON POINT
 			type        : 'Point',
 			coordinates : [ -77.027772, -12.121937 ],
@@ -105,7 +104,7 @@ options:
 	           ]
 		},
 
-		layer_files: [						// optional new or existing File Resource objects (KML or geoJSON) 
+		layer_files: [						// optional new or existing File Resource objects (KML or geoJSON)
 			{
 				file:	{
 						data_uri: <data uri base64>,
@@ -117,7 +116,5 @@ options:
 		],
 		default_vis: 'map'				// optional -> options are: 'map' (default), 'timeline', 'pictures', 'files'
 		default_filter: 'owner'			// optional -> default is null
-	
+
 	}
-
-

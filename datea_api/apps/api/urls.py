@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 from tastypie.api import Api
-from api.resources import IPLocationResource
+from api.resources import IPLocationResource, EnvironmentsResource
 from account.resources import UserResource , AccountResource
 from dateo.resources import DateoResource, DateoFullResource, DateoStatusResource, RedateoResource
 from campaign.resources import CampaignResource
@@ -40,9 +40,10 @@ v2_api.register(FlagResource())
 v2_api.register(LinkResource())
 v2_api.register(URLInfoResource())
 v2_api.register(IPLocationResource())
+v2_api.register(EnvironmentsResource())
 
-urlpatterns = patterns('',
-    (r'^api/', include(v2_api.urls)),
+urlpatterns = [
+    url(r'^api/', include(v2_api.urls)),
     url(r"image/", include('image.urls')),
-    url(r"file/", include('file.urls')),
-)
+    url(r"file/", include('file.urls'))
+]

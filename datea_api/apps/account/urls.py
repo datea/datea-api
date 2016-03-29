@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib.auth import views as auth_views
 
 from account.views import CustomActivationView
@@ -7,7 +7,7 @@ from registration.backends.default.views import RegistrationView
 
 
 # overriding djang-registration urls because of problems with django 1.6 and custom behaviour
-urlpatterns = patterns('',
+urlpatterns = [
 
       #override the default auth urls
       url(r'^password/change/$',
@@ -49,8 +49,8 @@ urlpatterns = patterns('',
       url(r'^register/complete/$',
                     TemplateView.as_view(template_name='registration/registration_complete.html'),
                     name='registration_complete'),
-      
+
       url(r'^register/closed/$',
                     TemplateView.as_view(template_name='registration/registration_closed.html'),
                     name='registration_disallowed')
-)
+]

@@ -3,7 +3,7 @@ from campaign.models import Campaign
 import unicodedata
 
 class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
-    
+
     text = indexes.CharField(document=True, use_template=True, template_name="search/indexes/campaign/campaign_index.txt")
     obj_id = indexes.IntegerField(model_attr='pk')
     name = indexes.CharField(model_attr='name', boost=1.25)
@@ -12,7 +12,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     user_id = indexes.IntegerField(model_attr="user__pk")
     category = indexes.CharField(model_attr='category__name', null=True, faceted=True)
     category_id = indexes.IntegerField(null=True)
-    published = indexes.BooleanField(model_attr='published', null=True) 
+    published = indexes.BooleanField(model_attr='published', null=True)
     featured = indexes.IntegerField(model_attr='featured', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
@@ -23,12 +23,15 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     center = indexes.LocationField(model_attr='center', null=True)
     dateo_count = indexes.IntegerField(model_attr='dateo_count', null=True)
     follow_count = indexes.IntegerField(model_attr='follow_count', null=True)
+    is_standalone = indexes.BooleanField(default=True)
+    follow_key = indexes.CharField()
+    rank = indexes.IntegerField(model_attr="rank")
     #comment_count = indexes.IntegerField(model_attr='comment_count', null=True)
     #user_count = indexes.IntegerField(model_attr='user_count', null=True)
-    
+
     def get_model(self):
         return Campaign
-    
+
     def index_queryset(self, using=None):
         return self.get_model().objects.all()
 
@@ -52,3 +55,6 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
             return int(obj.category.pk)
         else:
             return None
+
+    def prepare_follow_key(self, obj):
+        return 'tag.'+str(obj.main_tag.pk)

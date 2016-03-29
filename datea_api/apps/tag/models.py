@@ -18,6 +18,7 @@ class Tag(models.Model):
 	dateo_count = models.IntegerField(_('Dateo count'), default=0, blank=True, null=True)
 	image_count = models.IntegerField(_("Image count"), default=0)
 	file_count = models.IntegerField(_("File count"), default=0)
+	rank = models.PositiveIntegerField(_("Search rank"), default=0)
 
 	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
 
@@ -51,4 +52,3 @@ def before_delete(sender, instance, **kwargs):
 
 post_save.connect(after_save, sender=Tag, dispatch_uid="tag.saved")
 pre_delete.connect(before_delete, sender=Tag, dispatch_uid="tag.delete")
-

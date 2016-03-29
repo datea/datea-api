@@ -4,9 +4,9 @@ from django.template.defaultfilters import slugify
 from account.models import User, ClientDomain
 from urlparse import urlparse
 from django.core.validators import URLValidator
-from django.contrib.sites.models import RequestSite
+from django.contrib.sites.requests import RequestSite
 from django.contrib.sites.models import Site
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.core.cache import cache
 from datea_api.utils import remove_accents
@@ -21,7 +21,7 @@ def getOrCreateKey(user):
     except:
         #User already has key, so get's retreive it!
         #this fix a postgre error [https://code.djangoproject.com/ticket/10813]
-        #from django.db import connection 
+        #from django.db import connection
         #connection._rollback()
         key = ApiKey.objects.create(user=user)
     return key.key
@@ -50,9 +50,9 @@ def make_social_username(username):
             final_username = username+str(index)
 
         if final_username.lower() not in test_field:
-            break    
+            break
         index +=1
-        
+
     return final_username
 
 
@@ -131,18 +131,16 @@ def get_client_data(domain):
         'create_notifications': True,
         'send_notification_mail': True
     }
-    
+
     if domain:
         try:
             client = ClientDomain.objects.get(domain=domain)
             for field in data.keys():
                 if hasattr(client, field) and getattr(client, field):
-                    data[field] = getattr(client, field)        
+                    data[field] = getattr(client, field)
         except:
             pass
 
         cache.set('client-'+domain, data, 3600)
 
     return data
-
-

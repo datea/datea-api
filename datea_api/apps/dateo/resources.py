@@ -66,7 +66,8 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
             attribute='link', null=True, full=True, readonly=True)
     admin = fields.ToManyField('dateo.resources.DateoStatusResource',
             attribute='admin', null=True, full=True, readonly=True)
-
+    redateos = fields.ToManyField('dateo.resources.RedateoResource',
+            attribute='redateos', related_name='redateos', null=True, full=True, readonly=True)
 
     class Meta:
         queryset = Dateo.objects.all()
@@ -129,7 +130,6 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
 
 
     def hydrate(self, bundle):
-
 
         # Some security measures in regards to an object's owner
 
@@ -438,17 +438,15 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         if q_args['published'] == 'all':
             del q_args['published']
 
+        # INCLUDE REDATEOS (or not)
+        search_models = [Dateo]
+        if 'include_redateos' in request.GET and request.GET.get('include_redateos'):
+            search_models.append(Redateo)
+
         # INIT THE QUERY
-        sqs = SearchQuerySet().models(Dateo).load_all()
+        sqs = SearchQuerySet().models(*search_models).load_all()
         for narg in narrow_args:
             sqs = sqs.narrow(narg)
-
-        # FILTER REDATEOS
-        if 'user_id' in request.GET and 'with_redateos' in request.GET and request.GET.get('with_redateos'):
-            if 'user_id' in q_args:
-                del q_args['user_id']
-            uid = int(request.GET.get('user_id'))
-            sqs = sqs.filter_or(user_id=uid).filter_or(redateos=uid)
 
         sqs = sqs.filter(**q_args)
 
@@ -483,20 +481,18 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         # ORDER BY
         order_by = request.GET.get('order_by', '-created').split(',')
 
+        # if q is set, then order will be relevance first
+        # if not, then do normal order by
         if 'q' in request.GET:
             if order_by == ['-created'] and 'order_by' not in request.GET:
                 #order_by = ['_score']
                 order_by = ['score']
 
-        # in elastic search 'score' is '_score'
-        # order_by = [o if 'score' not in o else o.replace('score', '_score') for o in order_by]
-
-        # if q is set, then order will be relevance first
-        # if not, then do normal order by
+        # if order_by distance, then things change a bit
         if 'distance' in order_by and 'position' in request.GET and request.GET['position'] != '':
             pos = [float(c) for c in request.GET.get('position').split(',')]
             position = Point(pos[0], pos[1])
-            sqs = sqs.distance('position', position).order_by('distance')
+            sqs = sqs.distance('position', position).order_by('distance', *order_by)
         elif len(order_by) > 0:
             sqs = sqs.order_by(*order_by)
 
@@ -510,10 +506,11 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         objects = []
 
         for result in page.object_list:
-            cache_key = self._meta.resource_name+'.'+str(result.obj_id)
+            res_obj = result.object if result.model_name == 'dateo' else result.object.dateo
+            cache_key = 'dateo.'+str(res_obj.pk)
             data = self._meta.cache.get(cache_key)
             if not data:
-                bundle = self.build_bundle(obj=result.object, request=request)
+                bundle = self.build_bundle(obj=res_obj, request=request)
                 bundle = self.full_dehydrate(bundle)
                 data = self._meta.cache.set(cache_key, bundle)
             objects.append(data)
@@ -811,6 +808,7 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
         # put tags with campaigns first
         if 'tags' in bundle.data:
             bundle.data['tags'] = sorted(bundle.data['tags'], key= lambda t: len(t.data['campaigns']), reverse=True)
+        bundle.data['username'] = bundle.obj.user.username
         return bundle
 
     def hydrate(self, bundle):
@@ -821,6 +819,9 @@ class RedateoResource(JSONDefaultMixin, ModelResource):
             response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                     'error': 'not on own objects'}, status=BAD_REQUEST)
             raise ImmediateHttpResponse(response=response)
+
+        if 'username' in bundle.data:
+            del bundle.data['username']
 
         bundle.obj.dateo = dateo
         bundle.obj.user_id = bundle.request.user.id

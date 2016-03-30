@@ -24,11 +24,12 @@ Filters:
 * tags: comma separated tags (without hash) [strings]
 * has_images: [boolean 0 or 1]
 * is_geolocated: [boolean 0 or 1]
+* include_redateos: [boolean 0 or 1] // usually together with user or user_id filter
 
 Tag filter operator:
 * tag_operator: ['or', 'and'], defaults to 'or'
 
-Number of results and pagingation:
+Number of results and pagination:
 * 'limit': number of results, defaults to 100 [int]
 * 'offset': paging offset (e.g 100 for next page) [int]
 
@@ -53,8 +54,8 @@ At the moment we have fields for 3 administrative levels besides 'Country'. In P
 
 spatial filters:
 
-* Within bounding box: 
-  'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right). 
+* Within bounding box:
+  'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right).
 
 * Within distance to point: 'distance', 'latitude' and 'longitude' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as decimal latitude and longitude params, distance in meters as an integer.
 
@@ -70,7 +71,7 @@ all parameters invert ascending or descending order when a '-' (minus) on front:
 * 'created' -> created ascending
 * '-created' -> descending (probably what you want)
 
-options: 
+options:
 * 'score': works only in combination with 'q' parameter above, means search relevance
 * 'created'
 * 'published'
@@ -88,7 +89,7 @@ options:
     	category:	'/api/v2/category/1/',  	// category resource_uri (optional)
     	content:	'this is a test';
     	position: 	{ 					  		// (optional)
-    					coordinates : [ -77.027772, -12.121937 ], 
+    					coordinates : [ -77.027772, -12.121937 ],
         				type        : 'Point',
     				},
     	tags: 		[ { tag : 'testTag' },
@@ -120,7 +121,7 @@ Endpoint:
 
 Method: GET
 
-Statistics are number of dateos per tags or the tags of a specific campaign. 
+Statistics are number of dateos per tags or the tags of a specific campaign.
 
 Params:
 * 'tags': comma separated string of tags ["tag1,tag2"]
@@ -154,9 +155,7 @@ At the moment we have fields for 3 administrative levels besides 'Country'. In P
 
 spatial filters:
 
-* Within bounding box: 
-  'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right). 
+* Within bounding box:
+  'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right).
 
 * Within distance to point: 'distance', 'latitude' and 'longitude' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as decimal latitude and longitude params, distance in meters as an integer.
-
-  

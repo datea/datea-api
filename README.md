@@ -3,17 +3,21 @@ Datea
 
 Django based backend for Datea.
 
-Datea is a corwdsourcing and civic engagement platform to create and visualize citizen reports (dateos) in maps, picture galleries, timelines and charts. It's mail goal is to allow citizens to share and visualize useful information for any purpose. It's flexibel, hashtag based structure allows anyone to create a map, timeline or gallery just by creating a report (dateo) using a hashtag. Furthermore, report iniciatives can be created by organizations such as NGOs, local governments and activists, which allow them to campaign for certain issues in order to obtain useful information from citizens (dateros).
+Datea is a corwdsourcing and civic engagement platform to create and visualize citizen reports (dateos) in maps, picture galleries, timelines and charts. It's main goal is to allow citizens to share and visualize useful information for any purpose. It's flexible, hashtag based structure allows anyone to create a map, timeline or gallery just by creating a report (dateo) using a hashtag. Furthermore, report initiatives can be created by organizations such as NGOs, local governments and activists, which allow them to campaign for certain issues in order to obtain useful information from citizens (dateros).
 
-If you are interested in using or contributing to this project, or want to know a litle bit more about us or the plattform, please feel free to contact us at contacto@datea.pe or via gitter (datea-gitter channel). For special a deployment or new feature, we also provide commercial support.
+If you are interested in using or contributing to this project, or want to know a little more about us or the platform, please feel free to contact us at contacto@datea.pe. For special a deployment or new feature, we also provide commercial support.
 
 ##Datea Api
 
 This repo contains the server backend with all the endpoints necessary for the client apps (see other repos). It's based upong a bundle of tools and services, which makes it powerful, but complex to replicate and install. That's why we'd rather recommend using the existing API at https://api.datea.io/api/v2/ (read about the endpoints in the doc dir)
 
+##Endpoint documentation
+
+If you're looking to consume the endpoints, check out the [documentation](doc/).
+
 ##Installation
 
-1. Service dependencies 
+1. Service dependencies
 Datea needs the following services: django (and dependencies: check the datea_api/requirements/requirements.txt file if you'd like to know the details), postgres 2.x with postgis, memcached, rabbitmq, apache solr 4.x.
 On a production environment, Datea will run with gunicorn and a server like nginx.
 
@@ -21,17 +25,17 @@ On a Debian/Ubuntu machine it means something like: apt-get install postgresql-s
 
 2. clone this repo:
   git clone https://github.com/datea/datea-api.git
-  
+
 3. Create python environment and install dependencies
   - If you don't have virtualenv installed: pip install virtualenv
   - virtualenv --no-site-packages env
   - source env/bin/activate
   - cd datea-api
   - pip install -r datea_api/requirements/requirements.txt
-  
+
 4. Configure DB with postgresql
   - create a db: createdb datea
-  - activate postgis: 
+  - activate postgis:
     - psql datea
     - create extension postgis;
   - cd datea_api
@@ -59,7 +63,7 @@ On a Debian/Ubuntu machine it means something like: apt-get install postgresql-s
   - As with memcached, if this service is not being run already, run: rabbitmq-server (this may require special priviledges)
 
 9. Run async tasks with celery (in new terminal)
- - cd <path to datea> 
+ - cd <path to datea>
  - ../env/bin/celery -A datea_api worker -l info
 
 That should be it for a dev environment. This instructions might be incomplete. If anything pops up, contact us on the datea-gitter channel or at contacto@datea.pe. There's a lot we probably didn't cover in this brief intro. If you plan to develop or use this repo, help us make a better documentation.

@@ -26,8 +26,8 @@ class Dateo(models.Model):
 	# status, published
 	published = models.BooleanField(_("published"), default=True)
 	status_choices = (
-            ('new',_('new')), 
-            ('reviewed', _('reviewed')), 
+            ('new',_('new')),
+            ('reviewed', _('reviewed')),
             ('solved', _('solved'))
         )
 	status = models.CharField(_("status"), max_length=15, choices=status_choices, default="new")
@@ -37,18 +37,18 @@ class Dateo(models.Model):
 	images = models.ManyToManyField(Image, verbose_name=_('Images'), blank=True, related_name="dateo")
 	files = models.ManyToManyField(File, verbose_name=_('Files'), blank=True, related_name="dateo")
 	link  = models.ForeignKey(Link, verbose_name=_('Link'), null=True, blank=True, related_name="dateos", on_delete=models.SET_NULL)
-    
+
     # location
 	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)
 	address = models.CharField(_('Address'), max_length=255, blank=True, null=True)
-    
+
     # optional relationship to campaign
 	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True, on_delete=models.SET_NULL)
-    
+
     # category
 	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, default=None, related_name="dateos", on_delete=models.SET_NULL)
 	tags = models.ManyToManyField(Tag, verbose_name=_("Tags"), related_name="dateos");
-    
+
     # stats
 	vote_count = models.IntegerField(default=0, blank=True, null=True)
 	comment_count = models.IntegerField(default=0,blank=True, null=True)
@@ -122,10 +122,10 @@ class Dateo(models.Model):
 			result = []
 			for k in sorted(extract.keys()):
 				result.append(extract[k])
-			
+
 			fields = ['country', 'admin_level1', 'admin_level2', 'admin_level3']
 
-			num_items = len(result) if len(result) <= 4 else 4 
+			num_items = len(result) if len(result) <= 4 else 4
 
 			for i in range(num_items):
 				setattr(self, fields[i], result[i])
@@ -160,7 +160,7 @@ class Dateo(models.Model):
 		if self.published and not published_changed:
 			add_tags = []
 			del_tag_pks = []
-			current_tag_pks = [t.pk for t in self.tags.all()] 
+			current_tag_pks = [t.pk for t in self.tags.all()]
 			# new tags:
 			for tag in self.tags.all():
 				if tag.pk not in self._prev_tag_pks:
@@ -239,8 +239,8 @@ class DateoStatus(models.Model):
 	created = models.DateTimeField(_('created'), auto_now_add=True)
 	modified = models.DateTimeField(_('modified'), auto_now=True)
 	status_choices = (
-            ('new',_('new')), 
-            ('reviewed', _('reviewed')), 
+            ('new',_('new')),
+            ('reviewed', _('reviewed')),
             ('solved', _('solved'))
         )
 	status = models.CharField(_("status"), max_length=15, choices=status_choices, default="new")
@@ -270,12 +270,12 @@ class Redateo(models.Model):
 		self.dateo.save()
 
 # importing here to aavoid circular imports
-from dateo.search_indexes import DateoIndex
+from dateo.search_indexes import DateoIndex, RedateoIndex
 from api.signals import resource_saved, resource_pre_saved
 from django.db.models.signals import pre_delete, post_delete
 from notify.models import ActivityLog
 
-# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME 
+# KEEP HAYSTACK INDEX UP TO DATE IN REALTIME
 # AND UPDATE DATEO STATS AFTER API RESOURCE SAVED (WITH ALL M2M FIELDS)
 # -> only happens with calls to the api (tastypie)
 def before_dateo_saved(sender, instance, created, **kwargs):
@@ -291,11 +291,15 @@ def after_dateo_saved(sender, instance, created, **kwargs):
 		cache.delete('dateo.'+str(instance.pk))
 		published_changed = instance.published != instance._orig_published
 		instance.refresh_stats(published_changed)
+		for redateo in instance.redateos.all():
+			RedateoIndex().update_object(redateo)
 	DateoIndex().update_object(instance)
 
 def before_dateo_delete(sender, instance, **kwargs):
+	instance.deleting = True
 	cache.delete('dateo.'+str(instance.pk))
 	DateoIndex().remove_object(instance)
+	instance.redateos.all().delete()
 	instance.update_stats(-1)
 	ActivityLog.objects.filter(action_key='dateo.'+str(instance.pk)).delete()
 	Follow.objects.filter(content_type__model="dateo", object_id=instance.pk).delete()
@@ -316,11 +320,14 @@ post_delete.connect(after_status_delete, sender=DateoStatus, dispatch_uid="dateo
 def after_redateo_saved(sender, instance, created, **kwargs):
 	instance.update_stats(1)
 	DateoIndex().update_object(instance.dateo)
+	RedateoIndex().update_object(instance)
 
 def after_redateo_delete(sender, instance, **kwargs):
 	instance.update_stats(-1)
 	ActivityLog.objects.filter(action_key='redateo.'+str(instance.pk)).delete()
-	DateoIndex().update_object(instance.dateo)
+	if instance.dateo and not hasattr(instance.dateo, 'deleting'):
+		DateoIndex().update_object(instance.dateo)
+	RedateoIndex().remove_object(instance)
 
 resource_saved.connect(after_redateo_saved, sender=Redateo, dispatch_uid="redateo.saved")
 post_delete.connect(after_redateo_delete, sender=Redateo, dispatch_uid="redateo.delete")

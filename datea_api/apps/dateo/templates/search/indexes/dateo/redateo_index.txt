@@ -1,0 +1,11 @@
+{% load uninormalize %}
+{{object.dateo.content | uninormalize }}
+{% for tag in object.dateo.tags.all %}#{{tag}} {% endfor %}
+{% for tag in object.dateo.tags.all %}{% if tag.title %}tag.title, {% endif %}{% endfor %}
+{% for tag in object.tags.all %}#{{tag}} {% endfor %}
+{% for tag in object.tags.all %}{% if tag.title %}tag.title, {% endif %}{% endfor %}
+{{object.dateo.category.name | uninormalize}}
+@{{object.dateo.user.username}}
+@{{object.user.username}}
+{% if object.dateo.address %}{{object.dateo.address | uninormalize}}{% endif %}
+{{ object.dateo.country | uninormalize}} {{ object.dateo.admin_level1 | uninormalize}} {{ objects.dateo.admin_level2 | uninormalize}} {{ object.dateo.admin_level3 | uninormalize}}

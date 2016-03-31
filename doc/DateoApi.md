@@ -1,7 +1,4 @@
-###Dateo Api
-
-
-###SEARCH
+###Dateo Endpoint
 
 allowed methods = GET, POST, PATCH, DELETE
 
@@ -19,7 +16,7 @@ Filters:
 * user: filter by username [string]
 * user_id: filter by user id [integer]
 * status: filter by status ['new', 'reviewed', 'solved']
-* published: [0, 1 or 'all'] (default is 1)
+* published: [0, 1 or 'all'] // default is 1
 * id: object id
 * tags: comma separated tags (without hash) [strings]
 * has_images: [boolean 0 or 1]
@@ -34,7 +31,7 @@ Number of results and pagination:
 * 'offset': paging offset (e.g 100 for next page) [int]
 
 date related filters:
-* created__year: year dateo was created [four digits] (watch for double underscore -> django filters)
+* created__year: year dateo was created [four digits] // watch for double underscore -> django filters
 * created__month: in combination with year, month dateo was created [two digits]
 * created__day: combined with month and year, day a dateo was created [two digits]
 * created__gt: created after date [date in ISO format]
@@ -83,6 +80,7 @@ options:
 
 
 ####POST
+Application/json POST request to /api/v2/dateo/ with:
 
 	{
 		  address:	'Calle x 546',			  	// (optional)
@@ -113,8 +111,11 @@ options:
     				}]
 	}
 
+####PATCH, DELETE
+same as POST, but object has to include "id" and the request goes to the Detail url
 
-###STATS
+
+###STATS Endpoint
 
 Endpoint:
 * */api/v2/dateo/stats/*
@@ -159,3 +160,22 @@ spatial filters:
   'bottom_left_latitude', 'bottom_left_longitude' and 'top_right_latitude', 'top_right_longitude' GET params need to be present (both) to filter dateos by a geographic bounding box (bottom left and top right).
 
 * Within distance to point: 'distance', 'latitude' and 'longitude' GET params need to be present. Filters dateos within given distance in meters from given point. Position given as decimal latitude and longitude params, distance in meters as an integer.
+
+
+### DateoStatus Endpoint
+Dateo status objects are used to assign states to dateos for administrative purposes inside campaigns. It only works in the context of a campaign, and can only be assigned by campaign owners.
+
+allowed methods = GET, POST, PATCH, DELETE
+
+Endpoints:
+
+* List: /api/v2/dateo_status/
+* Detail: /api/v2/dateo_status/\<id\>/
+* Schema: /api/v2/dateo_status/schema/
+
+####POST
+  {
+		campaign   : campaign id or campaign object,
+		dateo      : dateo id or dateo object,
+		status     : 'new', 'reviewed' or 'solved',
+  }

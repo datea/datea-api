@@ -26,7 +26,9 @@ def save_file(request):
             file_data = request.FILES['file']
             file_instance = File(file=file_data, user=request.user)
             if 'order' in form.cleaned_data:
-                image_instance.order = form.cleaned_data['order']
+                file_instance.order = form.cleaned_data['order']
+            if 'title' in form.cleaned_data:
+                file_instance.title = form.cleaned_data['title']
             file_instance.save()
 
             # create image resource

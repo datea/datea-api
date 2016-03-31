@@ -1,4 +1,4 @@
-###Tag Api
+###Tag Endpoint
 
 allowed methods = GET, POST, PATCH
 
@@ -28,7 +28,7 @@ Number of results and pagingation:
 
 orderby (prepend a '-' to invert):
 
-* 'created' ('-created' for descending) 
+* 'created' ('-created' for descending)
 * 'tag': order alphabeticaly
 
 
@@ -43,7 +43,7 @@ To autocomplete on "He":
 you'll receive a JSON with:
 
 	{
-		suggestions: ['Hello', 'Hey', 'Help']	
+		suggestions: ['Hello', 'Hey', 'Help']
 	}
 
 
@@ -78,11 +78,11 @@ Params:
 * limit: number of results [default 5, max 20]
 
 
-###POST 
+###POST
 
 Params needed for POST to */api/v2/tag/* are:
 
 	{
 		tag 	: <tagname>, 		// required
-		title 	: <a title>			// optional string with better description
+		title 	: <a title>			// optional string with description
 	}

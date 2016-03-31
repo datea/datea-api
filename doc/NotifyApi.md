@@ -1,4 +1,4 @@
-###Notify Api
+###Notify Endpoint
 
 
 ####Notify Settings
@@ -9,7 +9,7 @@ allowed methods = GET, PATCH
 
 Endpoint: */api/v2/notify_settings/\<id of notify settings objects\>/*
 
-This object has a OneToOne relation with the User object. It defines which events trigger the system to send notification emails to the users of the plattform. 
+This object has a OneToOne relation with the User object. It defines which events trigger the system to send notification emails to the users of the plattform.
 
 Structure:
 
@@ -20,10 +20,10 @@ Structure:
     	tags_dateos: 	<boolean>,					// default: false
     	tags_reports: 	<boolean>,					// default: true
     	site_news: 		<boolean>,					// default: true
-	} 
+	}
 
 * interaction: send notifications when actions in the system occur that involve a users content. Eg a comment on my dateo, someone supported my dateo etc.
-* conversations: send notifications when a new comment is created in a conversation a user participates. 
+* conversations: send notifications when a new comment is created in a conversation a user participates.
 * tags_dateos: Send notofications when dateos occur in a tag a user follows
 * tags_reports: Send notifications when reports by iniciatives are posted on a tag a user follows
 * site_news: receive news letter.
@@ -45,7 +45,7 @@ Notification objects are created for users individually. Only the "unread" param
 		unread: false
 	}
 
-to the detail endpoint of a notification. 
+to the detail endpoint of a notification.
 
 At the moment, no list PATCH is allowed, only detail. This will probably change.
 
@@ -65,7 +65,7 @@ Notification includes the following information:
 			actor_id: <acting user id>,
 			actor_img: <acting user thumb image>,
 			action_object: <comment or dateo resource>  // (not necesary to have the vote object)
-			verb: <"dateo", "commented", "voted">,	
+			verb: <"dateo", "commented", "voted">,
 			target_object: <full resource: dateo>,
 			target_user: <target user username>,
 			target_user_id: <target user userid>,
@@ -78,7 +78,7 @@ Notification includes the following information:
 *Filter params for GET list:*
 
 * user: \<user id\>
-* unread: 0 o 1 
+* unread: 0 o 1
 * limit: \<number of results\>  (default: 7)
 * offset: \<result offset\> [integer]
 
@@ -130,7 +130,3 @@ This endpoint also has paginated output, providing the following parameters:
 	    target_user: 	<full target user resource>, 	// optional
 	    data: 			<extra data: extract etc>
 	}
-
-
-
-

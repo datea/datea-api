@@ -1,8 +1,8 @@
-###Follow Api
+###Follow Endpoint
 
 allowed methods = GET, POST, DELETE
 
-Endpoints: 
+Endpoints:
 
 * List: /api/v2/follow/
 * Detail: /api/v2/follow/\<id\>/
@@ -47,6 +47,3 @@ You can only delete follow objects that belong to your user. You need to send th
 2. DELETE request to /api/v2/follow/?user=\<user id\>&content_type=tag&object_id=366
 
 3. DELETE request to /api/v2/follow/?user=\<user id\>&follow_key=tag.366
-
-
-

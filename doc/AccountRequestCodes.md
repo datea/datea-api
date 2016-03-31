@@ -1,6 +1,4 @@
-
-
-###Account api:
+###Account endpoint request codes:
 
 400 ( Bad Request ):
 
@@ -30,9 +28,3 @@
 
 * "Check your email for further instructions"
 * "Your password was successfully reset"
-
-
-
-
-
-

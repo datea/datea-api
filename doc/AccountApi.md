@@ -2,19 +2,19 @@
 
 ####Sign in
 Ajax POST (application/json) to: */api/v2/account/signin/*
-with 
+with
 
 	{
-		username: <username>, 
+		username: <username>,
 		password: <password>
 	}
 
 you'll receive a:
-* 200 if everything ok, with 
+* 200 if everything ok, with
 
 	{
-		token: <api_key>, 
-		user: <user object> 
+		token: <api_key>,
+		user: <user object>
 	}
 
 * 401 if username or password is wrong
@@ -22,17 +22,17 @@ you'll receive a:
 
 ####Register
 Ajax POST (application/json) to: */api/v2/account/register/*
-with 
+with
 
 	{
-		username: <username>, 
-		email: <email>, 
+		username: <username>,
+		email: <email>,
 		password: <password>
 	}
 
 if everything ok, you'll receive:
-* 201 message
-* an email with instructions for activating the account will be sent to the user
+* 201 response
+* an email is sent to the user with instructions on how to activate the account
 
 otherwise you'll receive a 400 error:
 
@@ -40,10 +40,10 @@ otherwise you'll receive a 400 error:
 * duplicate user: there's an account with the same username
 
 
-If your domain is whitelisted in the api, then you may define the redirect urls 
-specific to your app, that are sent to the users in the confirmation email. 
-Otherwise, after clicking the activation link sent in the email, the user will be directed 
-to a page from this system.
+If your domain is whitelisted in the api, then you may define the redirect urls
+specific to your app, that are sent to the users in the confirmation email.
+Otherwise, after clicking the activation link sent in the email, the user will be directed
+to a generic page to activate the account.
 
 
 ####Username exists
@@ -56,11 +56,11 @@ with:
 		username: <username>,
 	}
 
-receive a 200 with 
+receive a 200 with
 
 	{
 		result: <boolean>,
-		message: "..."	
+		message: "..."
 	}
 
 
@@ -75,7 +75,7 @@ do this by using our oauthd (from oauth.io) service like follows:
 	<script src="http://api.datea.pe:6284/download/latest/oauth.js"></script>
 	<script>
 		OAuth.initialize('rT1wbk04eERCkSCMnA7vvdm5UcY');	// our public key may change on release time
-		
+
 		/****** FACEBOOK ***********/
 
 		//Using popup (option 1)
@@ -84,7 +84,7 @@ do this by using our oauthd (from oauth.io) service like follows:
   			//use result.access_token in your API request
 		});
 
-		//Using redirection (option 2)	
+		//Using redirection (option 2)
 		OAuth.redirect('facebook', "callback/url");
 
 		/******* TWITTER **********/
@@ -101,25 +101,25 @@ do this by using our oauthd (from oauth.io) service like follows:
 	</script>
 
 Then, for facebook auth with our api, issue a json ajax POST to */api/v2/account/socialauth/facebook/*
-	
+
 	{
 		access_token: <access_token>
 	}
 
 For twitter:, json ajax POST to */api/v2/account/socialauth/twitter/* with
-	
+
 	{
-		oauth_token: <oauth_token>, 
+		oauth_token: <oauth_token>,
 		oauth_token_secret: <oauth_token_secret>
 	}
 
-  
-If everything goes as expected, you'll receive a 200 with: 
-	
+
+If everything goes as expected, you'll receive a 200 with:
+
 	{
-		token: <api_key>, 
-		user: <user_object>, 
-		is_new: <boolean> 
+		token: <api_key>,
+		user: <user_object>,
+		is_new: <boolean>
 	}
 
 
@@ -139,13 +139,13 @@ If you'd like the API to redirect back to your page when the user clicks the act
 ####Reset Password
 
 Ajax POST (application/json) to: */api/v2/account/reset-password/* with:
-	
+
 	{
 		email: <email>
 	}
 
 This will send a message to the given address with instructions - a link to access the password reset form. If you'd like the link in the email to redirect to a password reset form in your page, whitelist your domain with us, and add:
-	
+
 	{
 		...
 		base_url: <url to handle password reset>,
@@ -163,7 +163,7 @@ The url contains is build like this:
 if your domain is whitelisted, and you provided a url to deal with password reset, have the user enter his/her new password twice, check if both fields against each other, and then:
 
 Send a Ajax JSON POST to : */api/v2/account/reset-password-confirm/* with
-	
+
 	{
 		password: <new password entered by user>,
 		uid: <uid from reset url>,
@@ -176,16 +176,16 @@ if everything ok, you'll get a 200
 ###Authentication
 
 For POST,PUT,PATCH and DELETE methods api wide, you need to authenticate the user. This is done using the provided api_key and the username you get from the methods above. You have two options:
-	
+
 	# As a header
-	# Format is ``Authorization: ApiKey <username>:<api_key>
+	# Format is Authorization: ApiKey <username>:<api_key>
 	Authorization: ApiKey daniel:204db7bcfafb2deb7506b89eb3b9b715b09905c8
 
 	# As GET params
 	http://api.datea.pe/api/v2/entries/?username=daniel&api_key=204db7bcfafb2deb7506b89eb3b9b715b09905c8
 
 
-###User Api
+###User Endpoint
 
 allowed methods = GET, PATCH, DELETE
 
@@ -202,7 +202,7 @@ Endpoints:
 
 list filters:
 
-* follow_key: 'tag.30'		// follow_key -> '\<object_name\>'.'\<id\>' 
+* follow_key: 'tag.30'		// follow_key -> '\<object_name\>'.'\<id\>'
 
 
 Example User Object:
@@ -230,10 +230,10 @@ Example User Object:
 An example. Other fields are ignored. As with PATCH, you need only to provide the fields you want to change to
 
 */api/v2/user/\<id\>/*
-	
+
 	{
 		username: <username>,
-		fullname: <fullname>,	
+		fullname: <fullname>,
 		message: <message>,
 		email: <valid email address>,
 		image: {
@@ -243,4 +243,3 @@ An example. Other fields are ignored. As with PATCH, you need only to provide th
     		}
 		}
 	}
-

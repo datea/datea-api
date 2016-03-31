@@ -1,8 +1,8 @@
-###Vote Api
+###Vote Endpoint
 
 allowed methods = GET, POST, DELETE
 
-Endpoints: 
+Endpoints:
 
 * List: /api/v2/vote/
 * Detail: /api/v2/vote/\<id\>/

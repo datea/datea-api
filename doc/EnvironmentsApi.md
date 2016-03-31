@@ -1,4 +1,4 @@
-###Environments Api
+###Environments Endpoint
 
 The environments endpoint combines Tags and Campaigns into one Endpoint. Only Tags that are not part of a Campaign are shown, which makes it easier to search and display maps of relevance in Datea.
 

@@ -1,4 +1,4 @@
-###Campaign Api
+###Campaign Endpoint
 
 allowed methods = GET, POST, PATCH, DELETE
 
@@ -59,6 +59,7 @@ options:
 
 
 ####POST
+Issue a Application/json POST request to /api/v2/campaign/ with:
 
 	{
 		name: <string>, 				// max 100 chars
@@ -118,3 +119,6 @@ options:
 		default_filter: 'owner'			// optional -> default is null
 
 	}
+
+	####PATCH, DELETE
+	same as POST, but object has to include "id" and the request goes to the Detail url

@@ -1,4 +1,4 @@
-###Comment Api
+###Comment Endpoint
 
 allowed methods = GET, POST, PATCH, DELETE
 
@@ -20,13 +20,15 @@ List filters:
 * object_id: 123 [int]  
 
 ####POST
+Application/json POST request to /api/v2/comment/ with:
 
 	{
 		comment: 'bla bla bla',
 		object_id: 123,				// id of commented object
-		content_type: 'dateo', 		// ctype of commented object 
+		content_type: 'dateo', 		// ctype of commented object
 	}
 
 the user is taken automatically from the current authenticated user.
 
-Nested comments comming soon
+####PATCH, DELETE
+same as POST, but object has to include "id" and the request goes to the Detail url

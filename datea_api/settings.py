@@ -144,13 +144,13 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
     'account.pipeline.get_username',
-    # 'social.pipeline.mail.mail_validation',
+    'social.pipeline.mail.mail_validation',
     'social.pipeline.social_auth.associate_by_email',
     'account.pipeline.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',
-    'account.pipeline.save_avatar'
+    #'account.pipeline.save_avatar'
 )
 
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']

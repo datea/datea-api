@@ -1,6 +1,6 @@
 
 # CHANGE THIS SETTING FOR PRODUCTION!!!
-# generate new secret key with ./manage.py generate_secret_key 
+# generate new secret key with ./manage.py generate_secret_key
 SECRET_KEY = '9ko#ts81m_)h$hjyae!1xpx2#_le+ir3^tvg(dqv7^(jx-*dwe'
 
 DEBUG = False
@@ -49,6 +49,7 @@ SOCIAL_AUTH_TWITTER_SECRET = ''
 
 SOCIAL_AUTH_FACEBOOK_KEY = ''
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
+SOCIAL_AUTH_FACEBOOK_APP_NAMESPACE = ''
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''

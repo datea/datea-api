@@ -78,22 +78,26 @@ do this by using our oauthd (from oauth.io) service like follows:
 
 		/****** FACEBOOK ***********/
 
-		//Using popup (option 1)
-		OAuth.popup('facebook', function(error, result) {
+		//Using popup
+		OAuth.popup('facebook')
+		.done(result => {
   			//handle error with error
   			//use result.access_token in your API request
-		});
+		})
+		.fail(err => ...);
 
 		//Using redirection (option 2)
 		OAuth.redirect('facebook', "callback/url");
 
 		/******* TWITTER **********/
 
-		//Using popup (option 1)
-		OAuth.popup('twitter', function(error, result) {
+		//Using popup (option 1
+		OAuth.popup('twitter')
+		.done(result => {
 		  //handle error with error
 		  //use result.oauth_token and result.oauth_token_secret in your API request
-		});
+		})
+		.fail(err => ...);
 
 		//Using redirection (option 2)
 		OAuth.redirect('twitter', "callback/url");

@@ -3,7 +3,7 @@ from image.models import Image
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
 from utils import make_social_username, get_domain_from_url
-
+import json
 
 def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 
@@ -48,7 +48,7 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 USER_FIELDS = ['username', 'email']
 
 def get_username(strategy, details, user=None, *args, **kwargs):
-    
+
     if 'username' not in strategy.setting('USER_FIELDS', USER_FIELDS):
         return
     storage = strategy.storage
@@ -72,10 +72,6 @@ def get_username(strategy, details, user=None, *args, **kwargs):
 
     else:
         final_username = storage.user.get_username(user)
-
-    debug = open('/tmp/debug.txt', 'w')
-    debug.write('user name'+"\r\n\r\n")
-    debug.close()
 
     return {'username': final_username}
 

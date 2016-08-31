@@ -179,6 +179,13 @@ class AccountResource(JSONDefaultMixin, Resource):
         username = remove_accents(postData['username'])
         password = postData['password']
 
+        # allow to authenticate via email
+        if '@' in username:
+          try:
+            username = User.objects.get(email=username).username
+          except:
+            pass
+
         user = authenticate(username= username,
                             password= password)
 

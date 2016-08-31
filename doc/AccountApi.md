@@ -5,7 +5,7 @@ Ajax POST (application/json) to: */api/v2/account/signin/*
 with
 
 	{
-		username: <username>,
+		username: <username or email>,
 		password: <password>
 	}
 
@@ -62,6 +62,23 @@ receive a 200 with
 		result: <boolean>,
 		message: "..."
 	}
+
+####Email exists
+	Perform a quick test if a new email exists
+
+	Ajax GET to: */api/v2/account/email-exists*
+	with:
+
+		{
+			email: <valid email>,
+		}
+
+	receive a 200 with
+
+		{
+			result: <boolean>,
+			message: "..."
+		}
 
 
 

@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^account/', include('datea_api.apps.account.urls')),
     url(r'^csv-export/', include('datea_api.apps.dateo.urls')),
     url(r'^seo/', include('datea_api.apps.seo.urls')),
-    url(r'^', top_level)
+    #url(r'^', top_level)
 ]
 
 if settings.DEBUG:

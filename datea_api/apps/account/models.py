@@ -31,6 +31,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(username=username, email=email,
                           is_staff=is_staff, is_active=True,
                           is_superuser=is_superuser, **extra_fields)
+        user.last_login = timezone.now()
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -197,14 +198,14 @@ def after_user_saved(sender, instance, created, **kwargs):
 		ci = CampaignIndex()
 		for campaign in instance.campaigns.all():
 			ci.update_object(campaign)
-	
+
 	if not created:
 		for pk in [d.pk for d in Dateo.objects.filter(user=instance)]:
 			cache.delete('dateo.'+str(pk))
 		for pk in [c.pk for c in Campaign.objects.filter(user=instance)]:
 			cache.delete('campaign.'+str(pk))
 
-	
+
 
 
 def before_user_delete(sender, instance, using, **kwargs):
@@ -227,23 +228,23 @@ class ClientDomain(models.Model):
 
 	pwreset_base_url = models.URLField(_('Password reset base URL'), max_length=200, blank=True, null=True)
 
-	comment_url = models.CharField(_('Comment url template'), max_length=255, 
+	comment_url = models.CharField(_('Comment url template'), max_length=255,
 					help_text=_("Available vars: {user_id} of commented object's owner, \
 						{username} of commented object' owner, {obj_id} of commented \
 						object, {comment_id} of comment, {obj_type} type of commented object (dateo mostly)"), blank=True, null=True)
 
-	dateo_url = models.CharField(_('Dateo url template'), max_length=255, 
+	dateo_url = models.CharField(_('Dateo url template'), max_length=255,
 					help_text=_("Available vars: {user_id} of dateo owner, \
-						{username} of dateo owner, {obj_id} of dateo"), 
+						{username} of dateo owner, {obj_id} of dateo"),
 					blank=True, null=True)
 
-	campaign_url = models.CharField(_('Campaign url template'), max_length=255, 
+	campaign_url = models.CharField(_('Campaign url template'), max_length=255,
 					help_text=_("Available vars: {user_id} of campaign owner, \
-						{username} of campaign owner, {obj_id} of campaign, {slug} of campaign"), 
+						{username} of campaign owner, {obj_id} of campaign, {slug} of campaign"),
 					blank=True, null=True)
 
-	notify_settings_url = models.CharField(_('Notify settings url template'), max_length=255, 
-					help_text=_("Available vars: {user_id} and {username}"), 
+	notify_settings_url = models.CharField(_('Notify settings url template'), max_length=255,
+					help_text=_("Available vars: {user_id} and {username}"),
 					blank=True, null=True)
 
 	send_notification_mail = models.BooleanField(_('Send notification mail'), default=True)
@@ -261,14 +262,9 @@ class ClientDomain(models.Model):
 
 
 def after_domain_save(sender, instance, using, **kwargs):
-	try: 
+	try:
 		cache.delete('domain-'+instance.domain)
 	except:
 		pass
 
 post_save.connect(after_domain_save, sender=User, dispatch_uid="datea_api.apps.account.domain_save")
-
-
-
-		
-

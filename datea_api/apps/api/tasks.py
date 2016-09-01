@@ -2,7 +2,8 @@ from __future__ import absolute_import
 from celery import shared_task
 from django.contrib.contenttypes.models import ContentType
 from types import IntType
-import bleach
+#import bleach -> bleach is not working. Wait for new version.
+from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.utils.translation import ugettext
 import json
@@ -64,7 +65,8 @@ def create_dateo_activity_log(dateo):
 	actlog.verb = 'dateo'
 	actlog.action_object = dateo
 
-	tr = Truncator(bleach.clean(dateo.content, strip=True))
+	#tr = Truncator(bleach.clean(dateo.content, strip=True))
+	tr = Truncator(strip_tags(dateo.content))
 	extract = tr.chars(140)
 	actlog.data = {'extract': extract}
 	actlog.save()
@@ -106,7 +108,7 @@ def create_dateo_notifications(actlog):
 	if not client_data['send_notification_mail']:
 		return
 	dateo_url = client_data['dateo_url'].format(username=actlog.action_object.user.username,
-				user_id=actlog.action_object.user.pk, obj_id=actlog.action_object.pk) 
+				user_id=actlog.action_object.user.pk, obj_id=actlog.action_object.pk)
 
 	email_data = {
 		"actor": actlog.actor.username,
@@ -119,7 +121,7 @@ def create_dateo_notifications(actlog):
 
 	if hasattr(actlog.action_object, 'tags'):
 		email_data["tags"] = [tag.tag for tag in actlog.action_object.tags.all()]
-	
+
 	if len(email_users) > 0 :
 		send_mails(email_users, "dateo", email_data)
 
@@ -149,8 +151,9 @@ def create_redateo_activity_log(redateo):
 	actlog.action_object = redateo
 	actlog.target_object = redateo.dateo
 
-	tr = Truncator(bleach.clean(redateo.dateo.content, strip=True))
-	extract = tr.chars(100) 
+	#tr = Truncator(bleach.clean(redateo.dateo.content, strip=True))
+	tr = Truncator(strip_tags(redateo.dateo.content))
+	extract = tr.chars(100)
 	actlog.data = {'extract': extract}
 	actlog.target_user = redateo.dateo.user
 
@@ -196,7 +199,7 @@ def create_redateo_notifications(actlog):
 	if not client_data['send_notification_mail']:
 		return
 	dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
-				user_id=actlog.target_object.user.pk, obj_id=actlog.target_id) 
+				user_id=actlog.target_object.user.pk, obj_id=actlog.target_id)
 
 	email_data = {
 		"actor": actlog.actor.username,
@@ -242,8 +245,9 @@ def create_comment_activity_log(comment):
 	actlog.action_object = comment
 	actlog.target_object = comment.content_object
 
-	tr = Truncator(bleach.clean(comment.comment, strip=True))
-	extract = tr.chars(100) 
+	#tr = Truncator(bleach.clean(comment.comment, strip=True))
+	tr = Truncator(strip_tags(comment.comment))
+	extract = tr.chars(100)
 	actlog.data = {'extract': extract}
 
 	if hasattr(comment.content_object, "user"):
@@ -295,8 +299,8 @@ def create_comment_notifications(actlog):
 		return
 
 	comment_url = client_data['comment_url'].format(username=actlog.target_object.user.username,
-				user_id=actlog.target_object.user.pk, obj_id=actlog.target_id, 
-				obj_type= actlog.target_type.model, comment_id=actlog.action_id) 
+				user_id=actlog.target_object.user.pk, obj_id=actlog.target_id,
+				obj_type= actlog.target_type.model, comment_id=actlog.action_id)
 
 	email_data = {
 		"actor": actlog.actor.username,
@@ -367,13 +371,13 @@ def create_campaign_notifications(actlog):
 	for user in notify_users:
 		n = Notification(type="campaign", recipient=user, activity=actlog)
 		n.save()
-		
+
 	# email using target_object client_domain (for now)
 	client_data = get_client_data(actlog.action_object.client_domain)
 	if not client_data['send_notification_mail']:
 		return
 	campaign_url = client_data['campaign_url'].format(username=actlog.action_object.user.username,
-				user_id=actlog.action_object.user.pk, obj_id=actlog.action_id, tag_name=actlog.action_object.main_tag.tag) 
+				user_id=actlog.action_object.user.pk, obj_id=actlog.action_id, tag_name=actlog.action_object.main_tag.tag)
 
 	email_data = {
 		"actor": actlog.actor.username,
@@ -419,8 +423,9 @@ def create_vote_activity_log(vote):
 	actlog.target_object = vote.content_object
 
 	if hasattr(vote.content_object, 'content'):
-		tr = Truncator(bleach.clean(vote.content_object.content, strip=True))
-		extract = tr.chars(140) 
+		#tr = Truncator(bleach.clean(vote.content_object.content, strip=True))
+		tr = Truncator(strip_tags(vote.content_object.content))
+		extract = tr.chars(140)
 		actlog.data = {'extract': extract}
 
 	if hasattr(vote.content_object, "user"):
@@ -445,7 +450,7 @@ def create_vote_notifications(actlog):
 	if actlog.target_user.notify_settings.interaction:
 		email_users.add(actlog.target_user)
 
-	# 2. Seguidores de hilo 
+	# 2. Seguidores de hilo
 	#follows = Follow.objects.filter(follow_key=actlog.target_key)
 	#for f in follows:
 	#	notify_users.append(f.user)
@@ -463,13 +468,13 @@ def create_vote_notifications(actlog):
 	for user in notify_users:
 		n = Notification(type="vote", recipient=user, activity=actlog)
 		n.save()
-		
+
 	# email using target_object client_domain (for now)
 	client_data = get_client_data(actlog.target_object.client_domain)
 	if not client_data['send_notification_mail']:
 		return
 	dateo_url = client_data['dateo_url'].format(username=actlog.target_object.user.username,
-				user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk) 
+				user_id=actlog.target_object.user.pk, obj_id=actlog.target_object.pk)
 
 	email_data = {
 		"actor": actlog.actor.username,
@@ -507,15 +512,15 @@ def do_flag_async_tasks(flag_obj_id):
 	if flag_obj.content_type.model == 'dateo':
 		url = client_data['dateo_url'].format(username=flag_obj.content_object.user.username,
 				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.pk)
-	
+
 	elif flag_obj.content_type.model == 'comment':
 		url = client_data['comment_url'].format(username=flag_obj.content_object.user.username,
-				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.content_object.pk, 
+				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.content_object.pk,
 				comment_id=flag_obj.object_id, obj_type=flag_obj.content_object.content_type.model)
 
 	elif flag_obj.content_type.model == 'campaign':
 		url = client_data['campaign_url'].format(username=flag_obj.content_object.user.username,
-				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.pk, slug=flag_obj.content_object.slug) 
+				user_id=flag_obj.content_object.user.pk, obj_id=flag_obj.content_object.pk, slug=flag_obj.content_object.slug)
 
 	email_data = {
 		"actor": flag_obj.user.username,
@@ -530,29 +535,3 @@ def do_flag_async_tasks(flag_obj_id):
 	}
 
 	send_admin_mail("flag", email_data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-

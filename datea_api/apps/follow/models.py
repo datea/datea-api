@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -11,24 +10,24 @@ from django.db.models.signals import pre_delete, post_save
 from api.signals import resource_saved
 
 class Follow(models.Model):
-    
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="follows")
-    created = models.DateTimeField(_('created'), auto_now_add=True)
-    
+    created = models.DateTimeField('created', auto_now_add=True)
+
     # generic content type relation to followed object
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
     content_object = GenericForeignKey('content_type', 'object_id')
     object_id = models.PositiveIntegerField(null=True, blank=True)
 
-    # a sort of natural key by which easily and rapidly 
+    # a sort of natural key by which easily and rapidly
     # identify the followed object and it's related historyNotices
     # for example: 'dateo.15'
     follow_key = models.CharField(max_length=255)
     published = models.BooleanField(default=True)
 
-    client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
-    
-    def save(self, *args, **kwargs): 
+    client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
         if not self.follow_key:
             self.follow_key = self.content_type.model+'.'+str(self.object_id)
         elif (not self.content_type or not self.object_id) and self.follow_key:
@@ -58,8 +57,8 @@ class Follow(models.Model):
         return self.user.username+": "+self.follow_key
 
     class Meta:
-        verbose_name = _('Follow')
-        verbose_name_plural = _('Follows')
+        verbose_name = 'Follow'
+        verbose_name_plural = 'Follows'
         unique_together = ("user", "follow_key")
 
 
@@ -78,7 +77,3 @@ def follow_pre_delete(sender, instance, **kwargs):
 
 post_save.connect(follow_saved, sender=Follow, dispatch_uid="follow.save")
 pre_delete.connect(follow_pre_delete, sender=Follow, dispatch_uid="follow.delete")
-        
-    
- 
-

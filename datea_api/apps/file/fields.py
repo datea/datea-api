@@ -1,18 +1,17 @@
 from django.db.models import FileField
 from django.forms import forms
 from django.template.defaultfilters import filesizeformat
-from django.utils.translation import ugettext_lazy as _
 import magic
 
-allowed_extensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pps', 'pptx', 'ppsx', 
+allowed_extensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pps', 'pptx', 'ppsx',
                       'odt', 'fodt', 'ods', 'fods', 'odp', 'fodp', 'odg', 'fodg',
                       'json', 'csv', 'xml', 'kml', 'rdf',
-                      'pdf', 'ps', 'rtf', 'txt', 
+                      'pdf', 'ps', 'rtf', 'txt',
                       'zip', 'gzip',
-                      'mp3', 'mp4', 'ogg' 
+                      'mp3', 'mp4', 'ogg'
                      ]
 
-allowed_mimetypes = ['application/msword', 
+allowed_mimetypes = ['application/msword',
                      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                      'application/vnd.ms-excel',
                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -48,9 +47,9 @@ class ContentTypeRestrictedFileField(FileField):
         super(ContentTypeRestrictedFileField, self).__init__(*args, **kwargs)
 
 
-    def clean(self, *args, **kwargs):        
+    def clean(self, *args, **kwargs):
         data = super(ContentTypeRestrictedFileField, self).clean(*args, **kwargs)
-        
+
         try:
             ext = data.file.name.split(".")[-1].lower()
             if ext in allowed_extensions:
@@ -62,7 +61,6 @@ class ContentTypeRestrictedFileField(FileField):
             else:
                 raise forms.ValidationError('Filetype not supported.')
         except AttributeError:
-            pass        
-            
-        return data
+            pass
 
+        return data

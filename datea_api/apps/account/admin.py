@@ -2,7 +2,6 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.utils.translation import ugettext_lazy as _
 
 from account.models import User, ClientDomain
 from account.forms import CustomUserChangeForm, CustomUserCreationForm
@@ -21,10 +20,10 @@ class CustomUserAdmin(UserAdmin):
     change_user_password_template = None
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('full_name', 'email', 'message', 'image', 'bg_image')}),
-        (_('Permissions'), {'fields': ('status', 'is_active', 'is_staff', 'is_superuser',
+        ('Personal info', {'fields': ('full_name', 'email', 'message', 'image', 'bg_image')}),
+        ('Permissions', {'fields': ('status', 'is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login',)}),
+        ('Important dates', {'fields': ('last_login',)}),
     )
     add_fieldsets = (
         (None, {

@@ -1,7 +1,5 @@
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
 from django.conf import settings
 from django.utils import timezone
 
@@ -14,24 +12,24 @@ from jsonfield import JSONField
 
 class Campaign(models.Model):
 
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('User'), related_name="campaigns")
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='User', related_name="campaigns")
 
-	name = models.CharField(_("Name"), max_length=100)
-	slug = models.SlugField(_("Slug"), max_length=120, help_text=_("A string of text as a short id for use at the url of this map (alphanumeric and dashes only"))
-	published = models.BooleanField(_("Published"), default=True, help_text=_("If checked, campaign becomes visible to others"))
+	name = models.CharField("Name", max_length=100)
+	slug = models.SlugField("Slug", max_length=120, help_text="A string of text as a short id for use at the url of this map (alphanumeric and dashes only")
+	published = models.BooleanField("Published", default=True, help_text="If checked, campaign becomes visible to others")
 
 	# timestamps
-	created = models.DateTimeField(_('created'), auto_now_add=True)
-	modified = models.DateTimeField(_('modified'), auto_now=True)
+	created = models.DateTimeField('created', auto_now_add=True)
+	modified = models.DateTimeField('modified', auto_now=True)
 
 	# Tags / Categories
-	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, related_name="campaigns_primary", help_text=_("Choose a category for this campaign"), on_delete=models.SET_NULL)
-	main_tag = models.ForeignKey(Tag, verbose_name=_("Hashtag"), help_text=_("Main tag for your campaign."), related_name="campaigns", on_delete=models.PROTECT)
+	category = models.ForeignKey(Category, verbose_name="Category", null=True, blank=True, related_name="campaigns_primary", help_text="Choose a category for this campaign", on_delete=models.SET_NULL)
+	main_tag = models.ForeignKey(Tag, verbose_name="Hashtag", help_text="Main tag for your campaign.", related_name="campaigns", on_delete=models.PROTECT)
 	secondary_tags = models.ManyToManyField(Tag,
-	                        verbose_name=_("Dateo Tags"),
+	                        verbose_name="Dateo Tags",
 	                        blank=True,
 	                        default=None,
-	                        help_text=_("Tag suggestions for Dateos"),
+	                        help_text="Tag suggestions for Dateos",
 	                        related_name="campaigns_secondary")
 
 
@@ -41,66 +39,65 @@ class Campaign(models.Model):
             (1, 'interesante'),
             (0, 'normal')
         )
-	featured = models.PositiveIntegerField(_('Featured'), default=0, choices=featured_choices)
+	featured = models.PositiveIntegerField('Featured', default=0, choices=featured_choices)
 
-	end_date = models.DateTimeField(_('End Date'), null=True, blank=True, help_text=_('Set an end date for your campaign (optional)'))
+	end_date = models.DateTimeField('End Date', null=True, blank=True, help_text='Set an end date for your campaign (optional)')
 
-	image = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="campaigns", on_delete=models.SET_NULL)
-	image2 = models.ForeignKey(Image, verbose_name=_('Image'), blank=True, null=True, related_name="campaigns2", on_delete=models.SET_NULL)
+	image = models.ForeignKey(Image, verbose_name='Image', blank=True, null=True, related_name="campaigns", on_delete=models.SET_NULL)
+	image2 = models.ForeignKey(Image, verbose_name='Image', blank=True, null=True, related_name="campaigns2", on_delete=models.SET_NULL)
 
-	short_description = models.CharField(_("Short description / Slogan"), blank=True, null=True, max_length=140, help_text=_("A short description or slogan (max. 140 characters)."))
+	short_description = models.CharField("Short description / Slogan", blank=True, null=True, max_length=140, help_text="A short description or slogan (max. 140 characters).")
 
 	# text input fields
-	mission = models.TextField(_("Mission / Objectives"),
+	mission = models.TextField("Mission / Objectives",
 	                        blank=True,
 	                        null=True,
 	                        max_length=500,
-	                        help_text=_("max. 500 characters"))
+	                        help_text="max. 500 characters")
 
-	information_destiny = models.TextField(_("What happens with the data?"),
+	information_destiny = models.TextField("What happens with the data?",
 	                        max_length=500,
-	                        help_text=_("Who receives the information and what happens with it? (max 500 characters)")
-	                    )
+	                        help_text="Who receives the information and what happens with it? (max 500 characters)")
 
-	long_description = models.TextField(_("Description"),
+	long_description = models.TextField("Description",
 	                        blank=True,
 	                        null=True,
-	                        help_text=_("Long description (optional)"))
+	                        help_text="Long description (optional)")
 
 
 	# GEO:
-	center = models.PointField(_("Center"), blank=True, null=True, spatial_index=False)
-	boundary = models.PolygonField(_("Boundary"), blank=True, null=True, spatial_index=False)
-	layer_files = models.ManyToManyField(File, verbose_name=_('Layer Files'), blank=True)
-	zoom = models.PositiveIntegerField(_("Default zoom"), default=12)
+	center = models.PointField("Center", blank=True, null=True, spatial_index=False)
+	boundary = models.PolygonField("Boundary", blank=True, null=True, spatial_index=False)
+	layer_files = models.ManyToManyField(File, verbose_name='Layer Files', blank=True)
+	zoom = models.PositiveIntegerField("Default zoom", default=12)
 
 	# Visualization options
 	def_modes =  status_choices = (
-            ('map',_('Map')),
-            ('timeline', _('Timeline')),
-            ('images', _('Images')),
-            ('files', _('Files'))
+            ('map','Map'),
+            ('timeline', 'Timeline'),
+            ('images', 'Images'),
+            ('files', 'Files')
         )
-	default_vis = models.CharField(_("Default visualization mode"), max_length=10, choices=status_choices, default="map")
-	default_filter = models.CharField(_("Default filter"), max_length=10, blank=True, null=True)
+	default_vis = models.CharField("Default visualization mode", max_length=10, choices=status_choices, default="map")
+	default_filter = models.CharField("Default filter", max_length=10, blank=True, null=True)
 
-	#settings = JSONField(verbose_name=_("Settings"), blank=True, null=True)
+	#settings = JSONField(verbose_name="Settings", blank=True, null=True)
 
 	# statistics
-	dateo_count = models.PositiveIntegerField(_("Item count"), default=0)
-	#user_count = models.PositiveIntegerField(_("Participant count"), default=0)
-	comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
-	follow_count = models.PositiveIntegerField(_('Follower count'), default=0)
-	rank = models.PositiveIntegerField(_('Search rank'),default=0)
+	dateo_count = models.PositiveIntegerField("Item count", default=0)
+	#user_count = models.PositiveIntegerField("Participant count", default=0)
+	comment_count = models.PositiveIntegerField('Comment count', default=0)
+	follow_count = models.PositiveIntegerField('Follower count', default=0)
+	rank = models.PositiveIntegerField('Search rank',default=0)
 
-	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+	client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
 
 	# Object Manager from geodjango
 	objects = models.GeoManager()
 
 	class Meta:
-		verbose_name = _("Campaign")
-		verbose_name_plural = _("Campaigns")
+		verbose_name = "Campaign"
+		verbose_name_plural = "Campaigns"
 		unique_together = ("user", "slug")
 
 	def __unicode__(self):
@@ -134,7 +131,7 @@ class Campaign(models.Model):
 
 
 	def get_absolute_url(self):
-		return ugettext('/campaign/')+str(self.pk)
+		return '/campaign/'+str(self.pk)
 
 
 	def save(self, *args, **kwargs):

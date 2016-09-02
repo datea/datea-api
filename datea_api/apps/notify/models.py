@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 from django.contrib.contenttypes.models import ContentType
@@ -16,17 +15,17 @@ from tag.models import Tag
 
 
 class NotifySettings(models.Model):
-    
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="notify_settings")
-    interaction = models.BooleanField(_("Interactions regarding my content."), default=True)
-    tags_dateos = models.BooleanField(_("Dateos in tags I follow"), default=True)
-    tags_reports = models.BooleanField(_("Reports and new Campaigns in tags I follow"), default=True)
-    conversations = models.BooleanField(_("Conversations I follow/engage"), default=True)
-    site_news = models.BooleanField(_("News by Datea"), default=True)
-    
+    interaction = models.BooleanField("Interactions regarding my content.", default=True)
+    tags_dateos = models.BooleanField("Dateos in tags I follow", default=True)
+    tags_reports = models.BooleanField("Reports and new Campaigns in tags I follow", default=True)
+    conversations = models.BooleanField("Conversations I follow/engage", default=True)
+    site_news = models.BooleanField("News by Datea", default=True)
+
     def __unicode__(self):
-        return _('notify settings for')+' '+self.user.username
-    
+        return 'notify settings for'+' '+self.user.username
+
 def create_notify_settings(sender, instance=None, **kwargs):
     if instance is None: return
     notify_settings, created = NotifySettings.objects.get_or_create(user=instance)
@@ -41,21 +40,21 @@ def save_notify_settings(sender, instance, created, **kwargs):
 
 post_save.connect(save_notify_settings, sender=NotifySettings, dispatch_uid="notifysettings.save")
 
-        
+
 
 class Notification(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(_('Type of Notifications'), max_length=30)
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="notifications")
-    unread = models.BooleanField(_("Unread"), default=True)
+    type = models.CharField('Type of Notifications', max_length=30)
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User", related_name="notifications")
+    unread = models.BooleanField('Unread', default=True)
 
-    #data = JSONField(verbose_name=_("Data"), blank=True, null=True)
-    activity = models.ForeignKey('ActivityLog', verbose_name=_("ActivityLog"), null=True, blank=True)
+    #data = JSONField(verbose_name="Data"), blank=True, null=True)
+    activity = models.ForeignKey('ActivityLog', verbose_name="ActivityLog", null=True, blank=True)
 
     # actually used fields:
     # actor: username / id
-    # target_user: username / id 
+    # target_user: username / id
     # verb: verb
     # tags: tags (array of strings) -> sort ones with campaigns first
     # extract: text
@@ -95,27 +94,27 @@ class Notification(models.Model):
 class ActivityLog(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
-    published = models.BooleanField(_('Published'), default=True)
+    published = models.BooleanField('Published', default=True)
 
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Acting user (actor)"), related_name="acting_user")
-    verb = models.CharField(_('Verb'), max_length=50)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Acting user (actor)", related_name="acting_user")
+    verb = models.CharField('Verb', max_length=50)
 
     action_object = GenericForeignKey('action_type', 'action_id')
     action_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="action_types")
     action_id = models.PositiveIntegerField(null=True, blank=True)
 
-    action_key = models.CharField(_("Action Key"), max_length=50)
+    action_key = models.CharField("Action Key", max_length=50)
 
     target_object = GenericForeignKey('target_type', 'target_id')
     target_type = models.ForeignKey(ContentType, null=True, blank=True, related_name="target_types")
     target_id = models.PositiveIntegerField(null=True, blank=True)
 
-    target_key = models.CharField(_("Target Key"), max_length=50)
+    target_key = models.CharField("Target Key", max_length=50)
 
-    target_user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Target user"), related_name="target_user", null=True, blank=True)
-    tags = models.ManyToManyField(Tag, verbose_name=_("Tag"), blank=True)
+    target_user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Target user", related_name="target_user", null=True, blank=True)
+    tags = models.ManyToManyField(Tag, verbose_name="Tag", blank=True)
 
-    data = JSONField(verbose_name=_("Data"), blank=True, null=True)
+    data = JSONField(verbose_name="Data", blank=True, null=True)
 
 
     def __unicode__(self):
@@ -172,7 +171,6 @@ def update_search_index(sender, instance, created, **kwargs):
 def remove_search_index(sender, instance, **kwargs):
     ActivityLogIndex().remove_object(instance)
     cache.delete('actlog.'+str(instance.pk))
-    
+
 resource_saved.connect(update_search_index, sender=ActivityLog, dispatch_uid="actlog.saved")
 pre_delete.connect(remove_search_index, sender=ActivityLog, dispatch_uid="actlog.delete")
-

@@ -4,6 +4,8 @@ Django settings for datea_api project.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os, sys
+from django.utils.translation import ugettext_lazy as _
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_DIR = os.path.join(BASE_DIR, 'datea_api')
 
@@ -93,9 +95,9 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -180,12 +182,13 @@ HAYSTACK_CONNECTIONS = {
 #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor' -> using custom code for this
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 LANGUAGE_CODE = 'es'
 
 LANGUAGES = (
-    ('es', 'Spanish'),
+    ('es', _('Spanish')),
+    ('fr', _('French')),
+    ('en', _('English'))
 )
 
 LOCALE_PATHS = (
@@ -284,7 +287,7 @@ RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd',
                     'answer', 'answers', 'respuesta', 'respuestas',
                     'buscar', 'busqueda', 'search', 'panel', 'dashboard', 'update', 'updateUser',
                     'twitter', 'facebook', 'google', 'twitter-callback', '404', 'config', 'configuration',
-                    'configuracion', 'crear-cuenta'
+                    'configuracion', 'crear-cuenta', 'settings', 'welcome', 'recover-password'
                     ]
 
 

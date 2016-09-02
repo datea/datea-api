@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django_extensions.db.models import TimeStampedModel
-from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 from django.core import validators
 from django.utils import timezone
@@ -51,50 +50,50 @@ class User(AbstractBaseUser, PermissionsMixin):
 	Custom User class for Datea
 	"""
 	# timestamps
-	created = models.DateTimeField(_('created'), auto_now_add=True)
-	date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
-	#modified = models.DateTimeField(_('modified'), auto_now=True)
+	created = models.DateTimeField('created', auto_now_add=True)
+	date_joined = models.DateTimeField('date joined', auto_now_add=True)
+	#modified = models.DateTimeField('modified', auto_now=True)
 
-	is_staff = models.BooleanField(_('staff status'), default=False,
-	    help_text=_('Designates whether the user can log into this admin '
-	                'site.'))
+	is_staff = models.BooleanField('staff status', default=False,
+	    help_text='Designates whether the user can log into this admin '
+	                'site.')
 
-	is_active = models.BooleanField(_('active'), default=True,
-	    help_text=_('Designates whether this user should be treated as '
-	                'active. Unselect this instead of deleting accounts.'))
+	is_active = models.BooleanField('active', default=True,
+	    help_text='Designates whether this user should be treated as '
+	                'active. Unselect this instead of deleting accounts.')
 
-	username = models.CharField(_('username'), max_length=30, unique=True,
-	    help_text=_('Required. 30 characters or fewer. Letters, numbers and '
-	                '@/./+/-/_ characters'),
+	username = models.CharField('username', max_length=30, unique=True,
+	    help_text='Required. 30 characters or fewer. Letters, numbers and '
+	                '@/./+/-/_ characters',
 	    validators=[
-	        validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')
+	        validators.RegexValidator(re.compile('^[\w.@+-]+$'), 'Enter a valid username.', 'invalid')
 	    ])
 
-	full_name = models.CharField(_('full name'), max_length=254, blank=True, null=True)
-	email = models.EmailField(_('email address'), max_length=254, unique=True, null=True, blank=True)
-	message = models.CharField(_('personal message'), max_length=140, blank=True, null=True)
+	full_name = models.CharField('full name', max_length=254, blank=True, null=True)
+	email = models.EmailField('email address', max_length=254, unique=True, null=True, blank=True)
+	message = models.CharField('personal message', max_length=140, blank=True, null=True)
 
-	url = models.URLField(_('External URL'), max_length=200, blank=True, null=True)
-	url_facebook = models.URLField(_('Facebook URL'), max_length=200, blank=True, null=True)
-	url_twitter = models.URLField(_('Twitter URL'), max_length=200, blank=True, null=True)
-	url_youtube = models.URLField(_('Youtube URL'), max_length=200, blank=True, null=True)
+	url = models.URLField('External URL', max_length=200, blank=True, null=True)
+	url_facebook = models.URLField('Facebook URL', max_length=200, blank=True, null=True)
+	url_twitter = models.URLField('Twitter URL', max_length=200, blank=True, null=True)
+	url_youtube = models.URLField('Youtube URL', max_length=200, blank=True, null=True)
 
 	image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar", on_delete=models.SET_NULL)
 	bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background", on_delete=models.SET_NULL)
 
-	dateo_count = models.PositiveIntegerField(_("Dateo count"), default=0)
-	#comment_count = models.PositiveIntegerField(_('Comment count'), default=0)
-	#vote_count = models.PositiveIntegerField(_('Vote count'), default=0)
-	voted_count = models.PositiveIntegerField(_('Voted count'), default=0)
+	dateo_count = models.PositiveIntegerField("Dateo count", default=0)
+	#comment_count = models.PositiveIntegerField('Comment count', default=0)
+	#vote_count = models.PositiveIntegerField('Vote count', default=0)
+	voted_count = models.PositiveIntegerField('Voted count', default=0)
 
 	status_choices = (
-            (0,_('unconfirmed')),
-            (1, _('confirmed')),
-            (2, _('banned'))
+            (0,'unconfirmed'),
+            (1, 'confirmed'),
+            (2, 'banned')
         )
-	status = models.PositiveIntegerField(_('Status'), choices=status_choices, default=0)
+	status = models.PositiveIntegerField('Status', choices=status_choices, default=0)
 
-	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+	client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
 
 	objects = CustomUserManager()
 
@@ -102,8 +101,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	REQUIRED_FIELDS = ['email']
 
 	class Meta:
-	    verbose_name = _('User')
-	    verbose_name_plural = _('Users')
+	    verbose_name = 'User'
+	    verbose_name_plural = 'Users'
 	    abstract = False
     	app_label = 'datea.account'
 
@@ -217,45 +216,45 @@ post_save.connect(after_user_saved, sender=User, dispatch_uid="datea_api.apps.ac
 
 class ClientDomain(models.Model):
 
-	domain = models.CharField(_('domain name'), max_length=100)
-	name = models.CharField(_('site name'), max_length=255)
+	domain = models.CharField('domain name', max_length=100)
+	name = models.CharField('site name', max_length=255)
 
-	register_success_url = models.URLField(_('Register success redirect URL'), max_length=200, blank=True, null=True)
-	register_error_url = models.URLField(_('Register error redirect URL'), max_length=200, blank=True, null=True)
+	register_success_url = models.URLField('Register success redirect URL', max_length=200, blank=True, null=True)
+	register_error_url = models.URLField('Register error redirect URL', max_length=200, blank=True, null=True)
 
-	change_email_success_url = models.URLField(_('Change email success redirect URL'), max_length=200, blank=True, null=True)
-	change_email_error_url = models.URLField(_('Change email error redirect URL'), max_length=200, blank=True, null=True)
+	change_email_success_url = models.URLField('Change email success redirect URL', max_length=200, blank=True, null=True)
+	change_email_error_url = models.URLField('Change email error redirect URL', max_length=200, blank=True, null=True)
 
-	pwreset_base_url = models.URLField(_('Password reset base URL'), max_length=200, blank=True, null=True)
+	pwreset_base_url = models.URLField('Password reset base URL', max_length=200, blank=True, null=True)
 
-	comment_url = models.CharField(_('Comment url template'), max_length=255,
-					help_text=_("Available vars: {user_id} of commented object's owner, \
+	comment_url = models.CharField('Comment url template', max_length=255,
+					help_text="Available vars: {user_id} of commented object's owner, \
 						{username} of commented object' owner, {obj_id} of commented \
-						object, {comment_id} of comment, {obj_type} type of commented object (dateo mostly)"), blank=True, null=True)
+						object, {comment_id} of comment, {obj_type} type of commented object (dateo mostly)", blank=True, null=True)
 
-	dateo_url = models.CharField(_('Dateo url template'), max_length=255,
-					help_text=_("Available vars: {user_id} of dateo owner, \
-						{username} of dateo owner, {obj_id} of dateo"),
+	dateo_url = models.CharField('Dateo url template', max_length=255,
+					help_text="Available vars: {user_id} of dateo owner, \
+						{username} of dateo owner, {obj_id} of dateo",
 					blank=True, null=True)
 
-	campaign_url = models.CharField(_('Campaign url template'), max_length=255,
-					help_text=_("Available vars: {user_id} of campaign owner, \
-						{username} of campaign owner, {obj_id} of campaign, {slug} of campaign"),
+	campaign_url = models.CharField('Campaign url template', max_length=255,
+					help_text="Available vars: {user_id} of campaign owner, \
+						{username} of campaign owner, {obj_id} of campaign, {slug} of campaign",
 					blank=True, null=True)
 
-	notify_settings_url = models.CharField(_('Notify settings url template'), max_length=255,
-					help_text=_("Available vars: {user_id} and {username}"),
+	notify_settings_url = models.CharField('Notify settings url template', max_length=255,
+					help_text="Available vars: {user_id} and {username}",
 					blank=True, null=True)
 
-	send_notification_mail = models.BooleanField(_('Send notification mail'), default=True)
+	send_notification_mail = models.BooleanField('Send notification mail', default=True)
 
 	def save(self, *args, **kwargs):
 		cache.delete('client-'+self.domain)
 		super(ClientDomain, self).save(*args, **kwargs)
 
 	class Meta:
-		verbose_name = _('Whitelisted client domain')
-		verbose_name_plural = _('Whitelisted client domains')
+		verbose_name = 'Whitelisted client domain'
+		verbose_name_plural = 'Whitelisted client domains'
 
 	def __unicode__(self):
 		return self.domain

@@ -1,12 +1,11 @@
 from django.db import models
 from solo.models import SingletonModel
-from django.utils.translation import ugettext_lazy as _
 
 class ApiConfig(SingletonModel):
 
-	maintainance_mode = models.BooleanField(_("Maintainance mode"), default=False)
-	reserved_usernames = models.TextField(_("Reserved usernames"), blank=True, null=True)
-	reserved_campaign_names = models.TextField(_("Reserved campaign names"), blank=True, null=True)
+	maintainance_mode = models.BooleanField("Maintainance mode", default=False)
+	reserved_usernames = models.TextField("Reserved usernames", blank=True, null=True)
+	reserved_campaign_names = models.TextField("Reserved campaign names", blank=True, null=True)
 
 	def save(self, *args, **kwargs):
 		if self.reserved_usernames:
@@ -19,7 +18,7 @@ class ApiConfig(SingletonModel):
 		return "Api Configuration"
 
 	class Meta:
-		verbose_name = _("Api Configuration")
+		verbose_name = "Api Configuration"
 		verbose_name_plural = verbose_name
 
 
@@ -28,10 +27,10 @@ class ApiConfig(SingletonModel):
 ######################
 #
 #   SIGNALS FOR ASYNC ACTIONS WITH CELERY
-# 
+#
 #   need to find a proper place for this,
-#   but circular imports and celery's problems 
-#   with imports prevent this from being more 
+#   but circular imports and celery's problems
+#   with imports prevent this from being more
 #   conventional.
 #
 ######################
@@ -57,7 +56,7 @@ post_save.connect(user_saved, sender=User)
 
 ####
 #  DATEO ASYNC ACTIONS WITH CELERY
-#  updating stats, creating activity stream and sending notifications 
+#  updating stats, creating activity stream and sending notifications
 #  on objects is done using celery
 ###
 def dateo_pre_saved(sender, instance, **kwargs):
@@ -98,7 +97,7 @@ def redateo_saved(sender, instance, created, **kwargs):
 	if created:
 		global do_redateo_async_tasks
 		from .tasks import do_redateo_async_tasks
-		do_redateo_async_tasks.delay(instance, 1, True) 
+		do_redateo_async_tasks.delay(instance, 1, True)
 
 resource_saved.connect(redateo_saved, sender=Redateo)
 
@@ -181,7 +180,3 @@ def flag_saved(sender, instance, created, **kwargs):
 		do_flag_async_tasks.delay(instance.pk)
 
 post_save.connect(flag_saved, sender=Flag)
-
-
-
-

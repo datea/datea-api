@@ -1,5 +1,4 @@
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.utils.html import strip_tags
 
@@ -17,37 +16,37 @@ from django.utils.html import strip_tags
 
 class Dateo(models.Model):
 
-	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name="dateos")
+	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User", related_name="dateos")
 
 	# timestamps
-	created = models.DateTimeField(_('created'), auto_now_add=True)
-	modified = models.DateTimeField(_('modified'), auto_now=True)
+	created = models.DateTimeField('created', auto_now_add=True)
+	modified = models.DateTimeField('modified', auto_now=True)
 
 	# status, published
-	published = models.BooleanField(_("published"), default=True)
+	published = models.BooleanField("published", default=True)
 	status_choices = (
-            ('new',_('new')),
-            ('reviewed', _('reviewed')),
-            ('solved', _('solved'))
+            ('new','new'),
+            ('reviewed', 'reviewed'),
+            ('solved', 'solved')
         )
-	status = models.CharField(_("status"), max_length=15, choices=status_choices, default="new")
+	status = models.CharField("status", max_length=15, choices=status_choices, default="new")
 
 	# content
-	content = models.TextField(_("Content"))
-	images = models.ManyToManyField(Image, verbose_name=_('Images'), blank=True, related_name="dateo")
-	files = models.ManyToManyField(File, verbose_name=_('Files'), blank=True, related_name="dateo")
-	link  = models.ForeignKey(Link, verbose_name=_('Link'), null=True, blank=True, related_name="dateos", on_delete=models.SET_NULL)
+	content = models.TextField("Content")
+	images = models.ManyToManyField(Image, verbose_name='Images', blank=True, related_name="dateo")
+	files = models.ManyToManyField(File, verbose_name='Files', blank=True, related_name="dateo")
+	link  = models.ForeignKey(Link, verbose_name='Link', null=True, blank=True, related_name="dateos", on_delete=models.SET_NULL)
 
     # location
-	position = models.PointField(_('Position'), blank=True, null=True, spatial_index=False)
-	address = models.CharField(_('Address'), max_length=255, blank=True, null=True)
+	position = models.PointField('Position', blank=True, null=True, spatial_index=False)
+	address = models.CharField('Address', max_length=255, blank=True, null=True)
 
     # optional relationship to campaign
 	campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True, on_delete=models.SET_NULL)
 
     # category
-	category = models.ForeignKey(Category, verbose_name=_("Category"), null=True, blank=True, default=None, related_name="dateos", on_delete=models.SET_NULL)
-	tags = models.ManyToManyField(Tag, verbose_name=_("Tags"), related_name="dateos");
+	category = models.ForeignKey(Category, verbose_name="Category", null=True, blank=True, default=None, related_name="dateos", on_delete=models.SET_NULL)
+	tags = models.ManyToManyField(Tag, verbose_name="Tags", related_name="dateos");
 
     # stats
 	vote_count = models.IntegerField(default=0, blank=True, null=True)
@@ -55,14 +54,14 @@ class Dateo(models.Model):
 	#follow_count = models.IntegerField(default=0, blank=True, null=True)
 	redateo_count = models.IntegerField(default=0, blank=True, null=True)
 
-	date = models.DateTimeField(_('Date'), blank=True, null=True)
-	client_domain = models.CharField(_('CLient Domain'), max_length=100, blank=True, null=True)
+	date = models.DateTimeField('Date', blank=True, null=True)
+	client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
 
 	# Administrative levels
-	country = models.CharField(_('Country'), max_length=100, blank=True, null=True)
-	admin_level1 = models.CharField(_('Administrative level 1'), max_length=127, blank=True, null=True)
-	admin_level2 = models.CharField(_('Administrative level 2'), max_length=127, blank=True, null=True)
-	admin_level3 = models.CharField(_('Administrative level 3'), max_length=127, blank=True, null=True)
+	country = models.CharField('Country', max_length=100, blank=True, null=True)
+	admin_level1 = models.CharField('Administrative level 1', max_length=127, blank=True, null=True)
+	admin_level2 = models.CharField('Administrative level 2', max_length=127, blank=True, null=True)
+	admin_level3 = models.CharField('Administrative level 3', max_length=127, blank=True, null=True)
 
     # Object Manager from geodjango
 	objects = models.GeoManager()
@@ -235,17 +234,17 @@ class Dateo(models.Model):
 
 class DateoStatus(models.Model):
 
-	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
-	created = models.DateTimeField(_('created'), auto_now_add=True)
-	modified = models.DateTimeField(_('modified'), auto_now=True)
+	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User")
+	created = models.DateTimeField('created', auto_now_add=True)
+	modified = models.DateTimeField('modified', auto_now=True)
 	status_choices = (
-            ('new',_('new')),
-            ('reviewed', _('reviewed')),
-            ('solved', _('solved'))
+            ('new','new'),
+            ('reviewed', 'reviewed'),
+            ('solved', 'solved')
         )
-	status = models.CharField(_("status"), max_length=15, choices=status_choices, default="new")
-	dateo = models.ForeignKey('Dateo', verbose_name=_('Dateo'), related_name="admin")
-	campaign = models.ForeignKey(Campaign, verbose_name=_('Campaign'), related_name="admin")
+	status = models.CharField("status", max_length=15, choices=status_choices, default="new")
+	dateo = models.ForeignKey('Dateo', verbose_name='Dateo', related_name="admin")
+	campaign = models.ForeignKey(Campaign, verbose_name='Campaign', related_name="admin")
 
 	class Meta:
 		verbose_name = 'Dateo status'
@@ -255,10 +254,10 @@ class DateoStatus(models.Model):
 
 class Redateo(models.Model):
 
-	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"))
-	dateo = models.ForeignKey('Dateo', verbose_name=_('Dateo'), related_name="redateos")
-	created = models.DateTimeField(_('created'), auto_now_add=True)
-	tags = models.ManyToManyField(Tag, verbose_name=_("Tags"), related_name="redateos");
+	user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User")
+	dateo = models.ForeignKey('Dateo', verbose_name='Dateo', related_name="redateos")
+	created = models.DateTimeField('created', auto_now_add=True)
+	tags = models.ManyToManyField(Tag, verbose_name="Tags", related_name="redateos");
 
 	class Meta:
 		verbose_name = 'Redateo'

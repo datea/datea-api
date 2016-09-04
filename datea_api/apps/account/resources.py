@@ -577,6 +577,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
 
+                        translation.activate('es')
                         new_profile.send_activation_email(client_data, bundle.request)
 
             if 'notify_settings' in postData:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-04 01:15+0000\n"
+"POT-Creation-Date: 2016-09-04 03:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:2
 #: apps/comment/templates/notify/comment/email_body.txt:2
@@ -334,7 +333,7 @@ msgstr ""
 msgid "Hi there"
 msgstr "Amig@ dater@"
 
-#: templates/registration/activation_email.txt:3
+#: templates/registration/activation_email.txt:2
 #, python-format
 msgid ""
 "\n"
@@ -347,7 +346,7 @@ msgstr ""
 "fuiste tu, simplemente ignora este\n"
 "mensaje y tu correo será borrado de nuestros registros."
 
-#: templates/registration/activation_email.txt:7
+#: templates/registration/activation_email.txt:6
 #, python-format
 msgid ""
 "To activate your account, click on the following link within the next "
@@ -356,7 +355,16 @@ msgstr ""
 "Para activar tu cuenta, cliquéa el siguiente enlace en los próximos "
 "%(expiration_days)s días"
 
-#: templates/registration/activation_email.txt:10
+#: templates/registration/activation_email.txt:7
+#, python-format
+msgid ""
+"You asked to change your email at %(site_name)s. If this wasn't you, please "
+"write to contacto@datea.pe and let us know."
+msgstr ""
+"  Acabas de pedir un cambio de correo para tu cuenta en %(site_name)s. Si no "
+"fuiste tu, por favor escríbenos a contacto@datea.pe."
+
+#: templates/registration/activation_email.txt:9
 #, python-format
 msgid ""
 "To activate this new email address, please click on the following link "
@@ -364,6 +372,11 @@ msgid ""
 msgstr ""
 "Para activar esta nueva dirección, cliquéa el siguiente enlace durante los "
 "próximos %(expiration_days)s días:"
+
+#: templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Your account at %(site_name)s"
+msgstr "Tu cuenta en %(site_name)s"
 
 #: templates/registration/activation_email_subject.txt:1
 #, python-format

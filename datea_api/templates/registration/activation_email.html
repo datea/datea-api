@@ -1,0 +1,53 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>{{ site.name }} {% trans "registration" %}</title>
+</head>
+
+<body>
+<p>{% trans "Hi there," %}</p>
+
+{% if site.activation_mode == "registration" %}
+<p>
+    {% blocktrans with site_name=site.name %}
+    Congrats! You just registered an account at {{ site_name }}.
+    If this wasn't you, please ignore this email
+    and your address will be removed from our records.
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+    To activate this account, please click the following link within the next
+    {{ expiration_days }} days:
+    {% endblocktrans %}
+</p>
+<p>
+    <a href="{{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.register_success_url %}&surl={{ site.register_success_url|urlencode }}{% endif %}{% if site.register_error_url %}&eurl={{ site.register_error_url|urlencode }}{% endif %}">
+      {{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.register_success_url %}&surl={{ site.register_success_url|urlencode }}{% endif %}{% if site.register_error_url %}&eurl={{ site.register_error_url|urlencode }}{% endif %}
+    </a>
+</p>
+
+{% else %}
+<p>
+  {% blocktrans with site_name=site.name %}
+  You just asked to change your email address at {{site_name}}. If this wasn't you,
+  please write to contacto@datea.pe and let us know.
+  {% endblocktrans %}
+</p>
+<p>
+  {% blocktrans %}
+  To activate this email address, please click on the following link during the next
+  {{expiration_days}} days:
+  {% endblocktrans %}
+</p>
+<p>
+  <a href="{{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.change_email_success_url %}&surl={{ site.change_email_success_url|urlencode }}{% endif %}{% if site.change_email_error_url %}&eurl={{ site.change_email_error_url|urlencode }}{% endif %}&ec=1">
+    {{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.change_email_success_url %}&surl={{ site.change_email_success_url|urlencode }}{% endif %}{% if site.change_email_error_url %}&eurl={{ site.change_email_error_url|urlencode }}{% endif %}&ec=1
+  </a>
+</p>
+{% endif %}
+{% include "registration/email_footer.html" %}
+</body>
+</html>

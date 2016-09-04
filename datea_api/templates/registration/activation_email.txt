@@ -1,22 +1,15 @@
-{% if site.activation_mode == "registration" %}Amigo(a) datero(a),
+{% load i18n %}{% trans "Hi there" %},
+{% if site.activation_mode == "registration" %}{% blocktrans with site_name=site.name %}
+Congrats! You just registered an account at {{site_name}}. If this wasn't you, just ignore this
+message and you email will be removed from our records.{% endblocktrans %}
 
-Bienvenido(a)! Acabas de registrar una cuenta en {{site.name}}. Si no fuiste tu,
-por favor ignora este correo y tus datos serán borrados de nuestros registros.
+{% blocktrans %}To activate your account, click on the following link within the next {{expiration_days}} days{% endblocktrans %}:
+{% else %}{% blocktrans with site_name=site.name %}You asked to change your email at {{site_name}}. If this wasn't you, please write to contacto@datea.pe and let us know.{% endblocktrans %}
 
-Para activar tu cuenta, utiliza el siguiente enlace durante los próximos {{expiration_days}} días:
-{% else %}Amigo(a) datero(a),
-
-Has solicitado cambiar tu correo en {{site.name}}. Si no fuiste tu,
-por favor escríbenos a contacto@datea.pe.
-
-Para activar tu cuenta con esta nueva dirección, activa el siguiente enlace durante los próximos {{expiration_days}} días:
-{% endif %}
+{% blocktrans %}To activate this new email address, please click on the following link within the next {{expiration_days}} days:{% endblocktrans %}{% endif %}
 {% if site.activation_mode == "registration" %}
 {{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.register_success_url %}&surl={{ site.register_success_url|urlencode }}{% endif %}{% if site.register_error_url %}&eurl={{ site.register_error_url|urlencode }}{% endif %}
 {% else %}
 {{ site.api_base_url }}/account/activate/{{ activation_key }}/?n=1{% if site.change_email_success_url %}&surl={{ site.change_email_success_url|urlencode }}{% endif %}{% if site.change_email_error_url %}&eurl={{ site.change_email_error_url|urlencode }}{% endif %}&ec=1
 {% endif %}
-
-Saludos,
-
-El equipo de {{site.name}}
+{% include "registration/email_footer.txt" %}

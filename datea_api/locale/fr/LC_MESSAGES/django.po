@@ -1,7 +1,8 @@
-# DATEA API EN CASTELLANO.
-# Copyright (C) 2016 datea.pe
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# rodrigo@datea.pe, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -11,12 +12,11 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: es\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:2
 #: apps/comment/templates/notify/comment/email_body.txt:2
@@ -25,7 +25,7 @@ msgstr ""
 #: apps/vote/templates/notify/vote/email_body.txt:2
 #, python-format
 msgid "Hi %(user)s"
-msgstr "Amigo(a) %(user)s"
+msgstr ""
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:4
 #, python-format
@@ -33,8 +33,6 @@ msgid ""
 "\n"
 "%(actor)s created a new campaign on"
 msgstr ""
-"\n"
-"%(actor)s creo una nueva iniciativa en"
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:11
 #, python-format
@@ -43,9 +41,6 @@ msgid ""
 "\n"
 "%(url)s"
 msgstr ""
-"Chequea la iniciativa aquí: \n"
-"\n"
-"%(url)s"
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:15
 #: apps/comment/templates/notify/comment/email_body.txt:13
@@ -59,10 +54,6 @@ msgid ""
 "\n"
 "Team %(sitename)s\n"
 msgstr ""
-"\n"
-"Saludos,\n"
-"\n"
-"Equipo %(sitename)s\n"
 
 #: apps/campaign/templates/notify/campaign/email_body.txt:22
 #: apps/comment/templates/notify/comment/email_body.txt:20
@@ -74,13 +65,11 @@ msgid ""
 "Click the following link if you wish to configure your notification settings "
 "to stop receiving this emails: %(url)s"
 msgstr ""
-"Si no deseas recibir estos correos, haz click sobre este enlace para cambiar "
-"tus opciones de notificación: %(url)s"
 
 #: apps/campaign/templates/notify/campaign/email_subject.txt:1
 #, python-format
 msgid "%(actor)s's new campaign"
-msgstr "nueva iniciativa de %(actor)s"
+msgstr ""
 
 #: apps/comment/templates/notify/comment/email_body.txt:3
 #, python-format
@@ -88,8 +77,6 @@ msgid ""
 "\n"
 "%(actor)s commented your %(object_name)s"
 msgstr ""
-"\n"
-"%(actor)s comentó tu %(object_name)s"
 
 #: apps/comment/templates/notify/comment/email_body.txt:4
 #: apps/comment/templates/notify/comment/email_subject.txt:1
@@ -101,13 +88,13 @@ msgstr ""
 #: apps/vote/templates/notify/vote/email_body.txt:9
 #: apps/vote/templates/notify/vote/email_subject.txt:1
 msgid "on"
-msgstr "en"
+msgstr ""
 
 #: apps/comment/templates/notify/comment/email_body.txt:4
 #: apps/comment/templates/notify/comment/email_subject.txt:1
 #, python-format
 msgid "%(actor)s commented %(target_user)s's %(object_name)s"
-msgstr "%(actor)s comentó el %(object_name)s de %(target_user)s"
+msgstr ""
 
 #: apps/comment/templates/notify/comment/email_body.txt:9
 #, python-format
@@ -116,14 +103,11 @@ msgid ""
 "\n"
 "%(url)s"
 msgstr ""
-"Chequea el comentario en: \n"
-"\n"
-"%(url)s"
 
 #: apps/comment/templates/notify/comment/email_subject.txt:1
 #, python-format
 msgid "%(actor)s commented your %(obj_name)s"
-msgstr "%(actor)s comentó tu %(obj_name)s"
+msgstr ""
 
 #: apps/dateo/templates/notify/dateo/email_body.txt:3
 #, python-format
@@ -131,8 +115,6 @@ msgid ""
 "\n"
 "%(actor)s created a new dateo"
 msgstr ""
-"\n"
-"%(actor)s ha dateado"
 
 #: apps/dateo/templates/notify/dateo/email_body.txt:9
 #: apps/dateo/templates/notify/redateo/email_body.txt:9
@@ -142,26 +124,23 @@ msgid ""
 "\n"
 "%(url)s"
 msgstr ""
-"Chequea el dateo en: \n"
-"\n"
-"%(url)s"
 
 #: apps/dateo/templates/notify/dateo/email_subject.txt:1
 #, python-format
 msgid "%(actor)s created a new dateo"
-msgstr "%(actor)s dateó"
+msgstr ""
 
 #: apps/dateo/templates/notify/redateo/email_body.txt:4
 #: apps/dateo/templates/notify/redateo/email_subject.txt:1
 #, python-format
 msgid "%(actor)s has redateado %(target_user)s's dateo"
-msgstr "%(actor)s redateó a %(target_user)s"
+msgstr ""
 
 #: apps/dateo/templates/notify/redateo/email_body.txt:4
 #: apps/dateo/templates/notify/redateo/email_subject.txt:1
 #, python-format
 msgid "%(actor)s has redateado your dateo"
-msgstr "%(actor)s te redateó"
+msgstr ""
 
 #: apps/vote/templates/notify/vote/email_body.txt:5
 #, python-format
@@ -169,8 +148,6 @@ msgid ""
 "\n"
 "%(actor)s gave a thumbs up to your %(object_name)s"
 msgstr ""
-"\n"
-"%(actor)s apoyó tu %(object_name)s"
 
 #: apps/vote/templates/notify/vote/email_body.txt:8
 #, python-format
@@ -178,8 +155,6 @@ msgid ""
 "\n"
 "%(actor)s supported %(target_user)s's %(object_name)s"
 msgstr ""
-"\n"
-"%(actor)s apoyó el %(object_name)s de %(target_user)s"
 
 #: apps/vote/templates/notify/vote/email_body.txt:13
 #, python-format
@@ -188,40 +163,37 @@ msgid ""
 "\n"
 "%(url)s"
 msgstr ""
-"Chequea el %(object_name)s en: \n"
-"\n"
-"%(url)s"
 
 #: apps/vote/templates/notify/vote/email_subject.txt:1
 #, python-format
 msgid "%(actor)s now supports %(target_user)s's %(object_name)s"
-msgstr "%(actor)s apoya el %(object_name)s de %(target_user)s"
+msgstr ""
 
 #: apps/vote/templates/notify/vote/email_subject.txt:1
 #, python-format
 msgid "%(actor)s now supports your %(obj_name)s"
-msgstr "%(actor)s apoya tu %(obj_name)s"
+msgstr ""
 
 #: settings.py:189
 msgid "Spanish"
-msgstr "Español"
+msgstr ""
 
 #: settings.py:190
 msgid "French"
-msgstr "Frances"
+msgstr ""
 
 #: settings.py:191
 msgid "English"
-msgstr "Inglés"
+msgstr ""
 
 #: templates/registration/activate.html:4
 #: templates/registration/activate.html:5
 msgid "Activate account"
-msgstr "Activación de cuenta"
+msgstr ""
 
 #: templates/registration/activate.html:11
 msgid "Account activated"
-msgstr "¡Tu cuenta ha sido activada!"
+msgstr ""
 
 #: templates/registration/activate.html:14
 msgid ""
@@ -229,46 +201,39 @@ msgid ""
 "\tThanks, activation complete! You may now login using the username and "
 "password you set at registration.\n"
 msgstr ""
-"\n"
-"¡Gracias! has activado tu cuenta con éxito. Ahora puedes ingresar con tu "
-"nombre de usuario y contraseña.\n"
 
 #: templates/registration/activate.html:21
 msgid "We're sorry"
-msgstr "Lo sentimos"
+msgstr ""
 
 #: templates/registration/activate.html:23
 msgid ""
 "We could't activate your account. Please try to register again, or contact "
 "us."
 msgstr ""
-"No hemos podido activar tu cuenta. Por favor intenta registrarte nuevamente "
-"o contáctanos para ver cómo podemos ayudarte."
 
 #: templates/registration/activation_complete.html:4
 #: templates/registration/activation_complete.html:5
 msgid "Activation complete"
-msgstr "Cuenta activada"
+msgstr ""
 
 #: templates/registration/activation_complete.html:10
 msgid "Congratulations!"
-msgstr "¡Bien ahí!"
+msgstr ""
 
 #: templates/registration/activation_complete.html:13
 msgid ""
 "Welcome datero! You're account has been activated. You may now login using "
 "the username and password you set at registration."
 msgstr ""
-"Bienvenido(a)! Tu cuenta ha sido activada. Ahora puedes ingresar con tu "
-"usuario y contraseña."
 
 #: templates/registration/activation_email.html:6
 msgid "registration"
-msgstr "registro"
+msgstr ""
 
 #: templates/registration/activation_email.html:10
 msgid "Hi there,"
-msgstr "Amig@ dater@,"
+msgstr ""
 
 #: templates/registration/activation_email.html:14
 #, python-format
@@ -279,11 +244,6 @@ msgid ""
 "    and your address will be removed from our records.\n"
 "    "
 msgstr ""
-"\n"
-"   ¡Bienvenido! Acabas de registrate como dater@ en %(site_name)s.\n"
-"   Si no fuiste tu, simplemente ignora este mensaje y tu correo\n"
-"   será borrado de nuestros registros.\n"
-"    "
 
 #: templates/registration/activation_email.html:21
 #, python-format
@@ -294,11 +254,6 @@ msgid ""
 "    %(expiration_days)s days:\n"
 "    "
 msgstr ""
-"\n"
-"    Para activar tu cuenta, cliquéa el siguiente enlace durante los "
-"próximos\n"
-"    %(expiration_days)s días:\n"
-"      "
 
 #: templates/registration/activation_email.html:34
 #, python-format
@@ -309,11 +264,6 @@ msgid ""
 "  please write to contacto@datea.pe and let us know.\n"
 "  "
 msgstr ""
-"\n"
-"  Acabas de pedir un cambio de correo para tu cuenta en %(site_name)s. Si no "
-"fuiste tu,\n"
-"  por favor escríbenos a contacto@datea.pe.\n"
-"  "
 
 #: templates/registration/activation_email.html:40
 #, python-format
@@ -324,15 +274,10 @@ msgid ""
 "  %(expiration_days)s days:\n"
 "  "
 msgstr ""
-"\n"
-"  Para activar este correo, cliquéa el siguiente enlace durante los "
-"próximos\n"
-"  %(expiration_days)s días:\n"
-"  "
 
 #: templates/registration/activation_email.txt:1
 msgid "Hi there"
-msgstr "Amig@ dater@"
+msgstr ""
 
 #: templates/registration/activation_email.txt:3
 #, python-format
@@ -342,10 +287,6 @@ msgid ""
 "you, just ignore this\n"
 "message and you email will be removed from our records."
 msgstr ""
-"\n"
-"¡Bienvenido! Acabas de registrarte como dater@ en %(site_name)s. Si no "
-"fuiste tu, simplemente ignora este\n"
-"mensaje y tu correo será borrado de nuestros registros."
 
 #: templates/registration/activation_email.txt:7
 #, python-format
@@ -353,8 +294,6 @@ msgid ""
 "To activate your account, click on the following link within the next "
 "%(expiration_days)s days"
 msgstr ""
-"Para activar tu cuenta, cliquéa el siguiente enlace en los próximos "
-"%(expiration_days)s días"
 
 #: templates/registration/activation_email.txt:10
 #, python-format
@@ -362,40 +301,41 @@ msgid ""
 "To activate this new email address, please click on the following link "
 "within the next %(expiration_days)s days:"
 msgstr ""
-"Para activar esta nueva dirección, cliquéa el siguiente enlace durante los "
-"próximos %(expiration_days)s días:"
+
+#: templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Your account at %(site_name)s"
+msgstr ""
 
 #: templates/registration/activation_email_subject.txt:1
 #, python-format
 msgid "Confirm your email address at %(site_name)s"
-msgstr "Confirma tu correo en %(site_name)s"
+msgstr ""
 
 #: templates/registration/change_email_complete.html:4
 #: templates/registration/change_email_complete.html:5
 msgid "Email confirmed"
-msgstr "Correo confirmado"
+msgstr ""
 
 #: templates/registration/change_email_complete.html:10
 msgid "Thank you!"
-msgstr "¡Gracias!"
+msgstr ""
 
 #: templates/registration/change_email_complete.html:13
 msgid ""
 "You have successfully confirmed your email address. You're account is now "
 "fully activated."
 msgstr ""
-"Tu dirección de correo ha sido confirmada. Tu cuenta ahora está activada y "
-"estás listo(a) para datear."
 
 #: templates/registration/email_footer.html:2
 #: templates/registration/email_footer.txt:2
 msgid "cheers"
-msgstr "saludos"
+msgstr ""
 
 #: templates/registration/email_footer.html:3
 #: templates/registration/email_footer.txt:4
 msgid "Your friends at Datea"
-msgstr "Equipo datero"
+msgstr ""
 
 #: templates/registration/password_reset_complete.html:4
 #: templates/registration/password_reset_complete.html:5
@@ -404,83 +344,77 @@ msgstr "Equipo datero"
 #: templates/registration/password_reset_done.html:4
 #: templates/registration/password_reset_done.html:9
 msgid "Password reset"
-msgstr "Recuperar contraseña"
+msgstr ""
 
 #: templates/registration/password_reset_complete.html:10
 msgid "Your password has been reset!"
-msgstr "Tu contraseña ha sido cambiada!"
+msgstr ""
 
 #: templates/registration/password_reset_complete.html:12
 msgid "You may now log in with your new password."
-msgstr "Ahora puedes ingresar con tu nueva contraseña."
+msgstr ""
 
 #: templates/registration/password_reset_confirm.html:4
 #: templates/registration/password_reset_confirm.html:5
 msgid "Reset your password"
-msgstr "Recuperar contraseña"
+msgstr ""
 
 #: templates/registration/password_reset_confirm.html:10
 msgid "Enter your new password below to reset your password"
-msgstr "Ingresa tu nueva contraseña aquí abajo."
+msgstr ""
 
 #: templates/registration/password_reset_confirm.html:14
 msgid "Set password"
-msgstr "Ingresa tu contraseña"
+msgstr ""
 
 #: templates/registration/password_reset_done.html:12
 msgid ""
 "We have sent you an email with a link to reset your password. Please check "
 "your email and click the link to continue."
 msgstr ""
-"Te hemos enviado un correo con un enlace para recuperar tu contraseña. Por "
-"favor, revisa tu correo y activa el enlace para continuar con el proceso."
 
 #: templates/registration/password_reset_email.html:1
 #, python-format
 msgid "Hey %(user)s"
-msgstr "Amig@ %(user)s"
+msgstr ""
 
 #: templates/registration/password_reset_email.html:3
 #, python-format
 msgid "You just requested a new passford for %(sitename)s."
-msgstr "Acabas de solicitar una nueva contraseña en %(sitename)s."
+msgstr ""
 
 #: templates/registration/password_reset_email.html:4
 msgid "If you don't wish to change your password, just ignore this message."
-msgstr "Si no deseas cambiar tu contraseña, simplemente ignora este mensaje."
+msgstr ""
 
 #: templates/registration/password_reset_email.html:6
 msgid ""
 "To recover your password, just click on the following link or copy and paste "
 "it into your browser"
 msgstr ""
-"Para crear una nueva contraseña, cliquéa el siguiente enlace o copia y "
-"pégalo en tu navegador"
 
 #: templates/registration/password_reset_email.html:10
 #, python-format
 msgid "Your username, in case you forgot, is: %(user)s"
-msgstr "Tu usuario, en caso lo hayas olvidado, es: %(user)s"
+msgstr ""
 
 #: templates/registration/password_reset_form.html:5
 #: templates/registration/password_reset_form.html:6
 #: templates/registration/password_reset_form.html:18
 msgid "Reset password"
-msgstr "Recuperar tu contraseña"
+msgstr ""
 
 #: templates/registration/password_reset_form.html:11
 msgid "Recover password"
-msgstr "Recuperar tu contraseña"
+msgstr ""
 
 #: templates/registration/password_reset_form.html:13
 msgid ""
 "Forgot your password? Enter your email in the form below and we'll send you "
 "instructions for creating a new one"
 msgstr ""
-"¿Olvidaste tu contraseña? Ingresa tu correo aquí abajo y te enviaremos "
-"instruccionesde como recuperarla."
 
 #: templates/registration/password_reset_subject.txt:1
 #, python-format
 msgid "Your password at %(sitename)s"
-msgstr "Tu contraseña en %(sitename)s"
+msgstr ""

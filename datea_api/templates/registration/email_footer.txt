@@ -1,0 +1,4 @@
+{% load i18n %}
+{% trans "cheers" %},
+
+{% trans "Your friends at Datea" %}

@@ -1,1 +1,1 @@
-{% spaceless %}{% if site.activation_mode == "registration" %}Tu cuenta en {{site.name}}{% else %}Confirma tu correo en {{site.name}}{% endif %}{% endspaceless %}
+{% load i18n %}{% spaceless %}{% if site.activation_mode == "registration" %}{% blocktrans with site.name as site_name %}Your account at {{site_name}}{% endblocktrans %}{% else %}{% blocktrans with site.name as site_name %}Confirm your email address at {{site_name}}{% endblocktrans %}{% endif %}{% endspaceless %}

@@ -636,7 +636,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
         }
         fields = ['username', 'id', 'date_joined', 'last_login',
                   'image', 'bg_image', 'dateo_count', 'comment_count', 'vote_count',
-                  'full_name', 'message', 'status',
+                  'full_name', 'message', 'status', 'language',
                   'url', 'url_facebook', 'url_twitter', 'url_youtube']
         always_return_data = True
         include_resource_uri = False

@@ -46,78 +46,86 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-	"""
-	Custom User class for Datea
-	"""
-	# timestamps
-	created = models.DateTimeField('created', auto_now_add=True)
-	date_joined = models.DateTimeField('date joined', auto_now_add=True)
+  """
+  Custom User class for Datea
+  """
+  # timestamps
+  created = models.DateTimeField('created', auto_now_add=True)
+  date_joined = models.DateTimeField('date joined', auto_now_add=True)
 	#modified = models.DateTimeField('modified', auto_now=True)
 
-	is_staff = models.BooleanField('staff status', default=False,
+  is_staff = models.BooleanField('staff status', default=False,
 	    help_text='Designates whether the user can log into this admin '
 	                'site.')
 
-	is_active = models.BooleanField('active', default=True,
+  is_active = models.BooleanField('active', default=True,
 	    help_text='Designates whether this user should be treated as '
 	                'active. Unselect this instead of deleting accounts.')
 
-	username = models.CharField('username', max_length=30, unique=True,
+  username = models.CharField('username', max_length=30, unique=True,
 	    help_text='Required. 30 characters or fewer. Letters, numbers and '
 	                '@/./+/-/_ characters',
 	    validators=[
 	        validators.RegexValidator(re.compile('^[\w.@+-]+$'), 'Enter a valid username.', 'invalid')
 	    ])
 
-	full_name = models.CharField('full name', max_length=254, blank=True, null=True)
-	email = models.EmailField('email address', max_length=254, unique=True, null=True, blank=True)
-	message = models.CharField('personal message', max_length=140, blank=True, null=True)
+  full_name = models.CharField('full name', max_length=254, blank=True, null=True)
+  email = models.EmailField('email address', max_length=254, unique=True, null=True, blank=True)
+  message = models.CharField('personal message', max_length=140, blank=True, null=True)
 
-	url = models.URLField('External URL', max_length=200, blank=True, null=True)
-	url_facebook = models.URLField('Facebook URL', max_length=200, blank=True, null=True)
-	url_twitter = models.URLField('Twitter URL', max_length=200, blank=True, null=True)
-	url_youtube = models.URLField('Youtube URL', max_length=200, blank=True, null=True)
+  url = models.URLField('External URL', max_length=200, blank=True, null=True)
+  url_facebook = models.URLField('Facebook URL', max_length=200, blank=True, null=True)
+  url_twitter = models.URLField('Twitter URL', max_length=200, blank=True, null=True)
+  url_youtube = models.URLField('Youtube URL', max_length=200, blank=True, null=True)
 
-	image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar", on_delete=models.SET_NULL)
-	bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background", on_delete=models.SET_NULL)
+  image = models.ForeignKey(Image, blank=True, null=True, related_name="user_avatar", on_delete=models.SET_NULL)
+  bg_image = models.ForeignKey(Image, blank=True, null=True, related_name="user_background", on_delete=models.SET_NULL)
 
-	dateo_count = models.PositiveIntegerField("Dateo count", default=0)
-	#comment_count = models.PositiveIntegerField('Comment count', default=0)
-	#vote_count = models.PositiveIntegerField('Vote count', default=0)
-	voted_count = models.PositiveIntegerField('Voted count', default=0)
+  dateo_count = models.PositiveIntegerField("Dateo count", default=0)
+  #comment_count = models.PositiveIntegerField('Comment count', default=0)
+  #vote_count = models.PositiveIntegerField('Vote count', default=0)
+  voted_count = models.PositiveIntegerField('Voted count', default=0)
 
-	status_choices = (
+  status_choices = (
             (0,'unconfirmed'),
             (1, 'confirmed'),
             (2, 'banned')
         )
-	status = models.PositiveIntegerField('Status', choices=status_choices, default=0)
+  status = models.PositiveIntegerField('Status', choices=status_choices, default=0)
 
-	client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
+  client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
 
-	objects = CustomUserManager()
+  language_choices = (
+      ('es', 'spanish'),
+      ('en', 'english'),
+      ('fr', 'french')
+    )
 
-	USERNAME_FIELD = 'username'
-	REQUIRED_FIELDS = ['email']
+  language = models.CharField('Language', max_length=2, choices=language_choices, default='es')
 
-	class Meta:
-	    verbose_name = 'User'
-	    verbose_name_plural = 'Users'
-	    abstract = False
-    	app_label = 'datea.account'
+  objects = CustomUserManager()
 
-	def get_absolute_url(self):
-	    return "/users/%s/" % urlquote(self.username)
+  USERNAME_FIELD = 'username'
+  REQUIRED_FIELDS = ['email']
 
-	def get_full_name(self):
-		"""
-		Returns the first_name plus the last_name, with a space in between.
-		"""
-		if self.full_name:
-			full_name = self.full_name
-			return full_name.strip()
-		else:
-			return self.username
+  class Meta:
+    verbose_name = 'User'
+    verbose_name_plural = 'Users'
+    abstract = False
+    app_label = 'account'
+
+  def get_absolute_url(self):
+    return "/users/%s/" % urlquote(self.username)
+
+  def get_full_name(self):
+    """
+    Returns the first_name plus the last_name, with a space in between.
+    """
+    if self.full_name:
+    	full_name = self.full_name
+    	return full_name.strip()
+    else:
+    	return self.username
 
 	def get_short_name(self):
 		"Returns the short name for the user."

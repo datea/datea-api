@@ -83,8 +83,8 @@ class CustomPasswordResetForm(PasswordResetForm):
                 'user': user,
                 'token': token_generator.make_token(user),
             }
-            subject = loader.render_to_string(subject_template_name, c)
+            subject = loader.render_to_string(subject_template_name, c, request)
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
-            email = loader.render_to_string(email_template_name, c)
+            email = loader.render_to_string(email_template_name, c, request)
             send_mail(subject, email, from_email, [user.email])

@@ -153,7 +153,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             new_user.save()
 
             registration_profile = RegistrationProfile.objects.create_profile(new_user)
-            registration_profile.send_activation_email(client_data)
+            registration_profile.send_activation_email(client_data, request)
 
             if new_user:
                 user_rsc = UserResource()
@@ -577,7 +577,7 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
 
-                        new_profile.send_activation_email(client_data)
+                        new_profile.send_activation_email(client_data, bundle.request)
 
             if 'notify_settings' in postData:
                 obj = NotifySettings.objects.get(user=bundle.request.user)

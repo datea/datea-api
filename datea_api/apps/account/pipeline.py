@@ -13,14 +13,14 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 
         # FACEBOOK
         if strategy.backend.name == 'facebook':
-			try:
-				img_url = "http://graph.facebook.com/{id}/picture?type=large".format(id=response["id"])
-				img = urlopen(img_url)
-				suffix = '_fb'
-			except HTTPError:
-				pass
+            try:
+                img_url = "http://graph.facebook.com/{id}/picture?type=large".format(id=response["id"])
+                img = urlopen(img_url)
+                suffix = '_fb'
+            except HTTPError:
+                pass
 
-		# TWITTER
+# TWITTER
         if strategy.backend.name == 'twitter':
             try:
                 img = urlopen(response['profile_image_url'].replace('_normal', ''))
@@ -30,11 +30,11 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 
         # GOOGLE
         if strategy.backend.name == 'google-oauth2':
-        	try:
-        		img = urlopen(response['picture'])
-        		suffix = '_g'
-        	except HTTPError:
-        		pass
+            try:
+                img = urlopen(response['picture'])
+                suffix = '_g'
+            except HTTPError:
+                pass
 
         if img:
             format = 'png' if img.headers['content-type'] == 'image/png' else 'jpg'

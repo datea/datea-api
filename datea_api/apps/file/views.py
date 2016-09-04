@@ -23,22 +23,22 @@ def save_file(request):
 
     if form.is_valid():
 
-            file_data = request.FILES['file']
-            file_instance = File(file=file_data, user=request.user)
-            if 'order' in form.cleaned_data:
-                file_instance.order = form.cleaned_data['order']
-            if 'title' in form.cleaned_data:
-                file_instance.title = form.cleaned_data['title']
-            file_instance.save()
+        file_data = request.FILES['file']
+        file_instance = File(file=file_data, user=request.user)
+        if 'order' in form.cleaned_data:
+            file_instance.order = form.cleaned_data['order']
+        if 'title' in form.cleaned_data:
+            file_instance.title = form.cleaned_data['title']
+        file_instance.save()
 
-            # create image resource
-            fr = FileResource()
-            f_bundle = fr.build_bundle(obj=file_instance)
-            f_bundle = fr.full_dehydrate(f_bundle)
-            f_json = fr.serialize(f_bundle)
+        # create image resource
+        fr = FileResource()
+        f_bundle = fr.build_bundle(obj=file_instance)
+        f_bundle = fr.full_dehydrate(f_bundle)
+        f_json = fr.serialize(f_bundle)
 
-            data = {'ok': True, 'message':'ok', 'resource': json.loads(f_json)}
-            data = json.dumps(data)
+        data = {'ok': True, 'message':'ok', 'resource': json.loads(f_json)}
+        data = json.dumps(data)
 
     else:
         data = json.dumps({'ok': False, 'message': form.errors})

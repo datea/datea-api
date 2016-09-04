@@ -48,7 +48,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
                     "secondary_tags": [t.tag for t in c.secondary_tags.all()]  
                 })
         bundle.data['campaigns'] = campaigns
-        
+
         return bundle
 
     def hydrate(self, bundle):
@@ -184,12 +184,12 @@ class TagResource(JSONDefaultMixin, ModelResource):
 
         sqs = SearchQuerySet().models(Tag).load_all().filter(**q_args)
         paginator = Paginator(sqs, limit)
-        
+
         try:
             page = paginator.page(page)
         except InvalidPage:
             raise Http404("Sorry, no results on that page.")
-    
+
         objects = []
 
         if 'order_by' in request.GET:
@@ -252,7 +252,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
             if f in request.GET:
                 cache_key_elems.append(f)
                 q_args['dateos__'+f+'__iexact'] = request.GET.get(f)
-        
+
         cache_key = "_".join(cache_key_elems)
         response = cache.get(cache_key)
 

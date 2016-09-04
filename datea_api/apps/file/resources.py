@@ -14,7 +14,7 @@ class FileResource(JSONDefaultMixin, ModelResource):
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
     file = Base64FileField('file')
-    
+
     def hydrate(self, bundle):
 
         # always use request user on POST (not posting images on behalf of other users)
@@ -30,8 +30,8 @@ class FileResource(JSONDefaultMixin, ModelResource):
                     del bundle.data[f] 
 
         return bundle
-        
-    
+
+
     class Meta:
         queryset = File.objects.all()
         resource_name = 'file'

@@ -11,7 +11,7 @@ class Base64FileField(FileField):
 
     class MyResource(ModelResource):
         file_field = Base64FileField("file_field")
-        
+
         class Meta:
             queryset = ModelWithFileField.objects.all()
     """

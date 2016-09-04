@@ -25,9 +25,9 @@ class ImageResource(JSONDefaultMixin, ModelResource):
         except:
             bundle.data['image'] = ''
         return bundle
-    
+
     def hydrate(self, bundle):
-        
+
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -39,8 +39,8 @@ class ImageResource(JSONDefaultMixin, ModelResource):
             bundle.data['client_domain'] = bundle.obj.client_domain
 
         return bundle
-        
-    
+
+
     class Meta:
         queryset = Image.objects.all()
         resource_name = 'image'
@@ -83,9 +83,9 @@ class ImageResourceMP(JSONDefaultMixin, ModelResource):
         except:
             bundle.data['image'] = ''
         return bundle
-    
+
     def hydrate(self, bundle):
-        
+
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -97,8 +97,8 @@ class ImageResourceMP(JSONDefaultMixin, ModelResource):
             bundle.data['client_domain'] = bundle.obj.client_domain
 
         return bundle
-        
-    
+
+
     class Meta:
         queryset = Image.objects.all()
         resource_name = 'image2'

@@ -16,7 +16,7 @@ class TagIndex(indexes.SearchIndex, indexes.Indexable):
     tag_auto = indexes.NgramField(model_attr='tag')
 
     def get_model(self):
-    	return Tag
+        return Tag
 
     def prepare_tag(self, obj):
         return obj.tag.lower()

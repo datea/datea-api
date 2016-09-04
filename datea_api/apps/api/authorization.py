@@ -45,7 +45,7 @@ class DateaBaseAuthorization(Authorization):
         if not user or not user.is_active:
             raise Unauthorized('Not authenticated or inactive user')
             return False
-        
+
         elif bundle.obj._meta.model_name == 'user':
             if user.is_staff or (bundle.obj == user and bundle.obj.status != 2):
                 return True
@@ -97,7 +97,7 @@ class OwnerOnlyAuthorization(Authorization):
                 allowed.append(obj)
 
         return allowed
-        
+
 
     def read_detail(self, object_list, bundle):
 

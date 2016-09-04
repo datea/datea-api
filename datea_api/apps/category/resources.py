@@ -10,7 +10,7 @@ from api.base_resources import JSONDefaultMixin
 
 
 class CategoryResource(JSONDefaultMixin, ModelResource):
-     
+
     class Meta:
         queryset = Category.objects.all()
         resource_name = 'category'

@@ -15,10 +15,10 @@ from api.signals import resource_saved
 
 
 class FollowResource(JSONDefaultMixin, ModelResource):
-    
+
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
-    
+
     def hydrate(self, bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -37,7 +37,7 @@ class FollowResource(JSONDefaultMixin, ModelResource):
             return super(FollowResource, self).get_object_list(request).filter(content_type__model=request.GET.get('content_type'))
         else:
             return super(FollowResource, self).get_object_list(request)
-     
+
     class Meta:
         queryset = Follow.objects.all()
         resource_name = 'follow'

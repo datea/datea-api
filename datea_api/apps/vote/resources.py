@@ -18,7 +18,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
 
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
-    
+
     def hydrate(self, bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -40,7 +40,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
                 raise ImmediateHttpResponse(response=response)
 
             bundle.obj.content_type = ctype
-           
+
         return bundle
 
     def dehydrate(self, bundle):
@@ -52,7 +52,7 @@ class VoteResource(JSONDefaultMixin, ModelResource):
             return super(VoteResource, self).get_object_list(request).filter(content_type__model=request.GET.get('content_type'))
         else:
             return super(VoteResource, self).get_object_list(request)
-    
+
     class Meta:
         queryset = Vote.objects.all()
         resource_name = 'vote'

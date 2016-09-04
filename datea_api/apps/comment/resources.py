@@ -14,12 +14,12 @@ from comment.models import Comment
 
 
 class CommentResource(JSONDefaultMixin, ModelResource):
-    
+
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=True, readonly=True)
-    
+
     def dehydrate(self, bundle):
-        
+
         user_data = {
                      'username': bundle.data['user'].data['username'],
                      'image_small': bundle.data['user'].data['image_small'],
@@ -28,9 +28,9 @@ class CommentResource(JSONDefaultMixin, ModelResource):
         bundle.data['user'] = user_data
         bundle.data['content_type'] = bundle.obj.content_type.model
         return bundle
-    
+
     def hydrate(self,bundle):
-        
+
         # preserve data
         if bundle.request.method == 'PATCH':
             #preserve original fields
@@ -39,7 +39,7 @@ class CommentResource(JSONDefaultMixin, ModelResource):
             for f in fields:
                 if f in request.data:
                     request.data[f] = getattr(orig_obj, f)
-            
+
         elif bundle.request.method == 'POST':
             # enforce post user
             bundle.obj.user = bundle.request.user
@@ -62,7 +62,7 @@ class CommentResource(JSONDefaultMixin, ModelResource):
             options['order_by'] = 'created'
 
         return super(CommentResource, self).apply_sorting(obj_list, options)
-     
+
 
     class Meta:
         queryset = Comment.objects.all()

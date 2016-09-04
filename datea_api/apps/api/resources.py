@@ -55,16 +55,16 @@ class IPLocationResource(JSONDefaultMixin, Resource):
         found = False
         ip = get_real_ip(request)
         if ip:
-        	match = geolite2.lookup(ip)
-        	if match:
-        		response = {'ip_location' : {'latitude': match.location[0], 'longitude': match.location[1]},
-            				'ip_country'  : match.country}
-           		status = OK
-           		found  = True
+            match = geolite2.lookup(ip)
+            if match:
+                response = {'ip_location' : {'latitude': match.location[0], 'longitude': match.location[1]},
+                                'ip_country'  : match.country}
+                status = OK
+                found  = True
 
         if not found:
-       		response = {'error': 'not found'}
-        	status = NOT_FOUND
+            response = {'error': 'not found'}
+            status = NOT_FOUND
 
         self.log_throttled_access(request)
         return self.create_response(request, response, status=status)

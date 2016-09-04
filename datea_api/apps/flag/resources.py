@@ -14,14 +14,14 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class FlagResource(JSONDefaultMixin, ModelResource):
-    
+
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
 
     def dehydrate(self, bundle):
         bundle.data['content_type'] = bundle.obj.content_type.model
         return True
-    
+
     def hydrate(self,bundle):
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -29,7 +29,7 @@ class FlagResource(JSONDefaultMixin, ModelResource):
             if 'content_type' in bundle.data:
                 bundle.obj.content_type = ContentType.objects.get(model=bundle.data['content_type'])
         return bundle
-     
+
     class Meta:
         queryset = Flag.objects.all()
         resource_name = 'flag'

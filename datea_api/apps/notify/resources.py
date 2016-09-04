@@ -33,7 +33,7 @@ from api.status_codes import *
 
 
 class NotifySettingsResource(JSONDefaultMixin, ModelResource):
-    
+
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
 
@@ -66,7 +66,7 @@ class NotifySettingsResource(JSONDefaultMixin, ModelResource):
 
 
 class NotificationResource(JSONDefaultMixin, ModelResource):
-        
+
     recipient = fields.ToOneField('account.resources.UserResource', 
         attribute='recipient', full=False, readonly=True)
 
@@ -156,7 +156,7 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
         Campaign: CampaignResource
     }, 'target_object', null=True, full=True, readonly=True)
 
-    
+
     def dehydrate(self, bundle):
 
         if 'actor' in bundle.data and bundle.data['actor']:
@@ -224,7 +224,7 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
 
     # HAYSTACK SEARCH
     def get_search(self, request, **kwargs): 
-        
+
         # tests
         self.method_check(request, allowed=['get'])
         self.is_authenticated(request)
@@ -273,14 +273,14 @@ class ActivityLogResource(JSONDefaultMixin, ModelResource):
             sqs = sqs.filter(**q_args)
 
         sqs = sqs.order_by('-created')
-        
+
         paginator = Paginator(sqs, limit)
 
         try:
             page = paginator.page(page)
         except InvalidPage:
             raise Http404("Sorry, no results on that page.")
-        
+
         objects = []
 
         for result in page.object_list:

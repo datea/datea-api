@@ -44,7 +44,7 @@ class SimpleDictCache(NoCache):
 
     def delete(self, key):
         cache.delete(key)
-    
+
     def cache_control(self):
         control = {
             'max_age': self.timeout,

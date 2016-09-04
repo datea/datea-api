@@ -16,9 +16,9 @@ class LinkResource(JSONDefaultMixin, ModelResource):
 
     user = fields.ToOneField('account.resources.UserResource', 
             attribute='user', full=False, readonly=True)
-    
+
     def hydrate(self, bundle):
-        
+
         # always use request user on POST (not posting images on behalf of other users)
         if bundle.request.method == 'POST':
             bundle.obj.user = bundle.data['user'] = bundle.request.user
@@ -30,8 +30,8 @@ class LinkResource(JSONDefaultMixin, ModelResource):
             bundle.data['client_domain'] = bundle.obj.client_domain
 
         return bundle
-        
-    
+
+
     class Meta:
         queryset = Link.objects.all()
         resource_name = 'link'

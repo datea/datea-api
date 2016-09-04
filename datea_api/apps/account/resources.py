@@ -120,9 +120,9 @@ class AccountResource(JSONDefaultMixin, Resource):
         password = postData['password']
 
         if re.match("^(?=.*\d)(?=.*[a-z])(?!.*\s).{6,32}$", password) is None:
-             response = self.create_response(request,{
-                    'status': BAD_REQUEST,
-                    'error': 'Password too weak'}, status=BAD_REQUEST)
+            response = self.create_response(request,{
+                   'status': BAD_REQUEST,
+                   'error': 'Password too weak'}, status=BAD_REQUEST)
 
         elif User.objects.filter(email=email).count() > 0:
             response = self.create_response(request,{
@@ -181,10 +181,10 @@ class AccountResource(JSONDefaultMixin, Resource):
 
         # allow to authenticate via email
         if '@' in username:
-          try:
-            username = User.objects.get(email=username).username
-          except:
-            pass
+            try:
+                username = User.objects.get(email=username).username
+            except:
+                pass
 
         user = authenticate(username= username,
                             password= password)
@@ -270,9 +270,9 @@ class AccountResource(JSONDefaultMixin, Resource):
         password = postData['password']
 
         if re.match("^(?=.*\d)(?=.*[a-z])(?!.*\s).{6,32}$", password) is None:
-             response = self.create_response(request,{
-                    'status': BAD_REQUEST,
-                    'error': 'Password too weak'}, status=BAD_REQUEST)
+            response = self.create_response(request,{
+                   'status': BAD_REQUEST,
+                   'error': 'Password too weak'}, status=BAD_REQUEST)
 
         try:
             uid = urlsafe_base64_decode(uidb64)

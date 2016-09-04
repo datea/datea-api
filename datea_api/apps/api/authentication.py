@@ -5,7 +5,7 @@ from tastypie.authorization import Authorization
 # Api key + web authentication
 # taken from https://github.com/toastdriven/django-tastypie/issues/197
 class ApiKeyPlusWebAuthentication(ApiKeyAuthentication):
-    
+
     def is_authenticated(self, request, **kwargs):
         # people can always get stuff
 

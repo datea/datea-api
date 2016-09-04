@@ -49,6 +49,14 @@ class User(AbstractBaseUser, PermissionsMixin):
   """
   Custom User class for Datea
   """
+
+  def __init__(self, *args, **kwargs):
+		super(User, self).__init__(*args, **kwargs)
+		self._username_changed = False
+		self._orig_username = self.username
+		self._email_changed = False
+		self._orig_email = self.email
+
   # timestamps
   created = models.DateTimeField('created', auto_now_add=True)
   date_joined = models.DateTimeField('date joined', auto_now_add=True)
@@ -127,17 +135,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     else:
     	return self.username
 
-	def get_short_name(self):
+  def get_short_name(self):
 		"Returns the short name for the user."
 		return self.username
 
-	def email_user(self, subject, message, from_email=None):
+  def email_user(self, subject, message, from_email=None):
 		"""
 		Sends an email to this User.
 		"""
 		send_mail(subject, message, from_email, [self.email])
 
-	def get_image_thumb(self, thumb_preset = 'profile_image'):
+  def get_image_thumb(self, thumb_preset = 'profile_image'):
 		if self.image:
 			return self.image.get_thumb(thumb_preset)
 		else:
@@ -156,45 +164,38 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return get_thumbnail(url, Preset['size'], **options).url
 		"""
 
-	def get_image(self):
-		return self.get_image_thumb('profile_image')
+  def get_image(self):
+  	return self.get_image_thumb('profile_image')
 
-	def get_large_image(self):
-		return self.get_image_thumb('profile_image_large')
+  def get_large_image(self):
+  	return self.get_image_thumb('profile_image_large')
 
-	def get_small_image(self):
-		return self.get_image_thumb('profile_image_small')
+  def get_small_image(self):
+  	return self.get_image_thumb('profile_image_small')
 
-	def __init__(self, *args, **kwargs):
-		super(User, self).__init__(*args, **kwargs)
-		self._username_changed = False
-		self._orig_username = self.username
-		self._email_changed = False
-		self._orig_email = self.email
-
-	def save(self, *args, **kwargs):
-		if self.email == '':
-			self.email = None
-		if self.status == 2:
-			self.is_active = False
-		super(User, self).save(*args, **kwargs)
-		self._username_changed = self.username != self._orig_username
-		self._orig_username = self.username
-		self._email_changed = self.email != self._orig_email
-		self._orig_email = self.email
+  def save(self, *args, **kwargs):
+  	if self.email == '':
+  		self.email = None
+  	if self.status == 2:
+  		self.is_active = False
+  	super(User, self).save(*args, **kwargs)
+  	self._username_changed = self.username != self._orig_username
+  	self._orig_username = self.username
+  	self._email_changed = self.email != self._orig_email
+  	self._orig_email = self.email
 
 
-	def username_changed(self):
-		return self._username_changed
+  def username_changed(self):
+  	return self._username_changed
 
-	def email_changed(self):
-		return self._email_changed
+  def email_changed(self):
+  	return self._email_changed
 
-	def __unicode__(self):
-		if self.full_name:
-			return "{uname} ({full_name})".format(uname=self.username, full_name=self.full_name)
-		else:
-			return self.username
+  def __unicode__(self):
+  	if self.full_name:
+  		return "{uname} ({full_name})".format(uname=self.username, full_name=self.full_name)
+  	else:
+  		return self.username
 
 
 def after_user_saved(sender, instance, created, **kwargs):

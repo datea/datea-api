@@ -1,7 +1,7 @@
 ###Authentication Api
 
 ####Sign in
-Ajax POST (application/json) to: */api/v2/account/signin/*
+POST request (application/json) to: */api/v2/account/signin/*
 with
 
 	{
@@ -21,7 +21,7 @@ you'll receive a:
 * 401 if account has been disabled
 
 ####Register
-Ajax POST (application/json) to: */api/v2/account/register/*
+POST request (application/json) to: */api/v2/account/register/*
 with
 
 	{
@@ -49,7 +49,7 @@ to a generic page to activate the account.
 ####Username exists
 Perform a quick test if a new username is valid
 
-Ajax GET to: */api/v2/account/username-exists*
+GET request to: */api/v2/account/username-exists*
 with:
 
 	{
@@ -64,16 +64,16 @@ receive a 200 with
 	}
 
 ####Email exists
-	Perform a quick test if a new email exists
+Perform a quick test if a new email exists
 
-	Ajax GET to: */api/v2/account/email-exists*
-	with:
+GET request to: */api/v2/account/email-exists*
+with:
 
 		{
 			email: <valid email>,
 		}
 
-	receive a 200 with
+receive a 200 with:
 
 		{
 			result: <boolean>,
@@ -159,7 +159,7 @@ If you'd like the API to redirect back to your page when the user clicks the act
 
 ####Reset Password
 
-Ajax POST (application/json) to: */api/v2/account/reset-password/* with:
+POST request (application/json) to: */api/v2/account/reset-password/* with:
 
 	{
 		email: <email>
@@ -172,7 +172,7 @@ This will send a message to the given address with instructions - a link to acce
 		base_url: <url to handle password reset>,
 	}
 
-otherwise it will be handled by system views.
+otherwise it will be handled by our api views.
 
 The url contains is build like this:
 
@@ -183,7 +183,7 @@ The url contains is build like this:
 
 if your domain is whitelisted, and you provided a url to deal with password reset, have the user enter his/her new password twice, check if both fields against each other, and then:
 
-Send a Ajax JSON POST to : */api/v2/account/reset-password-confirm/* with
+Send a POST to : */api/v2/account/reset-password-confirm/* with
 
 	{
 		password: <new password entered by user>,

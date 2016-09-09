@@ -235,7 +235,9 @@ class AccountResource(JSONDefaultMixin, Resource):
 
             if resetForm.is_valid():
                 client_domain = get_client_domain(request)
+                print "client domain", client_domain
                 client_data = get_client_data(client_domain)
+                print "client data", client_data
                 save_data = {
                     'request': request,
                     'base_url': client_data['pwreset_base_url'],
@@ -278,17 +280,22 @@ class AccountResource(JSONDefaultMixin, Resource):
             uid = urlsafe_base64_decode(uidb64)
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
-            response = self.create_response(request,
+            self.log_throttled_access(request)
+            return self.create_response(request,
                 {'status': NOT_FOUND, 'error': 'User not found'}, status=NOT_FOUND)
 
-        if user is not None and default_token_generator.check_token(user, token):
+        if not user.is_active:
+          response = self.create_response(request, {'status':UNAUTHORIZED,
+              'error':'Account disabled'}, status=UNAUTHORIZED)
+
+        elif user is not None and default_token_generator.check_token(user, token):
             user.set_password(password)
             user.save()
             response = self.create_response(request, {'status': OK, 'message': 'Your password was successfully reset',
                 'userid': uid}, status=OK)
         else:
-            response = self.create_response(request, {'status': UNAUTHORIZED, 'error': 'Invalid reset link'},
-                status=UNAUTHORIZED)
+            response = self.create_response(request, {'status': BAD_REQUEST, 'error': 'Invalid reset link'},
+                status=BAD_REQUEST)
 
         self.log_throttled_access(request)
         return response
@@ -577,7 +584,6 @@ class UserResource(JSONDefaultMixin, ModelResource):
                         client_data = get_client_data(client_domain)
                         client_data['activation_mode'] = 'change_email'
 
-                        translation.activate('es')
                         new_profile.send_activation_email(client_data, bundle.request)
 
             if 'notify_settings' in postData:

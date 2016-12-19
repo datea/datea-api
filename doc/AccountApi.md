@@ -1,5 +1,7 @@
 ###Authentication Api
 
+Check the [request status codes](AccountRequestCodes.md)
+
 ####Sign in
 POST request (application/json) to: */api/v2/account/signin/*
 with

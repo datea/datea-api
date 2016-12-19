@@ -14,6 +14,7 @@ class TagIndex(indexes.SearchIndex, indexes.Indexable):
     rank = indexes.IntegerField(model_attr="rank")
     published = indexes.BooleanField()
     tag_auto = indexes.NgramField(model_attr='tag')
+    search_auto = indexes.EdgeNgramField()
 
     def get_model(self):
         return Tag
@@ -29,6 +30,9 @@ class TagIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_follow_key(self, obj):
         return 'tag.'+str(obj.pk)
+
+    def prepare_search_auto(self, obj):
+        return obj.tag.lower() + ' #' + obj.tag.lower()
 
     def index_queryset(self, using=None):
         return self.get_model().objects.all()

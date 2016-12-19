@@ -19,6 +19,7 @@ from django.utils.http import urlsafe_base64_decode
 import re
 
 from tag.models import Tag
+from image.models import Image
 from notify.models import NotifySettings
 
 from campaign.resources import CampaignResource
@@ -599,7 +600,8 @@ class UserResource(JSONDefaultMixin, ModelResource):
                 if imgfield in bundle.data and type(bundle.data[imgfield]) == DictType and 'image' in bundle.data[imgfield]:
 
                     if 'id' in bundle.data[imgfield] and 'data_uri' not in bundle.data[imgfield]['image']:
-                        setattr(bundle.obj, imgfield+"_id", bundle.data[imgfield]['id'])
+                        img = Image.objects.get(pk=bundle.data[imgfield]['id'])
+                        setattr(bundle.obj, imgfield, img)
                     else:
                         orig_method = bundle.request.method
                         if not 'id' in bundle.data[imgfield]:

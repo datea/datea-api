@@ -26,6 +26,7 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
     is_standalone = indexes.BooleanField(default=True)
     follow_key = indexes.CharField()
     rank = indexes.IntegerField(model_attr="rank")
+    search_auto = indexes.EdgeNgramField()
     #comment_count = indexes.IntegerField(model_attr='comment_count', null=True)
     #user_count = indexes.IntegerField(model_attr='user_count', null=True)
 
@@ -58,3 +59,6 @@ class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_follow_key(self, obj):
         return 'tag.'+str(obj.main_tag.pk)
+
+    def prepare_search_auto(self, obj):
+      return obj.name.lower() + ' ' + obj.main_tag.tag.lower()+ ' #' + obj.main_tag.tag.lower()

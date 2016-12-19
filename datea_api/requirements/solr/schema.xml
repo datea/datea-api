@@ -211,6 +211,8 @@
 
     <field name="follow_count" type="long" indexed="true" stored="true" multiValued="false" />
 
+    <field name="search_auto" type="edge_ngram" indexed="true" stored="true" multiValued="false" />
+
     <field name="rank" type="long" indexed="true" stored="true" multiValued="false" />
 
     <field name="tag_auto" type="ngram" indexed="true" stored="true" multiValued="false" />
@@ -288,4 +290,3 @@
   <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
   <solrQueryParser defaultOperator="AND"/>
 </schema>
-

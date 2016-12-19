@@ -1,15 +1,17 @@
 amqp==1.4.9
 anyjson==0.3.3
+autopep8==1.2.4
 beautifulsoup4==4.5.1
 billiard==3.3.0.23
 bleach==1.4.3
 celery==3.1.23
-Django==1.10
+defusedxml==0.4.1
+Django==1.10.4
 django-bootstrap3==7.0.1
 django-cors-headers==1.1.0
 django-extensions==1.7.3
 django-grappelli==2.8.1
--e git+https://github.com/django-haystack/django-haystack.git@5168abe6ac5e191cb5ce0215f0242c75e13d0f60#egg=django_haystack
+django-haystack==2.5.1
 django-ipware==1.1.5
 django-jsonfield==1.0.1
 django-registration-redux==1.4
@@ -24,6 +26,7 @@ html5lib==0.999999999
 kombu==3.0.35
 lxml==3.6.4
 oauthlib==1.1.2
+pep8==1.7.0
 Pillow==3.3.1
 psycopg2==2.6.2
 PyJWT==1.4.2

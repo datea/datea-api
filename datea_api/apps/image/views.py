@@ -2,7 +2,7 @@ import sys
 import json
 from image.models import Image
 from forms import ImageUploadForm
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from resources import ImageResource
 from tastypie.authentication import ApiKeyAuthentication
@@ -12,7 +12,7 @@ def save_image(request):
     """
     Save DateaImage instance for specified object FK or M2M-Field
     post parameters must include:
-        image:           image file input 
+        image:           image file input
         order:           the order of the image (optional)
     """
     key_auth = ApiKeyAuthentication()
@@ -36,11 +36,8 @@ def save_image(request):
         im_bundle = ir.full_dehydrate(im_bundle)
 
         data = {'ok': True, 'message':'ok', 'resource': im_bundle.data}
-        data = json.dumps(data)
 
     else:
-        data = json.dumps({'ok': False, 'message': form.errors})
+        data = {'ok': False, 'message': form.errors}
 
-    return HttpResponse(data, mimetype="application/json")
-
-
+    return JsonResponse(data)

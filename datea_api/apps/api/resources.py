@@ -12,8 +12,9 @@ from haystack.utils.geo import Distance
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery, Exact
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.http import Http404
+from django.http import HttpResponse, Http404
 from django.db import models
+import json
 
 from campaign.models import Campaign
 from campaign.resources import CampaignResource
@@ -72,20 +73,24 @@ class IPLocationResource(JSONDefaultMixin, Resource):
 
 # An endpoint to search for campaigns and standalone
 # tags together: combined dateo environments.
-class EnvironmentsResource(JSONDefaultMixin, Resource):
+class MappingResource(JSONDefaultMixin, Resource):
 
     class Meta:
-        resource_name = 'environments'
+        resource_name = 'mapping'
         allowed_methods = ['get']
         cache = SimpleDictCache(timeout=60)
         throttle = CacheThrottle(throttle_at=300)
 
     def prepend_urls(self):
         return [
-            # dateo stats
+            # maping resources
             url(r"^(?P<resource_name>%s)%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('get_combined'), name="api_search_combined_env")
+            self.wrap_view('get_combined'), name="api_search_combined_env"),
+            # autocomplete
+            url(r"^(?P<resource_name>%s)/autocomplete%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('autocomplete'), name="api_mapping_autocomplete"),
         ]
 
     def get_combined(self, request, **kwargs):
@@ -204,3 +209,41 @@ class EnvironmentsResource(JSONDefaultMixin, Resource):
 
         self.log_throttled_access(request)
         return self.create_response(request, object_list)
+
+
+    def autocomplete(self, request, **kwargs):
+
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+        limit = int(request.GET.get('limit', 10))
+
+        q = remove_accents(request.GET.get('q',u''))
+        if len(q) > 0 and len(q) <= 2:
+            sqs = SearchQuerySet().models(Campaign, Tag).filter(published=True).autocomplete(search_auto__startswith=q).order_by('-is_standalone', '-dateo_count')[0:limit]
+        else:
+            sqs = SearchQuerySet().models(Campaign,Tag).filter(published=True).autocomplete(search_auto=request.GET.get('q', '')).order_by('-is_standalone', '-dateo_count')[0:limit]
+
+        suggestions = [self.process_ac_result(result) for result in sqs]
+
+        self.log_throttled_access(request)
+        return HttpResponse(json.dumps(suggestions), content_type="application/json")
+
+    def process_ac_result(self, res):
+        result = {'id' : res.pk}
+        if res.model_name == 'campaign':
+          result.update({
+            'type' : 'campaign',
+            'name' : res.name,
+            'user' : res.user,
+            'slug' : res.slug,
+            'main_tag' : res.main_tag,
+            'dateo_count' : res.dateo_count,
+            'thumb' : res.object.get_image_thumb('image_thumb_medium')
+          })
+        elif res.model_name == 'tag':
+          result.update({
+            'type' : 'tag',
+            'tag'  : res.tag,
+            'dateo_count' : res.dateo_count
+          })
+        return result

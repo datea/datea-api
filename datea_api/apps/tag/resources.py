@@ -45,7 +45,9 @@ class TagResource(JSONDefaultMixin, ModelResource):
                     "id": c.id,
                     "name": c.name,
                     "username": c.user.username,
-                    "secondary_tags": [t.tag for t in c.secondary_tags.all()]  
+                    "slug" : c.slug,
+                    "thumb": c.get_image_thumb('image_thumb_medium'),
+                    "secondary_tags": [t.tag for t in c.secondary_tags.all()]
                 })
         bundle.data['campaigns'] = campaigns
 
@@ -58,31 +60,31 @@ class TagResource(JSONDefaultMixin, ModelResource):
         elif bundle.request.method == "POST":
             if type(bundle.data) != UnicodeType:
                 bundle.obj.client_domain = bundle.data['client_domain'] = get_domain_from_url(bundle.request.META.get('HTTP_ORIGIN', ''))
-        return bundle 
+        return bundle
 
 
     def prepend_urls(self):
 
         return [
 
-            url(r"^(?P<resource_name>%s)/(?P<pk>[0-9]+)%s$" % 
-            (self._meta.resource_name, trailing_slash()), 
+            url(r"^(?P<resource_name>%s)/(?P<pk>[0-9]+)%s$" %
+            (self._meta.resource_name, trailing_slash()),
             self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
 
             url(r"^(?P<resource_name>%s)/autocomplete%s$" %
-            (self._meta.resource_name, trailing_slash()), 
+            (self._meta.resource_name, trailing_slash()),
             self.wrap_view('autocomplete'), name="api_tag_autocomplete"),
 
             url(r"^(?P<resource_name>%s)/trending%s$" %
-            (self._meta.resource_name, trailing_slash()), 
+            (self._meta.resource_name, trailing_slash()),
             self.wrap_view('get_trending'), name="api_tag_trending"),
 
             url(r"^(?P<resource_name>%s)/nearby%s$" %
-            (self._meta.resource_name, trailing_slash()), 
+            (self._meta.resource_name, trailing_slash()),
             self.wrap_view('get_nearby'), name="api_tag_nearby"),
 
-            url(r"^(?P<resource_name>%s)/by_name/(?P<tag>[\w\d]+)%s$" % 
-            (self._meta.resource_name, trailing_slash()), 
+            url(r"^(?P<resource_name>%s)/by_name/(?P<tag>[\w\d]+)%s$" %
+            (self._meta.resource_name, trailing_slash()),
             self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
 
         ]
@@ -149,7 +151,7 @@ class TagResource(JSONDefaultMixin, ModelResource):
         else:
             return self.dispatch('list', request, **kwargs)
 
-    rename_get_filters = {   
+    rename_get_filters = {
         'id': 'obj_id',
         'tag': 'tag_exact',
     }
@@ -308,4 +310,3 @@ class TagResource(JSONDefaultMixin, ModelResource):
         cache = SimpleCache(timeout=10)
         #throttle = CacheThrottle()
         include_resource_uri = False
-

@@ -217,11 +217,8 @@ class MappingResource(JSONDefaultMixin, Resource):
         self.throttle_check(request)
         limit = int(request.GET.get('limit', 10))
 
-        q = remove_accents(request.GET.get('q',u''))
-        if len(q) > 0 and len(q) <= 2:
-            sqs = SearchQuerySet().models(Campaign, Tag).filter(published=True).autocomplete(search_auto__startswith=q).order_by('-is_standalone', '-dateo_count')[0:limit]
-        else:
-            sqs = SearchQuerySet().models(Campaign,Tag).filter(published=True).autocomplete(search_auto=request.GET.get('q', '')).order_by('-is_standalone', '-dateo_count')[0:limit]
+        q = remove_accents(request.GET.get('q',u'')).lower()
+        sqs = SearchQuerySet().models(Campaign,Tag).filter(published=True).autocomplete(search_auto=q).order_by('-is_standalone', 'rank', '-dateo_count')[0:limit]
 
         suggestions = [self.process_ac_result(result) for result in sqs]
 

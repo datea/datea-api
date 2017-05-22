@@ -91,7 +91,7 @@ INSTALLED_APPS = (
 
     # USER STUFF
     'registration',
-    'social.apps.django_app.default',
+    'social_django',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -134,24 +134,24 @@ ACCOUNT_ACTIVATION_DAYS = 2
 SOCIAL_AUTH_USER_MODEL = 'account.User'
 
 AUTHENTICATION_BACKENDS = (
-      'social.backends.google.GoogleOAuth2',
-      'social.backends.twitter.TwitterOAuth',
-      'social.backends.facebook.FacebookOAuth2',
+      'social_core.backends.google.GoogleOAuth2',
+      'social_core.backends.twitter.TwitterOAuth',
+      'social_core.backends.facebook.FacebookOAuth2',
       'django.contrib.auth.backends.ModelBackend',
 )
 
 SOCIAL_AUTH_PIPELINE = (
-    'social.pipeline.social_auth.social_details',
-    'social.pipeline.social_auth.social_uid',
-    'social.pipeline.social_auth.auth_allowed',
-    'social.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
     'account.pipeline.get_username',
-    'social.pipeline.mail.mail_validation',
-    'social.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.mail.mail_validation',
+    'social_core.pipeline.social_auth.associate_by_email',
     'account.pipeline.create_user',
-    'social.pipeline.social_auth.associate_user',
-    'social.pipeline.social_auth.load_extra_data',
-    'social.pipeline.user.user_details',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
     'account.pipeline.save_avatar'
 )
 

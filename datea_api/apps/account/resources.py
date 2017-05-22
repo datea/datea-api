@@ -42,7 +42,7 @@ from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import validate_email
 
-from social.apps.django_app.utils import strategy
+from social_django.utils import psa
 from pprint import pprint as pp
 
 from django.core.validators import validate_email
@@ -393,7 +393,7 @@ class AccountResource(JSONDefaultMixin, Resource):
 
 
 
-@strategy()
+@psa()
 def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
     user = request.backend.do_auth(access_token)
     return user

@@ -22,7 +22,7 @@ class Tag(models.Model):
     client_domain = models.CharField('CLient Domain', max_length=100, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        self.tag = remove_accents(re.sub("[\W_]", '', self.tag, flags=re.UNICODE))
+        #self.tag = remove_accents(re.sub("[\W_]", '', self.tag, flags=re.UNICODE))
         super(Tag, self).save(*args, **kwargs)
 
     class Meta:

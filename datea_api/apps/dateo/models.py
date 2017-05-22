@@ -16,7 +16,7 @@ from django.utils.html import strip_tags
 
 class Dateo(models.Model):
 
-    user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User", related_name="dateos")
+    user =  models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User", related_name="dateos", on_delete=models.DO_NOTHING)
 
     # timestamps
     created = models.DateTimeField('created', auto_now_add=True)
@@ -37,18 +37,18 @@ class Dateo(models.Model):
     files = models.ManyToManyField(File, verbose_name='Files', blank=True, related_name="dateo")
     link  = models.ForeignKey(Link, verbose_name='Link', null=True, blank=True, related_name="dateos", on_delete=models.SET_NULL)
 
-# location
+    # location
     position = models.PointField('Position', blank=True, null=True, spatial_index=False)
     address = models.CharField('Address', max_length=255, blank=True, null=True)
 
-# optional relationship to campaign
+    # optional relationship to campaign
     campaign = models.ForeignKey(Campaign, related_name="dateos", blank=True, null=True, on_delete=models.SET_NULL)
 
-# category
+    # category
     category = models.ForeignKey(Category, verbose_name="Category", null=True, blank=True, default=None, related_name="dateos", on_delete=models.SET_NULL)
     tags = models.ManyToManyField(Tag, verbose_name="Tags", related_name="dateos");
 
-# stats
+    # stats
     vote_count = models.IntegerField(default=0, blank=True, null=True)
     comment_count = models.IntegerField(default=0,blank=True, null=True)
     #follow_count = models.IntegerField(default=0, blank=True, null=True)
@@ -63,7 +63,7 @@ class Dateo(models.Model):
     admin_level2 = models.CharField('Administrative level 2', max_length=127, blank=True, null=True)
     admin_level3 = models.CharField('Administrative level 3', max_length=127, blank=True, null=True)
 
-# Object Manager from geodjango
+    # Object Manager from geodjango
     objects = models.GeoManager()
 
     def __unicode__(self):

@@ -301,10 +301,10 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
                 q_args[p] = models.DateTimeField().to_python(request.get(p))
 
         if 'tags' in request.GET:
-            q_args['secondary_tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags').split(',')]
+            q_args['secondary_tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags')]
 
         if 'main_tag' in request.GET:
-            mtags = request.GET.get('main_tag').split(',')
+            mtags = request.GET.get('main_tag')
             if len(mtags) == 1:
                 q_args['main_tag_exact'] = remove_accents(mtags[0].lower())
             else:

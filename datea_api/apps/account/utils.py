@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.cache import cache
 from datea_api.utils import remove_accents
 import re
+import logging
 
 from datea_api.apps.api.utils import get_reserved_usernames
 
@@ -38,6 +39,7 @@ def getUserByKey(key):
 
 
 def make_social_username(username):
+    logging.debug('username :'+username)
     index = 0
     final_username = re.sub("[^a-zA-Z0-9]", "", remove_accents(username))
     reserved = get_reserved_usernames()

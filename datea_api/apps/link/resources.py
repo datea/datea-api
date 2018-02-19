@@ -11,10 +11,11 @@ from django.conf.urls import url
 from tastypie.utils import trailing_slash
 from api.status_codes import *
 import requests, extraction, urlparse, os.path
+import logging
 
 class LinkResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource',
             attribute='user', full=False, readonly=True)
 
     def hydrate(self, bundle):
@@ -46,7 +47,7 @@ class LinkResource(JSONDefaultMixin, ModelResource):
 
 
 
-class URLInfoResource(JSONDefaultMixin, Resource): 
+class URLInfoResource(JSONDefaultMixin, Resource):
 
     class Meta:
         resource_name = 'url_info'
@@ -64,7 +65,7 @@ class URLInfoResource(JSONDefaultMixin, Resource):
         ]
 
 
-    def get_url_info(self, request, **kwargs): 
+    def get_url_info(self, request, **kwargs):
 
         # tests
         self.method_check(request, allowed=['get'])
@@ -79,11 +80,14 @@ class URLInfoResource(JSONDefaultMixin, Resource):
 
         req.encoding = 'utf-8'
         extracted = extraction.Extractor().extract(req.text, source_url=url)
+        logging.debug(extracted)
 
         url_info = {
             'title'       : extracted.title,
             'description' : extracted.description,
-            'images'      : []
+            'images'      : [],
+            'other'       : extracted._unexpected_values,
+            'image'       : extracted.image
         }
 
         if len(extracted.images) > 0:
@@ -97,7 +101,3 @@ class URLInfoResource(JSONDefaultMixin, Resource):
 
         self.log_throttled_access(request)
         return self.create_response(request, url_info)
-
-
-
-

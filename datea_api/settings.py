@@ -87,7 +87,6 @@ INSTALLED_APPS = (
     'flag',
     'link',
     'api',
-    'seo',
 
     # USER STUFF
     'registration',

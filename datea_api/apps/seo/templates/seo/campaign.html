@@ -1,9 +1,0 @@
-{% extends "seo/seo-base.html" %}
-{% block "body" %}
-	<h1>{{campaign.name}}</h1>
-	<h2><a href="/tag/{{campaign.main_tag.tag}}">#{{campaign.main_tag.tag}}</a></h2>
-	<h3>{{campaign.short_description}}</h3>
-	<p class="user"><a href="/{{campaign.user.username}}">{{campaign.user.username}}</a></p>
-	<p class="objectives">{{campaign.mission}}</p>
-	<p class="information_destiny">{{campaign.information_destiny}}</p>
-{% endblock %}

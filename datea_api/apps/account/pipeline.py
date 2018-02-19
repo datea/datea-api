@@ -5,14 +5,14 @@ from django.core.files.base import ContentFile
 from utils import make_social_username, get_domain_from_url
 import json
 
-def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
+def save_avatar(backend, user, response, details, is_new=False,*args,**kwargs):
 
     if is_new or not user.image:
 
         img = None
 
         # FACEBOOK
-        if strategy.backend.name == 'facebook':
+        if backend.name == 'facebook':
             try:
                 img_url = "http://graph.facebook.com/{id}/picture?type=large".format(id=response["id"])
                 img = urlopen(img_url)
@@ -20,8 +20,8 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
             except HTTPError:
                 pass
 
-# TWITTER
-        if strategy.backend.name == 'twitter':
+        # TWITTER
+        if backend.name == 'twitter':
             try:
                 img = urlopen(response['profile_image_url'].replace('_normal', ''))
                 suffix = '_tw'
@@ -29,7 +29,7 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
                 pass
 
         # GOOGLE
-        if strategy.backend.name == 'google-oauth2':
+        if backend.name == 'google-oauth2':
             try:
                 img = urlopen(response['picture'])
                 suffix = '_g'
@@ -47,7 +47,7 @@ def save_avatar(strategy, user, response, details, is_new=False,*args,**kwargs):
 
 USER_FIELDS = ['username', 'email']
 
-def get_username(strategy, details, user=None, *args, **kwargs):
+def get_username(backend, strategy, details, user=None, *args, **kwargs):
 
     if 'username' not in strategy.setting('USER_FIELDS', USER_FIELDS):
         return
@@ -77,7 +77,7 @@ def get_username(strategy, details, user=None, *args, **kwargs):
 
 
 # embed new information into user object for later use (DIRTY HACKS, I KNOW)
-def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
+def create_user(backend, details, response, uid, user=None, *args, **kwargs):
 
     if user:
         user.is_new = False

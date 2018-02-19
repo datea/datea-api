@@ -16,6 +16,8 @@ from api.utils import get_reserved_usernames
 from datea_api.utils import remove_accents
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+from requests_oauthlib import OAuth1Session
+from urlparse import urljoin
 import re
 
 from tag.models import Tag
@@ -56,6 +58,9 @@ from geoip import geolite2
 from ipware.ip import get_real_ip
 
 
+TWITTER_REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
+TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
+
 class AccountResource(JSONDefaultMixin, Resource):
 
     class Meta:
@@ -66,10 +71,20 @@ class AccountResource(JSONDefaultMixin, Resource):
     def prepend_urls(self):
 
         return [
-                        # social auth
+            # social auth
             url(r"^(?P<resource_name>%s)/socialauth/(?P<backend>[a-zA-Z0-9-_.]+)%s$" %
             (self._meta.resource_name, trailing_slash()),
             self.wrap_view('social_auth'), name="api_social_auth"),
+
+            # get twitter request token
+            url(r"^(?P<resource_name>%s)/twitter-request-token%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('get_twitter_request_token'), name="api_twitter_request_token"),
+
+            # twitter login url
+            url(r"^(?P<resource_name>%s)/twitter-login%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('get_twitter_login'), name="api_twitter_login"),
 
             #register datea account
             url(r"^(?P<resource_name>%s)/register%s$" %
@@ -185,7 +200,7 @@ class AccountResource(JSONDefaultMixin, Resource):
             try:
                 username = User.objects.get(email=username).username
             except:
-                pass
+                username = None
 
         user = authenticate(username= username,
                             password= password)
@@ -329,8 +344,20 @@ class AccountResource(JSONDefaultMixin, Resource):
         else:
             access_token = postData['access_token']
 
+        response = self.get_social_auth_user_response(request, access_token, **kwargs)
+
+        self.log_throttled_access(request)
+        return response
+
+
+    def get_social_auth_user_response(self, request, access_token, **kwargs):
+
+        if not access_token or (kwargs['backend'] == 'twitter' and oauth_token not in access_token):
+            return self.create_response(request, {'status': UNAUTHORIZED,
+              'error':'Social access could not be verified'}, status=UNAUTHORIZED)
+
         # Real authentication takes place here
-        user = wrap_social_auth(request, access_token = access_token, **kwargs)
+        user = wrap_social_auth(request, access_token=access_token, **kwargs)
 
         if user and user.is_active:
             request.user = user
@@ -354,7 +381,53 @@ class AccountResource(JSONDefaultMixin, Resource):
             response = self.create_response(request, {'status': UNAUTHORIZED,
                 'error':'Social access could not be verified'}, status=UNAUTHORIZED)
 
+        return response
+
+
+    def get_twitter_request_token(self, request, **kwargs):
+
+        self.method_check(request, allowed=['post', 'options'])
+        self.throttle_check(request)
+
+        consumer_key = settings.SOCIAL_AUTH_TWITTER_KEY
+        consumer_secret = settings.SOCIAL_AUTH_TWITTER_SECRET
+
+        oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, callback_uri=urljoin(request.META['HTTP_ORIGIN'], 'twitter-popup-redirect'))
+        try:
+          fetch_response = oauth.fetch_request_token(TWITTER_REQUEST_TOKEN_URL)
+          resource_owner_key = fetch_response.get('oauth_token')
+          resource_owner_secret = fetch_response.get('oauth_token_secret')
+          response = self.create_response(request, fetch_response, status=OK)
+        except Exception:
+          print Exception.message
+          response = self.create_response(request, {'status': SYSTEM_ERROR,
+              'error':'request token could not be retreived'}, status=SYSTEM_ERROR)
+
         self.log_throttled_access(request)
+
+        return response
+
+
+    def get_twitter_login(self, request, **kwargs):
+
+        self.method_check(request, allowed=['post', 'options'])
+        self.throttle_check(request)
+
+        user_token = request.GET.get('oauth_token')
+        verifier = request.GET.get('oauth_verifier')
+
+        consumer_key = settings.SOCIAL_AUTH_TWITTER_KEY
+        consumer_secret = settings.SOCIAL_AUTH_TWITTER_SECRET
+
+        oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, verifier=verifier, resource_owner_key=user_token)
+        fetch_response = oauth.fetch_access_token(TWITTER_ACCESS_TOKEN_URL)
+
+        print 'fetch_response', type(fetch_response), fetch_response
+
+        response = self.get_social_auth_user_response(request, fetch_response, backend='twitter')
+
+        self.log_throttled_access(request)
+
         return response
 
 
@@ -395,7 +468,10 @@ class AccountResource(JSONDefaultMixin, Resource):
 
 @psa()
 def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
-    user = request.backend.do_auth(access_token)
+    try:
+      user = request.backend.do_auth(access_token)
+    except Exception as e:
+      print e.message
     return user
 
 

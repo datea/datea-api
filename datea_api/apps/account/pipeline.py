@@ -49,14 +49,14 @@ USER_FIELDS = ['username', 'email']
 
 def get_username(backend, strategy, details, user=None, *args, **kwargs):
 
-    if 'username' not in strategy.setting('USER_FIELDS', USER_FIELDS):
+    if 'username' not in backend.setting('USER_FIELDS', USER_FIELDS):
         return
     storage = strategy.storage
 
     if not user:
         max_length = storage.user.username_max_length()
-        do_slugify = strategy.setting('SLUGIFY_USERNAMES', False)
-        do_clean = strategy.setting('CLEAN_USERNAMES', True)
+        do_slugify = backend.setting('SLUGIFY_USERNAMES', False)
+        do_clean = backend.setting('CLEAN_USERNAMES', True)
 
         if do_clean:
             clean_func = storage.user.clean_username
@@ -76,20 +76,15 @@ def get_username(backend, strategy, details, user=None, *args, **kwargs):
     return {'username': final_username}
 
 
-# embed new information into user object for later use (DIRTY HACKS, I KNOW)
-def create_user(backend, details, response, uid, user=None, *args, **kwargs):
-
+def create_user(strategy, details, backend, user=None, *args, **kwargs):
     if user:
-        user.is_new = False
-        return
+        return {'is_new': False}
 
-    fields = dict((name, kwargs.get(name) or details.get(name))
-                        for name in strategy.setting('USER_FIELDS',
-                                                      USER_FIELDS))
+    fields = dict((name, kwargs.get(name, details.get(name)))
+                  for name in backend.setting('USER_FIELDS', USER_FIELDS))
     if not fields:
         return
 
-    # if we have an email address, confirm the user
     if 'email' in fields and fields['email']:
         fields['status'] = 1
 

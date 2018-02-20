@@ -111,6 +111,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     language = models.CharField('Language', max_length=2, choices=language_choices, default='es')
 
+    facebook_id = models.CharField('Facebook id', max_length=32, blank=True, null=True)
+    twitter_id = models.CharField('Twitter id', max_length=32, blank=True, null=True)
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'

@@ -16,9 +16,10 @@ from api.utils import get_reserved_usernames
 from datea_api.utils import remove_accents
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
-from requests_oauthlib import OAuth1Session
 from urlparse import urljoin
 import re
+import requests
+from requests_oauthlib import OAuth1Session
 
 from tag.models import Tag
 from image.models import Image
@@ -35,6 +36,7 @@ import json
 from django.contrib.auth import authenticate
 from account.forms import CustomPasswordResetForm
 from account.utils import getOrCreateKey, getUserByKey, make_social_username, get_client_data, get_client_domain, get_domain_from_url, new_username_allowed
+from .social_user import get_or_create_social_user, save_social_profile_image
 from api.status_codes import *
 
 from registration.models import RegistrationProfile
@@ -43,8 +45,6 @@ from django.contrib.sites.requests import RequestSite
 from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import validate_email
-
-from social_django.utils import psa
 from pprint import pprint as pp
 
 from django.core.validators import validate_email
@@ -72,19 +72,19 @@ class AccountResource(JSONDefaultMixin, Resource):
 
         return [
             # social auth
-            url(r"^(?P<resource_name>%s)/socialauth/(?P<backend>[a-zA-Z0-9-_.]+)%s$" %
+            url(r"^(?P<resource_name>%s)/facebook-login%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('social_auth'), name="api_social_auth"),
+            self.wrap_view('facebook_login'), name="api_facebook_login"),
 
             # get twitter request token
             url(r"^(?P<resource_name>%s)/twitter-request-token%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('get_twitter_request_token'), name="api_twitter_request_token"),
+            self.wrap_view('twitter_request_token'), name="api_twitter_request_token"),
 
             # twitter login url
             url(r"^(?P<resource_name>%s)/twitter-login%s$" %
             (self._meta.resource_name, trailing_slash()),
-            self.wrap_view('get_twitter_login'), name="api_twitter_login"),
+            self.wrap_view('twitter_login'), name="api_twitter_login"),
 
             #register datea account
             url(r"^(?P<resource_name>%s)/register%s$" %
@@ -318,79 +318,13 @@ class AccountResource(JSONDefaultMixin, Resource):
 
 
 
-    def social_auth(self, request, **kwargs):
-
-        self.method_check(request, allowed=['post'])
-        self.throttle_check(request)
-
-        postData = json.loads(request.body)
-
-        #auth_backend = request.strategy.backend
-        if kwargs['backend'] == 'twitter':
-            if 'oauth_token' in postData and 'oauth_token_secret' in postData:
-                access_token = {
-                    'oauth_token': postData['oauth_token'],
-                    'oauth_token_secret': postData['oauth_token_secret']
-                }
-            else:
-                self.log_throttled_access(request)
-                return self.create_response(request,{'status': BAD_REQUEST,
-                'error': 'oauth_token and oauth_token_secret not provided'}, status = BAD_REQUEST)
-
-        elif 'access_token' not in postData:
-            self.log_throttled_access(request)
-            return self.create_response(request,{'status': BAD_REQUEST,
-                'error': 'access_token not provided'}, status = BAD_REQUEST)
-        else:
-            access_token = postData['access_token']
-
-        response = self.get_social_auth_user_response(request, access_token, **kwargs)
-
-        self.log_throttled_access(request)
-        return response
-
-
-    def get_social_auth_user_response(self, request, access_token, **kwargs):
-
-        if not access_token or (kwargs['backend'] == 'twitter' and oauth_token not in access_token):
-            return self.create_response(request, {'status': UNAUTHORIZED,
-              'error':'Social access could not be verified'}, status=UNAUTHORIZED)
-
-        # Real authentication takes place here
-        user = wrap_social_auth(request, access_token=access_token, **kwargs)
-
-        if user and user.is_active:
-            request.user = user
-            key = getOrCreateKey(user)
-            user_rsc = UserResource()
-            u_bundle = user_rsc.build_bundle(obj=user, request=request)
-            u_bundle = user_rsc.full_dehydrate(u_bundle)
-            u_bundle.data['status'] = user.status
-            if 'email' in u_bundle.data:
-                u_bundle.data['email'] = user.email
-            if hasattr(user, 'is_new') and user.is_new:
-                is_new = True
-                status = CREATED
-            else:
-                is_new = False
-                status = OK
-            #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
-            response = self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new},
-                status=status)
-        else:
-            response = self.create_response(request, {'status': UNAUTHORIZED,
-                'error':'Social access could not be verified'}, status=UNAUTHORIZED)
-
-        return response
-
-
-    def get_twitter_request_token(self, request, **kwargs):
+    def twitter_request_token(self, request, **kwargs):
 
         self.method_check(request, allowed=['post', 'options'])
         self.throttle_check(request)
 
-        consumer_key = settings.SOCIAL_AUTH_TWITTER_KEY
-        consumer_secret = settings.SOCIAL_AUTH_TWITTER_SECRET
+        consumer_key = settings.TWITTER_KEY
+        consumer_secret = settings.TWITTER_SECRET
 
         oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, callback_uri=urljoin(request.META['HTTP_ORIGIN'], 'twitter-popup-redirect'))
         try:
@@ -398,8 +332,8 @@ class AccountResource(JSONDefaultMixin, Resource):
           resource_owner_key = fetch_response.get('oauth_token')
           resource_owner_secret = fetch_response.get('oauth_token_secret')
           response = self.create_response(request, fetch_response, status=OK)
-        except Exception:
-          print Exception.message
+        except Exception as e:
+          print e.message
           response = self.create_response(request, {'status': SYSTEM_ERROR,
               'error':'request token could not be retreived'}, status=SYSTEM_ERROR)
 
@@ -408,7 +342,7 @@ class AccountResource(JSONDefaultMixin, Resource):
         return response
 
 
-    def get_twitter_login(self, request, **kwargs):
+    def twitter_login(self, request, **kwargs):
 
         self.method_check(request, allowed=['post', 'options'])
         self.throttle_check(request)
@@ -416,19 +350,118 @@ class AccountResource(JSONDefaultMixin, Resource):
         user_token = request.GET.get('oauth_token')
         verifier = request.GET.get('oauth_verifier')
 
-        consumer_key = settings.SOCIAL_AUTH_TWITTER_KEY
-        consumer_secret = settings.SOCIAL_AUTH_TWITTER_SECRET
+        consumer_key = settings.TWITTER_KEY
+        consumer_secret = settings.TWITTER_SECRET
 
         oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, verifier=verifier, resource_owner_key=user_token)
         fetch_response = oauth.fetch_access_token(TWITTER_ACCESS_TOKEN_URL)
 
-        print 'fetch_response', type(fetch_response), fetch_response
+        url = 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true'
+        cred_req = requests.get(url, auth=oauth.auth)
+        creds = cred_req.json()
 
-        response = self.get_social_auth_user_response(request, fetch_response, backend='twitter')
+        social_user_args = {
+          'request'  : request,
+          'social_id' : creds.get('id_str', ''),
+          'email' : creds.get('email', ''),
+          'username' : creds.get('screen_name', ''),
+          'name' : creds.get('name', ''),
+          'account_type': 'twitter'
+        }
+        # get or create user
+        try:
+          user, is_new = get_or_create_social_user(**social_user_args)
+        except Exception as e:
+          return self.create_response(request, {'status': BAD_REQUEST,
+              'error': e.message}, status=BAD_REQUEST)
+
+        # if is new, save image
+        if is_new and creds.get('profile_image_url'):
+            save_social_profile_image(user, creds.get('profile_image_url'), 'twitter')
+
+        response = self.create_social_login_response(request, user, is_new)
 
         self.log_throttled_access(request)
-
         return response
+
+
+
+    def facebook_login(self, request, **kwargs):
+
+        self.method_check(request, allowed=['post', 'options'])
+        self.throttle_check(request)
+
+        postData = json.loads(request.body)
+
+        access_token = postData.get('accessToken', '')
+        fbUserid = postData.get('userID', '')
+        email = postData.get('email', '')
+        name = postData.get('name', '')
+
+        if not access_token or not fbUserid or not email:
+            return self.create_response(request, {'status': BAD_REQUEST,
+                'error':'needed fb data not present'}, status=BAD_REQUEST)
+
+        # verify access token
+        resp = requests.get('https://graph.facebook.com/debug_token?input_token='+access_token+'&access_token='+settings.FACEBOOK_APP_TOKEN)
+
+        if resp.status_code != 200:
+            return self.create_response(request, {'status': BAD_REQUEST,
+              'error':'access token invalid'}, status=BAD_REQUEST)
+        else:
+            validated = resp.json()['data']
+            if validated['app_id'] != settings.FACEBOOK_KEY or validated['user_id'] != fbUserid:
+                return self.create_response(request, {'status': BAD_REQUEST,
+                  'error':'access token invalid'}, status=BAD_REQUEST)
+
+            social_user_args = {
+              'request'  : request,
+              'social_id' : fbUserid,
+              'email' : email,
+              'name' : name,
+              'account_type': 'facebook'
+            }
+            # get or create user
+            try:
+              user, is_new = get_or_create_social_user(**social_user_args)
+            except Exception as e:
+              return self.create_response(request, {'status': BAD_REQUEST,
+                  'error': e.message}, status=BAD_REQUEST)
+
+            # if is new, save image
+            if is_new:
+                save_social_profile_image(user)
+
+            response = self.create_social_login_response(request, user, is_new)
+
+            self.log_throttled_access(request)
+            return response
+
+
+    def create_social_login_response(self, request, user, is_new):
+        if user and user.is_active:
+
+            request.user = user
+
+            key = getOrCreateKey(user)
+            status = CREATED if is_new else OK
+
+            user_rsc = UserResource()
+            u_bundle = user_rsc.build_bundle(obj=user, request=request)
+            u_bundle = user_rsc.full_dehydrate(u_bundle)
+            u_bundle.data['status'] = user.status
+
+            if 'email' not in u_bundle.data:
+                u_bundle.data['email'] = user.email
+
+
+            #u_json = user_rsc.serialize(None, u_bundle, 'application/json')
+            return self.create_response(request, {'status': status, 'token': key, 'user': u_bundle.data, 'is_new': is_new},
+                status=status)
+        else:
+            print "USER NOT ACTIVE", user, user.is_active
+            return self.create_response(request, {'status': UNAUTHORIZED,
+                'error':'Social access could not be verified'}, status=UNAUTHORIZED)
 
 
     def username_exists(self, request, **kwargs):
@@ -463,16 +496,6 @@ class AccountResource(JSONDefaultMixin, Resource):
         self.log_throttled_access(request)
         return self.create_response(request, {'result': result,
                 'message': message}, status=OK)
-
-
-
-@psa()
-def wrap_social_auth(request, backend=None, access_token=None, **kwargs):
-    try:
-      user = request.backend.do_auth(access_token)
-    except Exception as e:
-      print e.message
-    return user
 
 
 

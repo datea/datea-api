@@ -11,7 +11,7 @@ from account.utils import get_domain_from_url
 
 class FileResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource',
             attribute='user', full=False, readonly=True)
     file = Base64FileField('file')
 
@@ -24,10 +24,10 @@ class FileResource(JSONDefaultMixin, ModelResource):
 
         # preserve original user
         elif bundle.request.method  == 'PATCH':
-            protect_fields = ['user', 'client_domain']
+            protect_fields = ['user', 'client_domain', 'file']
             for f in protect_fields:
                 if f in bundle.data:
-                    del bundle.data[f] 
+                    del bundle.data[f]
 
         return bundle
 

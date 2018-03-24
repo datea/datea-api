@@ -11,7 +11,7 @@ from account.utils import get_domain_from_url
 
 class ImageResource(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource',
             attribute='user', full=False, readonly=True)
     image = Base64FileField('image')
 
@@ -35,6 +35,8 @@ class ImageResource(JSONDefaultMixin, ModelResource):
 
         # preserve original user
         elif bundle.request.method  == 'PATCH':
+            bundle.data.pop('thumb', None)
+            bundle.data.pop('image', None) # don't patch image, only order
             bundle.data['user'] = bundle.obj.user
             bundle.data['client_domain'] = bundle.obj.client_domain
 
@@ -57,9 +59,9 @@ class ImageResource(JSONDefaultMixin, ModelResource):
 
 class ImageResourceMP(JSONDefaultMixin, ModelResource):
 
-    user = fields.ToOneField('account.resources.UserResource', 
+    user = fields.ToOneField('account.resources.UserResource',
             attribute='user', full=False, readonly=True)
-    image = fields.FileField(attribute = 'image', null=True, blank = True)    
+    image = fields.FileField(attribute = 'image', null=True, blank = True)
 
     def deserialize(self, request, data, format=None):
         if not format:

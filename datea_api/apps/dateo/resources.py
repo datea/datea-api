@@ -132,9 +132,8 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
     def hydrate(self, bundle):
 
         # Some security measures in regards to an object's owner
-
+        print "bundle", bundle.request.user
         if bundle.request.method == 'POST':
-
             if 'id' in bundle.data:
                 response = self.create_response(bundle.request,{'status': BAD_REQUEST,
                         'error': 'POST with id field not permitted. Use PATCH or PUT instead.'}, status=BAD_REQUEST)
@@ -307,6 +306,7 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         If the resource did not exist, return ``HttpNotFound`` (404 Not Found).
         """
         request = convert_post_to_patch(request)
+        print "HEY BRO"
         basic_bundle = self.build_bundle(request=request)
 
         # We want to be able to validate the update, but we can't just pass
@@ -409,6 +409,10 @@ class DateoBaseResource(JSONDefaultMixin, DateaBaseGeoResource):
         for p in date_params:
             if p in request.GET:
                 q_args[self.rename_get_filters.get(p, p)] = models.DateTimeField().to_python(request.GET.get(p))
+
+        if 'narrow_on_tags' in request.GET:
+          tags = map(normalize_tag, request.GET.get('narrow_on_tags').split(','))
+          narrow_args.append('tags:'+','.join(tags))
 
         if 'tags' in request.GET:
             tag_op = request.GET.get('tag_operator', 'or')

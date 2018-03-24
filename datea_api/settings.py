@@ -89,8 +89,7 @@ INSTALLED_APPS = (
     'api',
 
     # USER STUFF
-    'registration',
-    'social_django',
+    'registration'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -153,9 +152,10 @@ HAYSTACK_CONNECTIONS = {
 '''
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE' : 'haystack.backends.solr_backend.SolrEngine',
-        'URL'    : 'http://127.0.0.1:8983/solr',
-        'TIMEOUT': 60  # large timeout because of celery
+        'ENGINE'    : 'haystack.backends.solr_backend.SolrEngine',
+        'URL'       : 'http://127.0.0.1:8983/solr/tester',
+        'ADMIN_URL' : 'http://127.0.0.1:8983/solr/admin/cores',
+        'TIMEOUT'   : 60  # large timeout because of celery
     },
 }
 #HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor' -> using custom code for this

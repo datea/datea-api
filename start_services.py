@@ -2,12 +2,12 @@
 from subprocess import Popen
 from os.path import join as joinPath
 
-solrDir = '/Users/rod/datea/solr-4.10.4'
+solrDir = '/Users/rod/datea/solr-6.6.3'
 run = True
 
 mc   = Popen('memcached')
 rmq  = Popen('rabbitmq-server')
-solr = Popen(['java','-jar','start.jar'], cwd=joinPath(solrDir, 'example'))
+solr = Popen(['./bin/solr','start','-f'], cwd=joinPath(solrDir))
 #clry = Popen(['env/bin/celery -A datea_api worker -l info &
 
 while run:
@@ -15,4 +15,5 @@ while run:
     run = False
     mc.kill()
     rmq.kill()
-    solr.kill()	
+    solr.kill()
+    #clry.kill()

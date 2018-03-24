@@ -101,15 +101,19 @@ class TagResource(JSONDefaultMixin, ModelResource):
 
         self.method_check(request, allowed=['get'])
         self.throttle_check(request)
-        limit = int(request.GET.get('limit', 5))
+        limit = int(request.GET.get('limit', 7))
 
         q = remove_accents(request.GET.get('q',u''))
-        if len(q) > 0 and len(q) <= 2:
-            sqs = SearchQuerySet().models(Tag).autocomplete(tag__startswith=q).order_by('-dateo_count')[0:limit]
+        if len(q) == 0:
+            results = []
         else:
+          if len(q) > 0 and len(q) <= 2:
+            sqs = SearchQuerySet().models(Tag).autocomplete(tag__startswith=q).order_by('-dateo_count')[0:limit]
+          else:
             sqs = SearchQuerySet().models(Tag).autocomplete(tag_auto=request.GET.get('q', ''))[0:limit]
+          results = [result.tag_auto for result in sqs]
 
-        suggestions = {'suggestions': [result.tag_auto for result in sqs]}
+        suggestions = {'suggestions': results}
 
         self.log_throttled_access(request)
         return HttpResponse(json.dumps(suggestions), content_type="application/json")

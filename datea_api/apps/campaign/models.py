@@ -81,7 +81,7 @@ class Campaign(models.Model):
     default_vis = models.CharField("Default visualization mode", max_length=10, choices=status_choices, default="map")
     default_filter = models.CharField("Default filter", max_length=10, blank=True, null=True)
 
-    #settings = JSONField(verbose_name="Settings", blank=True, null=True)
+    settings = JSONField(verbose_name="Settings", blank=True, null=True)
 
     # statistics
     dateo_count = models.PositiveIntegerField("Item count", default=0)

@@ -2,7 +2,7 @@
 from django.conf.urls import include, url
 
 from tastypie.api import Api
-from api.resources import IPLocationResource, MappingResource
+from api.resources import IPLocationResource, MappingResource, GeocodingResource
 from account.resources import UserResource , AccountResource
 from dateo.resources import DateoResource, DateoFullResource, DateoStatusResource, RedateoResource
 from campaign.resources import CampaignResource
@@ -41,6 +41,7 @@ v2_api.register(LinkResource())
 v2_api.register(URLInfoResource())
 v2_api.register(IPLocationResource())
 v2_api.register(MappingResource())
+v2_api.register(GeocodingResource())
 
 urlpatterns = [
     url(r'^api/', include(v2_api.urls)),

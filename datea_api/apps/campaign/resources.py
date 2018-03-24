@@ -2,6 +2,7 @@ from tastypie import fields
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.cache import SimpleCache
 from tastypie.throttle import CacheThrottle
+from tastypie.utils import trailing_slash
 from api.cache import SimpleDictCache
 from api.base_resources import DateaBaseGeoResource, JSONDefaultMixin
 from api.authorization import DateaBaseAuthorization
@@ -26,6 +27,7 @@ from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery, Exact
+from django.conf.urls import url
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import Http404
 from django.db import models
@@ -304,11 +306,14 @@ class CampaignResource(JSONDefaultMixin, DateaBaseGeoResource):
             q_args['secondary_tags__in'] = [remove_accents(t.lower()) for t in request.GET.get('tags')]
 
         if 'main_tag' in request.GET:
-            mtags = request.GET.get('main_tag')
-            if len(mtags) == 1:
-                q_args['main_tag_exact'] = remove_accents(mtags[0].lower())
-            else:
-                q_args['main_tag_exact__in'] = [remove_accents(t.lower()) for t in mtags]
+            mtag = request.GET.get('main_tag', '')
+            if len(mtag):
+              q_args['main_tag_exact'] = remove_accents(mtag.lower())
+
+        if 'main_tag[]' in request.GET:
+            mtags = request.GET.getlist('main_tag[]',[])
+            if len(mtags):
+              q_args['main_tag_exact__in'] = [remove_accents(t.lower()) for t in mtags]
 
         if 'slug' in request.GET:
             q_args['slug_exact'] = request.GET.get('slug').lower()

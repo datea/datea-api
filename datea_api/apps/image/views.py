@@ -36,8 +36,11 @@ def save_image(request):
         im_bundle = ir.full_dehydrate(im_bundle)
 
         data = {'ok': True, 'message':'ok', 'resource': im_bundle.data}
-
+        status=201
     else:
         data = {'ok': False, 'message': form.errors}
+        status = 400
 
-    return JsonResponse(data)
+    resp = JsonResponse(data)
+    resp.status_code = status
+    return resp

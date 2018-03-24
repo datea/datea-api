@@ -5,7 +5,10 @@ from api.cache import SimpleDictCache
 from tastypie.throttle import CacheThrottle
 from tastypie.utils import trailing_slash
 from django.conf.urls import url
+import requests
 from datea_api.utils import remove_accents
+from .authorization import DateaBaseAuthorization
+from .authentication import ApiKeyPlusWebAuthentication
 
 from haystack.utils.geo import Point
 from haystack.utils.geo import Distance
@@ -25,6 +28,10 @@ from follow.models import Follow
 from geoip import geolite2
 from ipware.ip import get_real_ip
 from api.status_codes import *
+from django.conf import settings
+
+PLACES_AUTOCOMPLETE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+PLACES_DETAIL_URL = 'https://maps.googleapis.com/maps/api/place/details/json'
 
 resources = {'tag': TagResource(), 'campaign': CampaignResource()}
 
@@ -71,6 +78,107 @@ class IPLocationResource(JSONDefaultMixin, Resource):
         return self.create_response(request, response, status=status)
 
 
+class GeocodingResource(JSONDefaultMixin, Resource):
+
+    class Meta:
+        resource_name = 'geocoding'
+        allowed_methods = ['get']
+        cache = SimpleDictCache(timeout=60)
+        throttle = CacheThrottle(throttle_at=300)
+        #authentication = ApiKeyPlusWebAuthentication()
+        #authorization = DateaBaseAuthorization()
+
+    def prepend_urls(self):
+        return [
+            # autocomplete google places
+            url(r"^(?P<resource_name>%s)/autocomplete%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('autocomplete_place'), name="api_autocomplete_place"),
+            # google places detail
+            url(r"^(?P<resource_name>%s)/placedetail%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('place_detail'), name="api_place_detail"),
+        ]
+
+    def autocomplete_place(self, request, **kwargs):
+
+      self.method_check(request, allowed=['get'])
+      self.throttle_check(request)
+      #self.is_authenticated(request)
+
+      response_status = 200
+      response_content = {'result': []}
+
+      params = {'key' : settings.GOOGLE_API_KEY}
+      for field in ['input', 'location', 'radius']:
+        if field in request.GET:
+          params[field] = request.GET.get(field)
+
+      result = requests.get(PLACES_AUTOCOMPLETE_URL, params = params)
+      if result.status_code != 200:
+        response_status = 400
+        response_content = {'error': 'something went wrong'}
+      else:
+        body = result.json()
+        if body['status'] == 'OK':
+          response_content = {
+            'result': [{'placeid': pred['place_id'], 'description': pred['description']} for pred in body['predictions']]
+          }
+        elif body['status'] == 'ZERO_RESULTS':
+          response_content = {'result': []}
+        else:
+          response_status = 400
+          response_content = {'error': body['status']}
+
+      self.log_throttled_access(request)
+      return HttpResponse(json.dumps(response_content), content_type="application/json", status=response_status)
+
+    def place_detail(self, request, **kwargs):
+      print "HEY"
+      self.method_check(request, allowed=['get'])
+      self.throttle_check(request)
+      #self.is_authenticated(request)
+
+      response_status = 200
+      placeid = request.GET.get('placeid', '')
+
+      if not placeid:
+        response_status = 400
+        response_content = {'error': 'bad request'}
+      else:
+        params = {
+          'placeid': placeid,
+          'key' : settings.GOOGLE_API_KEY
+        }
+        result = requests.get(PLACES_DETAIL_URL, params = params)
+        if result.status_code != 200:
+          response_status = 400
+          response_content = {'error': 'bad request'}
+        else:
+          body = result.json()
+          if body['status'] != 'OK':
+            response_status = 400
+            response_content = {'error': body['status']}
+          else:
+            location = body['result']['geometry']['location']
+            ne = body['result']['geometry']['viewport']['northeast']
+            sw = body['result']['geometry']['viewport']['southwest']
+            geometry = {
+              'location': location,
+              'bounds': [[ne['lat'], ne['lng']], [sw['lat'], sw['lng']]]
+            }
+            response_content = {
+              'geometry' : geometry,
+              'formatted_address' : body['result']['formatted_address'],
+              'address_components': body['result']['address_components']
+            }
+
+      self.log_throttled_access(request)
+      return HttpResponse(json.dumps(response_content), content_type="application/json", status=response_status)
+
+
+
+
 # An endpoint to search for campaigns and standalone
 # tags together: combined dateo environments.
 class MappingResource(JSONDefaultMixin, Resource):
@@ -80,6 +188,8 @@ class MappingResource(JSONDefaultMixin, Resource):
         allowed_methods = ['get']
         cache = SimpleDictCache(timeout=60)
         throttle = CacheThrottle(throttle_at=300)
+        authentication = ApiKeyPlusWebAuthentication()
+        authorization = DateaBaseAuthorization()
 
     def prepend_urls(self):
         return [

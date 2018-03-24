@@ -15,7 +15,7 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     position = indexes.LocationField(model_attr='position', null=True)
     created = indexes.DateTimeField(model_attr='created')
     modified = indexes.DateTimeField(model_attr='modified')
-    date = indexes.DateTimeField(model_attr='date')
+    date = indexes.DateTimeField(model_attr='date', null=True)
 
     country = indexes.CharField(model_attr='country', null=True)
     admin_level1 = indexes.CharField(model_attr='admin_level1', null=True)

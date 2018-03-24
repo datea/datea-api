@@ -2,7 +2,7 @@ import sys
 import json
 from dateo.models import File
 from file.forms import FileUploadForm
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from dateo.resources import FileResource
 from tastypie.authentication import ApiKeyAuthentication
@@ -26,7 +26,7 @@ def save_file(request):
         file_data = request.FILES['file']
         file_instance = File(file=file_data, user=request.user)
         if 'order' in form.cleaned_data:
-            file_instance.order = form.cleaned_data['order']
+          file_instance.order = form.cleaned_data['order']
         if 'title' in form.cleaned_data:
             file_instance.title = form.cleaned_data['title']
         file_instance.save()
@@ -35,12 +35,13 @@ def save_file(request):
         fr = FileResource()
         f_bundle = fr.build_bundle(obj=file_instance)
         f_bundle = fr.full_dehydrate(f_bundle)
-        f_json = fr.serialize(f_bundle)
 
-        data = {'ok': True, 'message':'ok', 'resource': json.loads(f_json)}
-        data = json.dumps(data)
-
+        data = {'ok': True, 'message':'ok', 'resource': f_bundle.data}
+        status = 201
     else:
-        data = json.dumps({'ok': False, 'message': form.errors})
+        data = {'ok': False, 'message': form.errors}
+        status = 400
 
-    return HttpResponse(data, mimetype="application/json")
+    resp = JsonResponse(data)
+    resp.status_code = status
+    return resp

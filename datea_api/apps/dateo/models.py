@@ -32,6 +32,7 @@ class Dateo(models.Model):
     status = models.CharField("status", max_length=15, choices=status_choices, default="new")
 
     # content
+    title = models.CharField('Title', max_length=120, blank=True, null=True)
     content = models.TextField("Content")
     images = models.ManyToManyField(Image, verbose_name='Images', blank=True, related_name="dateo")
     files = models.ManyToManyField(File, verbose_name='Files', blank=True, related_name="dateo")
@@ -39,6 +40,7 @@ class Dateo(models.Model):
 
     # location
     position = models.PointField('Position', blank=True, null=True, spatial_index=False)
+    geometry_collection = models.GeometryCollectionField('GeometryCollection', blank=True, null=True, spatial_index=False)
     address = models.CharField('Address', max_length=255, blank=True, null=True)
 
     # optional relationship to campaign

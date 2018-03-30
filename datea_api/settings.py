@@ -240,7 +240,7 @@ def default_subscribe_func(user, action):
 EXTERNAL_NEWSLETTER_SUBSCRIBE_FUNC = default_subscribe_func
 
 
-RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'tsd',
+RESERVED_USERNAMES = ['datea', 'datero', 'dateo', 'dateos', 'tsd',
                     'api', 'admin', 'root',
                     'todossomosdateros', 'user', 'users', 'usuario', 'usuarios',
                     'comment', 'comments', 'comentario', 'comentarios',

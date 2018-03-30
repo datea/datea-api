@@ -203,6 +203,13 @@ class MappingResource(JSONDefaultMixin, Resource):
             self.wrap_view('autocomplete'), name="api_mapping_autocomplete"),
         ]
 
+    rename_get_filters = {
+        'id': 'obj_id',
+        'main_tag': 'main_tag_exact',
+        'category': 'category_exact',
+        'user': 'user_exact',
+    }
+
     def get_combined(self, request, **kwargs):
 
         # tests

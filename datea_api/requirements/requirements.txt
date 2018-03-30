@@ -27,7 +27,7 @@ extraction==0.2
 geopy==1.11.0
 goose3==3.0.5
 gunicorn==19.7.1
-html5lib==0.999999999
+html5lib==1.0b3
 idna==2.6
 jieba==0.38
 kombu==4.0.2

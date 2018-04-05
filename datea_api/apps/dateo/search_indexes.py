@@ -31,6 +31,9 @@ class DateoIndex(indexes.SearchIndex, indexes.Indexable):
     has_images = indexes.BooleanField()
     is_geolocated = indexes.BooleanField()
 
+    user_auto = indexes.EdgeNgramField(model_attr='user__username')
+    tag_auto = indexes.EdgeNgramField(use_template=True, template_name="search/indexes/dateo/dateo_tags_index.txt")
+
     def get_model(self):
         return Dateo
 

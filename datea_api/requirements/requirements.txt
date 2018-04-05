@@ -18,7 +18,7 @@ django-grappelli==2.9.1
 django-haystack==2.8.0
 django-ipware==1.1.6
 django-jsonfield==1.0.1
-django-registration-redux==1.6
+django-registration-redux==2.2
 django-resized==0.3.5
 django-solo==1.1.2
 django-tastypie==0.13.3
@@ -27,7 +27,7 @@ extraction==0.2
 geopy==1.11.0
 goose3==3.0.5
 gunicorn==19.7.1
-html5lib==1.0b3
+html5lib==0.999999999
 idna==2.6
 jieba==0.38
 kombu==4.0.2

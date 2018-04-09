@@ -24,6 +24,7 @@ from campaign.resources import CampaignResource
 from tag.models import Tag
 from tag.resources import TagResource
 from follow.models import Follow
+from dateo.models import Dateo
 
 from geoip import geolite2
 from ipware.ip import get_real_ip
@@ -201,6 +202,11 @@ class MappingResource(JSONDefaultMixin, Resource):
             url(r"^(?P<resource_name>%s)/autocomplete%s$" %
             (self._meta.resource_name, trailing_slash()),
             self.wrap_view('autocomplete'), name="api_mapping_autocomplete"),
+            # get in mapping autocomplete
+            url(r"^(?P<resource_name>%s)/autocomplete-inside-mapping%s$" %
+            (self._meta.resource_name, trailing_slash()),
+            self.wrap_view('in_mapping_autocomplete'), name="api_mapping_autocomplete_inside"),
+
         ]
 
     rename_get_filters = {
@@ -341,6 +347,63 @@ class MappingResource(JSONDefaultMixin, Resource):
 
         self.log_throttled_access(request)
         return HttpResponse(json.dumps(suggestions), content_type="application/json")
+
+
+    def in_mapping_autocomplete(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+        self.throttle_check(request)
+        limit = int(request.GET.get('limit', 15))
+        narrow_on = request.GET.get('narrow_on', '')
+
+        if not narrow_on:
+          return HttpResponse(json.dumps({'error': 'no arg to narrow on mapping.'}), content_type="application/json", status=BAD_REQUEST)
+
+        if narrow_on[0] == '@':
+          narrow_arg = 'user:'+narrow_on.replace('@','')
+          narrow_type = 'user'
+        else:
+          narrow_arg = 'tags:'+narrow_on.replace('#', '')
+          narrow_type = 'tag'
+
+        q = remove_accents(request.GET.get('q',u'')).lower().strip()
+        search = q.replace('#', '').replace('@', '')
+        if not search or len(search) < 2:
+          return HttpResponse(json.dumps({'error': 'no valid search string (at least 2 chars long).'}), content_type="application/json", status=BAD_REQUEST)
+
+        suggested = {}
+
+        if q[0] != '@':
+          main_tag = narrow_on.replace('#', '') if narrow_type == 'tag' else None
+          sqs1 = SearchQuerySet().models(Dateo).narrow(narrow_arg).filter(published=True).autocomplete(tag_auto=search)
+          found_tags = []
+          for dateo in sqs1:
+            rtags = dateo.tags
+            for t in rtags:
+              if narrow_type == 'user' or t != main_tag:
+                if search in t:
+                  if '#'+t in suggested:
+                    suggested['#'+t] +=1
+                  else:
+                    suggested['#'+t] = 1
+
+        if q[0] != '#':
+          sqs2 = SearchQuerySet().models(Dateo).narrow(narrow_arg).filter(published=True).autocomplete(user_auto=search)
+          found_users = []
+          for dateo in sqs2:
+            found_users.append(dateo.user)
+            if '@'+dateo.user in suggested:
+              suggested['@'+dateo.user] += 1
+            else:
+              suggested['@'+dateo.user] = 1
+
+        if len(suggested):
+          sorted_items = sorted(suggested.iteritems(), key=lambda (k,v): (v,k), reverse=True)[0:limit]
+          result = [{'item': item[0], 'dateo_count': item[1]} for item in sorted_items]
+        else :
+          result = []
+
+        return HttpResponse(json.dumps(result), content_type="application/json")
+
 
     def process_ac_result(self, res):
         result = {'id' : res.pk}

@@ -3,6 +3,7 @@
 .#*
 *.pyc
 fabfile.py
+fabfile2.py
 env
 datea_api/local_settings.py
 .git

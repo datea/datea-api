@@ -326,7 +326,7 @@ class AccountResource(JSONDefaultMixin, Resource):
         consumer_key = settings.TWITTER_KEY
         consumer_secret = settings.TWITTER_SECRET
 
-        oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, callback_uri=urljoin(request.META['HTTP_ORIGIN'], 'twitter-popup-redirect'))
+        oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, callback_uri=urljoin(request.META['HTTP_REFERER'], 'twitter-popup-redirect'))
         try:
           fetch_response = oauth.fetch_request_token(TWITTER_REQUEST_TOKEN_URL)
           resource_owner_key = fetch_response.get('oauth_token')
